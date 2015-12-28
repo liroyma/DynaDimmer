@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Dynadimmer.Views.Config.ConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dynadimmer.Views.Config"
+             mc:Ignorable="d" Background="#efefef">
+    <GroupBox Header="Unit Clock" Margin="10" Padding="10" BorderBrush="Black">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="90"></ColumnDefinition>
+                <ColumnDefinition Width="200"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Unit Time:"></TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Computer Time:"></TextBlock>
+            <TextBox Grid.Row="0" Grid.Column="1" Background="Aqua" Text="{Binding UnitTime}" Margin="0,5" HorizontalContentAlignment="Center" IsEnabled="False"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UnitLampCount}" Margin="0,5" HorizontalContentAlignment="Center"></TextBox>
+            <Button Grid.Row="0" Grid.Column="2" Content="Upload" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
+            <Button Grid.Row="1" Grid.Column="2" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
+        </Grid>
+    </GroupBox>
+</UserControl>
