@@ -69,7 +69,6 @@ namespace Dynadimmer.Models
             }
         }
 
-
         private bool windowenable;
         public bool WindowEnable
         {
@@ -592,7 +591,7 @@ namespace Dynadimmer.Models
             AppTitle = "Menorah Programmable Dimmer";
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                AppTitle += System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                AppTitle +=  "  - V" + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
         }
 
