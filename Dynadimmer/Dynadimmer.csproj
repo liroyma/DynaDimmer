@@ -124,7 +124,7 @@
     <Reference Include="UIAutomationTypes" />
     <Reference Include="wcl, Version=6.14.7.0, Culture=neutral, PublicKeyToken=c33610a096b7e41b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Softwares\WCL\NET\redist\x32\46\wcl.dll</HintPath>
+      <HintPath>WCL\wcl.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -246,6 +246,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
@@ -262,21 +263,6 @@
     <Resource Include="Menorah_Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\download.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\exit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\help.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\new.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\open.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
@@ -287,6 +273,16 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WCL\concrt140.dll" />
+    <Content Include="WCL\msvcp140.dll" />
+    <Content Include="WCL\vccorlib140.dll" />
+    <Content Include="WCL\vcruntime140.dll" />
+    <Content Include="WCL\wcl.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
