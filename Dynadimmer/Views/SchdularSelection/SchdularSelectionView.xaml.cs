@@ -32,5 +32,10 @@ namespace Dynadimmer.Views.SchdularSelection
         {
             modol.SetContainer(containr);
         }
+
+        internal void UpdateNumberOfLamps(int unitLampCount)
+        {
+            modol.SetNumberOfLamps(unitLampCount);
+        }
     }
 }

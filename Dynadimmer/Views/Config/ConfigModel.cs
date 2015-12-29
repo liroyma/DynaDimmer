@@ -12,6 +12,8 @@ namespace Dynadimmer.Views.Config
     {
         private const int Header = 3;
 
+        public event EventHandler GotData;
+
         #region Properties
         private string unittime;
         public string UnitTime
@@ -36,9 +38,13 @@ namespace Dynadimmer.Views.Config
         }
         #endregion
 
-        public override void DidntGotAnswer()
+        public ConfigModel():base()
         {
             Title = "Unit Configuration";
+        }
+
+        public override void DidntGotAnswer()
+        {
         }
 
         public override void GotAnswer(IncomeMessage messase)
@@ -49,6 +55,7 @@ namespace Dynadimmer.Views.Config
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             base.SetView();
             UnitLampCount = messase.DecimalData[9];
+            GotData(null,null);
         }
 
         public override void SendDownLoad(object sender)

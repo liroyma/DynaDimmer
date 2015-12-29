@@ -28,5 +28,10 @@ namespace Dynadimmer.Views.DateTime
             InitializeComponent();
             this.DataContext = Model;
         }
+
+        internal void UpdateTime(string unitTime)
+        {
+            ((UnitDateTimeModel)Model).UnitTime = unitTime;
+        }
     }
 }

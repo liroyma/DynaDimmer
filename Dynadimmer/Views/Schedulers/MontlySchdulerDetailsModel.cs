@@ -17,12 +17,12 @@ namespace Dynadimmer.Views.Schedulers.Inner
     {
         private const int UploadHeader = 12;
         private const int DownloadHeader = 11;
+        private const int ENDVALUE = 1440;
 
         private const int STARTHOUR = 15;
         private const int STARTMINUTE = 00;
 
         public event EventHandler UpdateView;
-        public event EventHandler AddView;
 
 
         #region Commands
@@ -136,7 +136,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 NotifyPropertyChanged("ItemVisablility");
             }
         }
-        
+
         #endregion
 
         public MontlySchdulerDetailsModel(Lamp lamp, Month month) : base()
@@ -145,8 +145,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
             Month = (int)month;
             MonthString = month.ToString();
             BorderColor = GetBorderColor(Lamp);
-            Title = string.Format("Lamp {0} - {1}", Lamp, MonthString);
-            SendUpload(null);
+            Title = string.Format("Lamp {0} - {1}", Lamp + 1, MonthString);
             Add = new MyCommand();
             Add.CommandSent += Add_CommandSent;
             Close = new MyCommand();
@@ -156,6 +155,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
             SelectedLampTime = null;
             Illuminance = 100;
             lamptimes = new ObservableCollection<LampTime>();
+            ItemVisablility = Visibility.Collapsed;
         }
 
         private void Close_CommandSent(object sender, EventArgs e)
@@ -202,9 +202,10 @@ namespace Dynadimmer.Views.Schedulers.Inner
             {
                 LampTimes.Add(item);
             }
-            UpdateView(null,null);
+            ItemVisablility = Visibility.Visible;
+            UpdateView(null, null);
         }
-        
+
         private void Add_CommandSent(object sender, EventArgs e)
         {
             SelectedLampTime = null;
@@ -268,15 +269,23 @@ namespace Dynadimmer.Views.Schedulers.Inner
             data.Add((byte)Month);
             foreach (var item in LampTimes)
             {
-                data.Add((byte)item.Hour);
-                data.Add((byte)item.Minute);
+                int x = item.Hour * 60 + item.Minute;
+                byte[] bytes = BitConverter.GetBytes(x).ToList().GetRange(0, 2).ToArray();
+                data.Add(bytes[1]);
+                data.Add(bytes[0]);
+                //data.Add((byte)item.Hour);
+                //data.Add((byte)item.Minute);
                 data.Add((byte)item.Precentage);
             }
-            for (int i = LampTimes.Count; i < 10; i++)
+            if (LampTimes.Count < 10)
             {
-                data.Add(24);
-                data.Add(60);
-                data.Add(0);
+                int x = ENDVALUE;// 24 * 60 + 60;
+                byte[] bytes = BitConverter.GetBytes(x).ToList().GetRange(0, 2).ToArray();
+                data.Add(bytes[1]);
+                data.Add(bytes[0]);
+                //data.Add(24);
+                //data.Add(60);
+                data.Add(100);
             }
             CreateAndSendMessage(this, DownloadHeader, data.ToArray());
         }
@@ -291,12 +300,35 @@ namespace Dynadimmer.Views.Schedulers.Inner
             AfterStart.Clear();
             BeforeStart.Clear();
             byte[] data = messase.DecimalData;
-           /* for (int i = 4; i < 33; i+=3)
+
+            if (data[1] == UploadHeader)
             {
-                LampTime lt = new LampTime(data[i], data[i + 1], data[i + 2]);
-                if (lt.Hour == STARTHOUR)
+                bool ended = false;
+                int index = 4;
+                while (!ended)
                 {
-                    if (lt.Minute > STARTMINUTE)
+                    byte[] bytes = { data[index + 1], data[index] };
+                    int time = BitConverter.ToInt16(bytes, 0);
+                    int pre = data[index + 2];
+                    index += 3;
+                    if (time == ENDVALUE)
+                        break;
+                    if(index > data.Length - 3)
+                        ended = true;
+                    //LampTime lt = new LampTime(data[index], data[index + 1], data[index + 2]);
+                    LampTime lt = new LampTime(time, pre);
+                    if (lt.Hour == STARTHOUR)
+                    {
+                        if (lt.Minute > STARTMINUTE)
+                        {
+                            AfterStart.Add(lt);
+                        }
+                        else
+                        {
+                            BeforeStart.Add(lt);
+                        }
+                    }
+                    else if (lt.Hour > STARTHOUR)
                     {
                         AfterStart.Add(lt);
                     }
@@ -305,17 +337,10 @@ namespace Dynadimmer.Views.Schedulers.Inner
                         BeforeStart.Add(lt);
                     }
                 }
-                else if (lt.Hour > STARTHOUR)
-                {
-                    AfterStart.Add(lt);
-                }
-                else
-                {
-                    BeforeStart.Add(lt);
-                }
+                UpadteList();
+                base.SetView();
             }
-            UpadteList();*/
-            base.SetView();
+
         }
 
         public override void DidntGotAnswer()
@@ -323,6 +348,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
             IsLoaded = true;
         }
 
-        
+
     }
 }

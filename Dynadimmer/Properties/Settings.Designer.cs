@@ -22,5 +22,29 @@ namespace Dynadimmer.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ViewLog {
+            get {
+                return ((bool)(this["ViewLog"]));
+            }
+            set {
+                this["ViewLog"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Maximized")]
+        public global::System.Windows.WindowState WindowState {
+            get {
+                return ((global::System.Windows.WindowState)(this["WindowState"]));
+            }
+            set {
+                this["WindowState"] = value;
+            }
+        }
     }
 }

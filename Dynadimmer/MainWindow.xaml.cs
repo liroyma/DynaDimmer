@@ -36,13 +36,20 @@ namespace Dynadimmer
             datetimeview.Visibility = connection.UnitTimeVisibility;
             summerwinterview.Visibility = connection.SummerWinterVisibility;
             configview.Visibility = connection.ConfigVisibility;
+            ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
 
+        }
+
+        private void ConfigModel_GotData(object sender, EventArgs e)
+        {
+            datetimeview.UpdateTime(((Views.Config.ConfigModel)configview.Model).UnitTime);
+            schdularselectionview.UpdateNumberOfLamps(((Views.Config.ConfigModel)configview.Model).UnitLampCount);
         }
 
         private void Connection_Connected(object sender, EventArgs e)
         {
-            //Models.Action startaction = new Models.Action(datetimeview.Model, summerwinterview.Model);
-            //startaction.Start();
+            Models.Action startaction = new Models.Action(configview.Model);
+            startaction.Start();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

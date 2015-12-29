@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer"
         x:Class="Dynadimmer.MainWindow" Closing="Window_Closing"
-        mc:Ignorable="d" Height="700" Width="1000" WindowStartupLocation="CenterScreen"
-        Title="Menorah Programmable Dimmer" MinHeight="700" MinWidth="1000">
+        mc:Ignorable="d" Height="700" Width="1000" WindowStartupLocation="CenterScreen" WindowState="{Binding WindowState}"
+        Title="{Binding AppTitle}" MinHeight="700" MinWidth="1000">
     <Window.Resources>
         <Style TargetType="Button" x:Key="ConnectButton" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -36,13 +36,14 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_TestMode" IsCheckable="True" IsChecked="{Binding TestMode}"></MenuItem>
                 <MenuItem Header="_Exit" Command="{Binding Exit}"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Parameters">
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration" Uid="V1"></MenuItem>
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock" Uid="V1"></MenuItem>
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter" Uid="V2"></MenuItem>
+                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
+                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
+                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
+                <Separator></Separator>
+                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
             </MenuItem>
         </Menu>
         <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
@@ -56,14 +57,13 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding WindowEnable}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="65"></ColumnDefinition>
-                    <ColumnDefinition Width="328"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <DateTime:UnitDateTime x:Name="datetimeview" Visibility="{Binding UnitTimeVisibility}" IsEnabled="{Binding WindowEnable}" Grid.Column="2"/>
-                <SummerWinnter:UnitSummerWinnterClock Visibility="{Binding SummerWinterVisibility}" x:Name="summerwinterview" IsEnabled="{Binding WindowEnable}" Grid.Column="2"/>
-                <Config:ConfigView x:Name="configview" Visibility="{Binding ConfigVisibility}" IsEnabled="{Binding WindowEnable}" Grid.Column="2" />
-                <SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" IsEnabled="{Binding WindowEnable}" Grid.Column="0" Grid.ColumnSpan="2" />
+                <DateTime:UnitDateTime x:Name="datetimeview" Grid.Column="1"/>
+                <SummerWinnter:UnitSummerWinnterClock x:Name="summerwinterview" Grid.Column="1"/>
+                <Config:ConfigView x:Name="configview" Grid.Column="1" />
+                <SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" Grid.Column="0" />
             </Grid>
             <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
                 <Button.Background>
@@ -87,7 +87,7 @@
             <Separator></Separator>
             <TextBlock Text="{Binding MessageInfo}" Foreground="{Binding MessageInfoColor}"></TextBlock>
         </StatusBar>
-        <DataGrid DockPanel.Dock="Bottom" ItemsSource="{Binding Messages}" Height="150" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid DockPanel.Dock="Bottom" Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" Height="150" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
@@ -131,9 +131,8 @@
                 </Style>
             </DataGrid.RowStyle>
         </DataGrid>
-        <!-- <Schedulers:MontlySchduler  IsEnabled="{Binding IsConnected}" DockPanel.Dock="Top" />-->
         <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="Container" Background="White"></StackPanel>
+            <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
         </ScrollViewer>
     </DockPanel>
 </Window>

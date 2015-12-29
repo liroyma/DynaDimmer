@@ -18,17 +18,6 @@ namespace Dynadimmer.Models
 {
     public class IRDACummunication : INotifyPropertyChanged
     {
-        private bool _TestMode;
-        public bool TestMode
-        {
-            get { return _TestMode; }
-            set
-            {
-                _TestMode = value;
-                NotifyPropertyChanged("TestMode");
-            }
-        }
-        
         #region Private Properties
         wclAPI _wclAPI;
         wclClient _wclClient;
@@ -61,6 +50,25 @@ namespace Dynadimmer.Models
                 NotifyPropertyChanged("Messages");
             }
         }
+
+        private List<string> notifications = new List<string>();
+
+        public string AppVersion { get; private set; }
+        public string AppTitle { get; private set; }
+
+        private WindowState _windowState;
+        public System.Windows.WindowState WindowState
+        {
+            get { return _windowState; }
+            set
+            {
+                _windowState = value;
+                Properties.Settings.Default.WindowState = value;
+                Properties.Settings.Default.Save();
+                NotifyPropertyChanged("WindowState");
+            }
+        }
+
 
         private bool windowenable;
         public bool WindowEnable
@@ -205,6 +213,21 @@ namespace Dynadimmer.Models
             }
         }
 
+        private bool _LogChecked;
+        public bool LogChecked
+        {
+            get { return _LogChecked; }
+            set
+            {
+                _LogChecked = value;
+                Properties.Settings.Default.ViewLog = value;
+                Properties.Settings.Default.Save();
+                LogVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                NotifyPropertyChanged("LogChecked");
+            }
+        }
+
+
         private Visibility _UnitTimeVisibility;
         public Visibility UnitTimeVisibility
         {
@@ -235,6 +258,17 @@ namespace Dynadimmer.Models
             {
                 _ConfigVisibility = value;
                 NotifyPropertyChanged("ConfigVisibility");
+            }
+        }
+
+        private Visibility _LogVisibility;
+        public Visibility LogVisibility
+        {
+            get { return _LogVisibility; }
+            set
+            {
+                _LogVisibility = value;
+                NotifyPropertyChanged("LogVisibility");
             }
         }
 
@@ -271,12 +305,10 @@ namespace Dynadimmer.Models
             FillAnswerTimer.Tick += FillAnswerTimer_Elapsed;
             FillAnswerTimer.Interval = TimeSpan.FromMilliseconds(500);
 
-            UnitClockChecked = false;
-            SummerWinterChecked = false;
+            ReadSettings();
             ConfigChecked = true;
-            WindowEnable = false;
         }
-
+       
         #region Send and Recieved
 
         private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
@@ -296,17 +328,23 @@ namespace Dynadimmer.Models
                 {
                     int endindex = answer.FindIndex(x => x == 3);
                     byte[] answer1 = answer.GetRange(0, endindex + 1).ToArray();
-                    Console.WriteLine("startindex: " + startindex + "\n" + "endindex: " + endindex + "\n" + string.Join(" ", answer1));
-                    try {
+                    try
+                    {
                         IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", property.Title), answer1.ToList());
-                        property.GotAnswer(mess);
+                        if (mess.Header == 255)
+                        {
+                            HandleGaneralMassege(property.Title,mess);
+                        }
+                        else
+                        {
+                            property.GotAnswer(mess);
+                        }
                         Messages.Insert(0, mess);
                     }
                     catch
                     {
                         MessageBox.Show(string.Join(" ", answer1));
                     }
-
                     answer.RemoveRange(0, endindex + 1);
                 }
             }
@@ -315,29 +353,50 @@ namespace Dynadimmer.Models
                 Messages.Insert(0, new JunkMessage(answer));
                 answer.Clear();
             }
+        }
 
-            /*try
+        private void HandleGaneralMassege(string title, IncomeMessage mess)
+        {
+            string str = "Fail to get " + title + ", ";
+            var color = Brushes.Red;
+            switch (mess.DecimalData[5])
             {
-
-                int endindex = answer.FindIndex(x => x == 3);
-                answer = answer.GetRange(0, endindex - startindex + 1);
-                IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", property.Title), answer.ToList());
-                property.GotAnswer(mess);
-                Messages.Insert(0, mess);
-                answer = new List<byte>();
+                case 0:
+                    color = Brushes.Green;
+                    str = "Changes in "+title+" saved.";
+                    break;
+                case 1:
+                    str += "Number of ascii byte is odd.";
+                    break;
+                case 2:
+                    str += "CRC problem.";
+                    break;
+                case 3:
+                    str += "Lamp don't exist.";
+                    break;
+                case 4:
+                    str += "Program message to short (less then 5 bytes).";
+                    break;
+                case 5:
+                    str += "Message length is not valid.";
+                    break;
+                case 6:
+                    str += "Message with wrong program number.";
+                    break;
+                case 7:
+                    str += "Message data is not valid.";
+                    break;
+                case 8:
+                    str += "Fail to save the changes.";
+                    break;
             }
-            catch
-            {
-                property.DidntGotAnswer();
-                MessageBox.Show(string.Join(" ", answer.ToArray()));
-                answer = new List<byte>();
-                SetMessageInfo("Incorrect message format.", Brushes.Red);
-            }*/
+            SetMessageInfo(str, color);
         }
 
         private void SetMessageInfo(string text, Brush color)
         {
             MessageInfo = text;
+            notifications.Insert(0, text);
             MessageInfoColor = color;
         }
 
@@ -520,6 +579,21 @@ namespace Dynadimmer.Models
             _wclClient.Dispose();
             _wclIrDADiscovery.Dispose();
             _wclAPI.Dispose();
+        }
+
+        #endregion
+
+        #region Setting
+
+        private void ReadSettings()
+        {
+            LogChecked = Properties.Settings.Default.ViewLog;
+            WindowState = Properties.Settings.Default.WindowState;
+            AppTitle = "Menorah Programmable Dimmer";
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            {
+                AppTitle += System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+            }
         }
 
         #endregion

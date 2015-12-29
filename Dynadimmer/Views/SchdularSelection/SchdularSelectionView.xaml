@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.SchdularSelection"
-             mc:Ignorable="d" Background="#efefef">
+             mc:Ignorable="d" Background="#efefef" Visibility="{Binding WinVisibility}" IsEnabled="{Binding IsWinEnabled}">
     <GroupBox Header="Lamps" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>
             <Grid.RowDefinitions>

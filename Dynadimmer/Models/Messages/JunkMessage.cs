@@ -9,8 +9,6 @@ namespace Dynadimmer.Models.Messages
 {
     class JunkMessage:UnitMessage
     {
-        private List<byte> answer;
-        
         public JunkMessage(List<byte> answer):base("Unknown data")
         {
             MessageColor = Brushes.Brown;

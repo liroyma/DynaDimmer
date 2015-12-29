@@ -26,7 +26,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
     {
         public UnitProperty Model { get; private set; }
         
-
         public string Uniqid { get; set; }
         public int Lamp { get; set; }
         public int Month { get; set; }
@@ -82,6 +81,9 @@ namespace Dynadimmer.Views.Schedulers.Inner
             double currentLeft = 20;
 
             double step = (width - 40) / (lampTimes.Count + 1);
+
+            if (step < 0)
+                return;
 
 
             TextBlock starttextBlock = new TextBlock();

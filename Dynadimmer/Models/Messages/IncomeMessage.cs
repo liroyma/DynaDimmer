@@ -9,6 +9,7 @@ namespace Dynadimmer.Models.Messages
 {
     public class IncomeMessage : UnitMessage
     {
+        public byte Header { get; private set; }
         public IncomeMessage(string info,List<byte> answer):base(info)
         {
             MessageColor = Brushes.Green;
@@ -17,6 +18,8 @@ namespace Dynadimmer.Models.Messages
             byte[] test = CRCManager.CheckCRC(answer);
             data.AddRange(test);
             data.Add(3);
+
+            Header = data[1];
 
             DataAscii = answer.ToArray();
             DecimalData = data.ToArray();
