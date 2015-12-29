@@ -27,16 +27,24 @@ namespace Dynadimmer
 
         public MainWindow()
         {
-            connection = new IRDACummunication();
-            connection.Connected += Connection_Connected;
-            InitializeComponent();
-            UnitProperty.SetConnection(connection);
-            this.DataContext = connection;
-            schdularselectionview.SetContainer(this.Container);
-            datetimeview.Visibility = connection.UnitTimeVisibility;
-            summerwinterview.Visibility = connection.SummerWinterVisibility;
-            configview.Visibility = connection.ConfigVisibility;
-            ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
+            int i = 0;
+            try
+            {
+                connection = new IRDACummunication();i++;
+                connection.Connected += Connection_Connected; i++;
+                InitializeComponent(); i++;
+                UnitProperty.SetConnection(connection); i++;
+                this.DataContext = connection; i++;
+                schdularselectionview.SetContainer(this.Container); i++;
+                datetimeview.Visibility = connection.UnitTimeVisibility; i++;
+                summerwinterview.Visibility = connection.SummerWinterVisibility; i++;
+                configview.Visibility = connection.ConfigVisibility; i++;
+                ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData; i++;
+            }
+            catch
+            {
+                MessageBox.Show("error "+i);
+            }
 
         }
 

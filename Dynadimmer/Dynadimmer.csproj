@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dynadimmer</RootNamespace>
     <AssemblyName>Programmable Dimmer</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -28,12 +28,12 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://menorah.liroym.com/dynadimmer/</InstallUrl>
     <TargetCulture>en</TargetCulture>
-    <ProductName>Menorah Programmable Dimmer</ProductName>
+    <ProductName>Programmable Dimmer</ProductName>
     <PublisherName>Menorah</PublisherName>
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -89,7 +89,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>3D9B06225483543BAD60F08D691210FD0F7BA56D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>1D98EF74317C086946D05D8DC1A0161C9A18A02D</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -122,13 +122,13 @@
     </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
-    <Reference Include="wcl, Version=6.14.7.0, Culture=neutral, PublicKeyToken=c33610a096b7e41b, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>WCL\wcl.dll</HintPath>
-    </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="wcl, Version=6.14.7.0, Culture=neutral, PublicKeyToken=c33610a096b7e41b, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Softwares\WCL\NET\redist\x32\451\wcl.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock, Version=2.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
       <HintPath>..\packages\Extended.Wpf.Toolkit.2.5\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
       <Private>True</Private>
@@ -275,14 +275,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WCL\concrt140.dll" />
-    <Content Include="WCL\msvcp140.dll" />
-    <Content Include="WCL\vccorlib140.dll" />
-    <Content Include="WCL\vcruntime140.dll" />
-    <Content Include="WCL\wcl.dll" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
+    <Content Include="WCL\msvcp120.dll" />
+    <Content Include="WCL\msvcr120.dll" />
+    <Content Include="WCL\vccorlib120.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
