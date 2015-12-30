@@ -19,16 +19,48 @@ namespace Dynadimmer.Views.Schedulers.Inner
     /// <summary>
     /// Interaction logic for BarView.xaml
     /// </summary>
-    public partial class BarView : UserControl,INotifyPropertyChanged
+    public partial class BarView : UserControl, INotifyPropertyChanged
     {
         private int _precentage;
         public int Precentage
         {
-            get{ return _precentage; }
+            get { return _precentage; }
             set
             {
                 _precentage = value;
+                if (value < 10)
+                {
+                    PrecentageColor = Brushes.Red;
+                    PrecentagePosition = new Thickness(0, -15, 0, 0);
+                }
+                else
+                {
+                    PrecentageColor = Brushes.White;
+                    PrecentagePosition = new Thickness(0, 5, 0, 0);
+                }
                 NotifyPropertyChanged("Precentage");
+            }
+        }
+
+        private Thickness _precentageposition;
+        public Thickness PrecentagePosition
+        {
+            get { return _precentageposition; }
+            set
+            {
+                _precentageposition = value;
+                NotifyPropertyChanged("PrecentagePosition");
+            }
+        }
+
+        private Brush _precentagecolor;
+        public Brush PrecentageColor
+        {
+            get { return _precentagecolor; }
+            set
+            {
+                _precentagecolor = value;
+                NotifyPropertyChanged("PrecentageColor");
             }
         }
 
@@ -65,5 +97,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
         {
             BarHeight = this.Height * Precentage / 100;
         }
+
     }
 }

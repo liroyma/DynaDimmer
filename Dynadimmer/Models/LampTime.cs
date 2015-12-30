@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Dynadimmer.Views.Schedulers
 {
-    class LampTime
+    public class LampTime
     {
         public int Hour { get; set; }
         public int Minute { get; set; }

@@ -19,8 +19,15 @@ namespace Dynadimmer.Models
 
             foreach (var item in Upload)
             {
-                item.AllDone += Item_AllDone; 
+                if(item!=null)
+                    item.AllDone += Item_AllDone; 
             }
+        }
+
+        public void Add(UnitProperty control)
+        {
+            control.AllDone += Item_AllDone;
+            Upload.Add(control);
         }
 
         private void Item_AllDone(object sender, EventArgs e)

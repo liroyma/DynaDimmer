@@ -13,7 +13,7 @@ using Xceed.Wpf.Toolkit;
 
 namespace Dynadimmer.Views.Schedulers.Inner
 {
-    class MontlySchdulerDetailsModel : UnitProperty
+    public class MontlySchdulerDetailsModel : UnitProperty
     {
         private const int UploadHeader = 12;
         private const int DownloadHeader = 11;
@@ -23,12 +23,15 @@ namespace Dynadimmer.Views.Schedulers.Inner
         private const int STARTMINUTE = 00;
 
         public event EventHandler UpdateView;
+        public event EventHandler ItemsCopied;
 
 
         #region Commands
         public MyCommand Add { get; set; }
         public MyCommand Remove { get; set; }
         public MyCommand Close { get; set; }
+        public MyCommand Copy { get; set; }
+        public MyCommand Paste { get; set; }
         #endregion
 
         #region Properties
@@ -87,7 +90,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
             }
         }
 
-
         private LampTime selectedlamptime;
         public LampTime SelectedLampTime
         {
@@ -125,7 +127,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
         public List<LampTime> BeforeStart = new List<LampTime>();
         public List<LampTime> AfterStart = new List<LampTime>();
 
-
         private Visibility itemvisablility;
         public Visibility ItemVisablility
         {
@@ -134,6 +135,28 @@ namespace Dynadimmer.Views.Schedulers.Inner
             {
                 itemvisablility = value;
                 NotifyPropertyChanged("ItemVisablility");
+            }
+        }
+
+        private bool _CanPaste;
+        public bool CanPaste
+        {
+            get { return _CanPaste; }
+            set
+            {
+                _CanPaste = value;
+                NotifyPropertyChanged("CanPaste");
+            }
+        }
+
+        private List<LampTime> _PastebleLampTimes;
+        public List<LampTime> PastebleLampTimes
+        {
+            get { return _PastebleLampTimes; }
+            set
+            {
+                _PastebleLampTimes = value;
+                CanPaste = value.Count > 0;
             }
         }
 
@@ -152,10 +175,48 @@ namespace Dynadimmer.Views.Schedulers.Inner
             Close.CommandSent += Close_CommandSent;
             Remove = new MyCommand();
             Remove.CommandSent += Remove_CommandSent;
+            Copy = new MyCommand();
+            Copy.CommandSent += Copy_CommandSent;
+            Paste = new MyCommand();
+            Paste.CommandSent += Paste_CommandSent;
             SelectedLampTime = null;
             Illuminance = 100;
             lamptimes = new ObservableCollection<LampTime>();
             ItemVisablility = Visibility.Collapsed;
+        }
+
+        private void Paste_CommandSent(object sender, EventArgs e)
+        {
+            AfterStart.Clear();
+            BeforeStart.Clear();
+            foreach (var lt in PastebleLampTimes)
+            {
+                if (lt.Hour == STARTHOUR)
+                {
+                    if (lt.Minute >= STARTMINUTE)
+                    {
+                        AfterStart.Add(lt);
+                    }
+                    else
+                    {
+                        BeforeStart.Add(lt);
+                    }
+                }
+                else if (lt.Hour > STARTHOUR)
+                {
+                    AfterStart.Add(lt);
+                }
+                else
+                {
+                    BeforeStart.Add(lt);
+                }
+            }
+            UpadteList();
+        }
+
+        private void Copy_CommandSent(object sender, EventArgs e)
+        {
+            ItemsCopied(this, EventArgs.Empty);
         }
 
         private void Close_CommandSent(object sender, EventArgs e)
@@ -242,7 +303,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
 
             if (lt.Hour == STARTHOUR)
             {
-                if (lt.Minute > STARTMINUTE)
+                if (lt.Minute >= STARTMINUTE)
                 {
                     AfterStart.Add(lt);
                 }
@@ -319,7 +380,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
                     LampTime lt = new LampTime(time, pre);
                     if (lt.Hour == STARTHOUR)
                     {
-                        if (lt.Minute > STARTMINUTE)
+                        if (lt.Minute >= STARTMINUTE)
                         {
                             AfterStart.Add(lt);
                         }

@@ -27,25 +27,28 @@ namespace Dynadimmer
 
         public MainWindow()
         {
-            int i = 0;
             try
             {
-                connection = new IRDACummunication();i++;
-                connection.Connected += Connection_Connected; i++;
-                InitializeComponent(); i++;
-                UnitProperty.SetConnection(connection); i++;
-                this.DataContext = connection; i++;
-                schdularselectionview.SetContainer(this.Container); i++;
-                datetimeview.Visibility = connection.UnitTimeVisibility; i++;
-                summerwinterview.Visibility = connection.SummerWinterVisibility; i++;
-                configview.Visibility = connection.ConfigVisibility; i++;
-                ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData; i++;
+                connection = new IRDACummunication(true);
             }
             catch
             {
-                MessageBox.Show("error "+i);
+                MessageBox.Show("Error in WCL library");
             }
-
+            finally
+            {
+                if(connection==null) connection = new IRDACummunication(false);
+                connection.Connected += Connection_Connected;
+                InitializeComponent();
+                UnitProperty.SetConnection(connection);
+                this.DataContext = connection;
+                schdularselectionview.SetContainer(this.Container);
+                datetimeview.Visibility = connection.UnitTimeVisibility;
+                summerwinterview.Visibility = connection.SummerWinterVisibility;
+                configview.Visibility = connection.ConfigVisibility;
+                ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
+                connection.CheckStatus();
+            }
         }
 
         private void ConfigModel_GotData(object sender, EventArgs e)
@@ -57,6 +60,7 @@ namespace Dynadimmer
         private void Connection_Connected(object sender, EventArgs e)
         {
             Models.Action startaction = new Models.Action(configview.Model);
+            startaction.Add(schdularselectionview.UploadScadular(Views.SchdularSelection.Lamp.Lamp_1, Views.SchdularSelection.Month.January));
             startaction.Start();
         }
 
@@ -70,8 +74,7 @@ namespace Dynadimmer
             datetimeview.Visibility = connection.UnitTimeVisibility;
             summerwinterview.Visibility = connection.SummerWinterVisibility;
             configview.Visibility = connection.ConfigVisibility;
-        }
-        
+        } 
     }
 
 }

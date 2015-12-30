@@ -274,7 +274,7 @@ namespace Dynadimmer.Models
 
         #endregion
 
-        public IRDACummunication()
+        public IRDACummunication(bool withconnection)
         {
             Messages = new ObservableCollection<UnitMessage>();
             IsConnected = false;
@@ -282,21 +282,23 @@ namespace Dynadimmer.Models
             Connect.CommandSent += Connect_CommandSent;
             Exit = new MyCommand();
             Exit.CommandSent += Exit_CommandSent;
-            _wclAPI = new wclAPI();
-            _wclClient = new wclClient();
-            _wclIrDADiscovery = new wclIrDADiscovery();
+            if (withconnection)
+            {
+                _wclAPI = new wclAPI();
+                _wclClient = new wclClient();
+                _wclIrDADiscovery = new wclIrDADiscovery();
 
-            _wclAPI.AfterLoad += new EventHandler(AfterLoad);
-            _wclAPI.AfterUnload += new EventHandler(AfterUnload);
-            _wclAPI.OnChanged += new EventHandler(OnChanged);
+                _wclAPI.AfterLoad += new EventHandler(AfterLoad);
+                _wclAPI.AfterUnload += new EventHandler(AfterUnload);
+                _wclAPI.OnChanged += new EventHandler(OnChanged);
 
-            _wclIrDADiscovery.OnComplete += new wcl.wclIrDACompleteEventHandler(OnComplete);
-            _wclIrDADiscovery.OnStarted += new System.EventHandler(OnStarted);
+                _wclIrDADiscovery.OnComplete += new wcl.wclIrDACompleteEventHandler(OnComplete);
+                _wclIrDADiscovery.OnStarted += new System.EventHandler(OnStarted);
 
-            _wclClient.OnDisconnect += new System.EventHandler(OnDisconnect);
-            _wclClient.OnData += new wcl.wclDataEventHandler(OnData);
-            _wclClient.OnConnect += new wcl.wclConnectEventHandler(OnConnect);
-
+                _wclClient.OnDisconnect += new System.EventHandler(OnDisconnect);
+                _wclClient.OnData += new wcl.wclDataEventHandler(OnData);
+                _wclClient.OnConnect += new wcl.wclConnectEventHandler(OnConnect);
+            }
             ConnectionTimer.Tick += t_Elapsed;
             ConnectionTimer.Interval = TimeSpan.FromMilliseconds(10000);
 
@@ -307,7 +309,7 @@ namespace Dynadimmer.Models
             ReadSettings();
             ConfigChecked = true;
         }
-       
+
         #region Send and Recieved
 
         private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
@@ -332,7 +334,7 @@ namespace Dynadimmer.Models
                         IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", property.Title), answer1.ToList());
                         if (mess.Header == 255)
                         {
-                            HandleGaneralMassege(property.Title,mess);
+                            HandleGaneralMassege(property.Title, mess);
                         }
                         else
                         {
@@ -347,7 +349,7 @@ namespace Dynadimmer.Models
                     answer.RemoveRange(0, endindex + 1);
                 }
             }
-            if(answer.Count>0)
+            if (answer.Count > 0)
             {
                 Messages.Insert(0, new JunkMessage(answer));
                 answer.Clear();
@@ -362,7 +364,7 @@ namespace Dynadimmer.Models
             {
                 case 0:
                     color = Brushes.Green;
-                    str = "Changes in "+title+" saved.";
+                    str = "Changes in " + title + " saved.";
                     break;
                 case 1:
                     str += "Number of ascii byte is odd.";
@@ -522,8 +524,10 @@ namespace Dynadimmer.Models
             CheckStatus();
         }
 
-        private void CheckStatus()
+        public void CheckStatus()
         {
+            if (_wclClient == null)
+                return;
             if (_wclClient.State == wclClientState.csConnecting)
             {
                 _wclClient.Disconnect();
@@ -575,9 +579,12 @@ namespace Dynadimmer.Models
 
         public void Dispose()
         {
-            _wclClient.Dispose();
-            _wclIrDADiscovery.Dispose();
-            _wclAPI.Dispose();
+            if (_wclClient != null)
+                _wclClient.Dispose();
+            if (_wclIrDADiscovery != null)
+                _wclIrDADiscovery.Dispose();
+            if (_wclAPI != null)
+                _wclAPI.Dispose();
         }
 
         #endregion
@@ -591,7 +598,7 @@ namespace Dynadimmer.Models
             AppTitle = "Menorah Programmable Dimmer";
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                AppTitle +=  "  - V" + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                AppTitle += "  - V" + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
         }
 

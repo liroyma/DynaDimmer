@@ -53,9 +53,9 @@ namespace Dynadimmer.Views.Config
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[3], data[4], data[5], data[6], data[7], data[8]);
             System.DateTime date = System.DateTime.Parse(dateString);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
-            base.SetView();
             UnitLampCount = messase.DecimalData[9];
             GotData(null,null);
+            base.SetView();
         }
 
         public override void SendDownLoad(object sender)

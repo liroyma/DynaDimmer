@@ -7,7 +7,7 @@
              mc:Ignorable="d" Height="100" Background="White">
     <DockPanel SizeChanged="DockPanel_SizeChanged">
         <Grid Height="{Binding BarHeight}" DockPanel.Dock="Bottom">
-            <TextBlock Panel.ZIndex="1" TextAlignment="Center" Margin="0,5,0,0" Foreground="White" Text="{Binding Precentage, StringFormat={}{0}%}"></TextBlock>
+            <TextBlock Panel.ZIndex="1" TextAlignment="Center" Margin="{Binding PrecentagePosition}" Foreground="{Binding PrecentageColor}" Text="{Binding Precentage, StringFormat={}{0}%}"></TextBlock>
             <Border BorderThickness="4,4,4,0">
                 <Border.Background >
                     <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">

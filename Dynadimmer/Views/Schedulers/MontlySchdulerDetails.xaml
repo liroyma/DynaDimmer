@@ -9,18 +9,18 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" Background="White" d:DesignWidth="600" Visibility="{Binding ItemVisablility}">
     <UserControl.Resources>
-    <ControlTemplate x:Key="TextBoxErrorTemplate">
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
-               
-                <AdornedElementPlaceholder x:Name="Holder"/>
-            </StackPanel>
-            <Label Foreground="Red" Content="{Binding ElementName=Holder, 
+        <ControlTemplate x:Key="TextBoxErrorTemplate">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+
+                    <AdornedElementPlaceholder x:Name="Holder"/>
+                </StackPanel>
+                <Label Foreground="Red" Content="{Binding ElementName=Holder, 
                Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"/>
-        </StackPanel>
-    </ControlTemplate>
+            </StackPanel>
+        </ControlTemplate>
     </UserControl.Resources>
-    <GroupBox Padding="5" Margin="5" BorderThickness="3" BorderBrush="{Binding BorderColor}" Height="270" Background="#F0F0F0">
+    <GroupBox Padding="5" Margin="5" BorderThickness="3" BorderBrush="{Binding BorderColor}" Height="335" Background="#F0F0F0">
         <GroupBox.Header>
             <TextBlock Text="{Binding Title}" Height="17" FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
         </GroupBox.Header>
@@ -30,28 +30,31 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
-                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="75"></ColumnDefinition>
+                <ColumnDefinition Width="80"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="100"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <tools:TimePicker Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  Margin="10,2" Name="TimePicker" TimeInterval="00:30" ShowButtonSpinner="False"/>
+            <TextBlock Margin="5" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Select Time:</TextBlock>
+            <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center"  Name="TimePicker" Value="15:00" TimeInterval="00:30" ShowButtonSpinner="True"/>
             <TextBlock Margin="5" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Illuminance:</TextBlock>
-            <TextBox x:Name="Box" Margin="5" Grid.Row="1" Grid.Column="1" Width="30" TextAlignment="Center">
-                <TextBox.Text>
+            <WrapPanel Margin="5" Grid.Row="1" Grid.Column="1">
+                <TextBox x:Name="Box"  Width="50" TextAlignment="Center">
                     <Binding Path="Illuminance" UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
                             <valid:DoubleRangeRule Min="0" Max="100"/>
                         </Binding.ValidationRules>
                     </Binding>
-                </TextBox.Text>
-            </TextBox>
+                </TextBox>
+                <TextBlock Margin="5" VerticalAlignment="Center"><Run Text="%"/></TextBlock>
+            </WrapPanel>
             <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" CommandParameter="{Binding Text,ElementName=TimePicker}"></Button>
-            <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,2" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
-            <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}" MinWidth="120" MinHeight="80">
+            <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
+            <ListBox Grid.RowSpan="2" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}" MinWidth="120" MinHeight="80">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -65,11 +68,12 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Canvas Grid.Row="0" Grid.Column="2" Grid.RowSpan="5" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
-
-           <Button Grid.Row="0" Grid.Column="4" Content="Upload" Margin="10,5"  Command="{Binding Upload}"></Button>
+            <Canvas Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="Upload" Margin="10,5"  Command="{Binding Upload}"></Button>
             <Button Grid.Row="1" Grid.Column="4" Content="Download" Margin="10,5" Command="{Binding Download}" IsEnabled="{Binding IsLoaded}"></Button>
-            <Button Grid.Row="2" Grid.Column="4" Content="Close" Margin="10,5" Command="{Binding Close}"></Button>
+            <Button Grid.Row="2" Grid.Column="4" Content="Copy" Margin="10,5" Command="{Binding Copy}" IsEnabled="{Binding IsLoaded}"></Button>
+            <Button Grid.Row="3" Grid.Column="4" Content="Paste" Margin="10,5" Command="{Binding Paste}" IsEnabled="{Binding CanPaste}"></Button>
+            <Button Grid.Row="4" Grid.Column="4" Content="Close" Margin="10,5" Command="{Binding Close}"></Button>
         </Grid>
     </GroupBox>
 </UserControl>

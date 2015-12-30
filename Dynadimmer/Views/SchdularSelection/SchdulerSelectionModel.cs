@@ -9,11 +9,13 @@ using Dynadimmer.Models;
 using Dynadimmer.Views.Schedulers.Inner;
 using System.Collections.ObjectModel;
 using System.Windows;
+using Dynadimmer.Views.Schedulers;
 
 namespace Dynadimmer.Views.SchdularSelection
 {
     class SchdulerSelectionModel : INotifyPropertyChanged
     {
+        List<LampTime> CopiedList;
         List<MontlySchdulerDetails> Loaded = new List<MontlySchdulerDetails>();
         private StackPanel Container;
 
@@ -66,6 +68,21 @@ namespace Dynadimmer.Views.SchdularSelection
             }
         }
 
+        private bool _HaveCopyItems;
+        public bool HaveCopyItems
+        {
+            get { return _HaveCopyItems; }
+            set
+            {
+                _HaveCopyItems = value;
+                foreach (var item in Loaded)
+                {
+                    item.CanPaste(CopiedList);
+                }
+                NotifyPropertyChanged("HaveCopyItems");
+            }
+        }
+
         public SchdulerSelectionModel()
         {
             MonthsList = (Month[])Enum.GetValues(typeof(Month));
@@ -73,11 +90,33 @@ namespace Dynadimmer.Views.SchdularSelection
             AddNeW = new MyCommand();
             AddNeW.CommandSent += AddNeW_CommandSent;
             IsWinEnabled = false;
+            foreach (Lamp item in Enum.GetValues(typeof(Lamp)))
+            {
+                foreach (Month month in Enum.GetValues(typeof(Month)))
+                {
+                    MontlySchdulerDetails Details = new MontlySchdulerDetails(item, month);
+                    Details.CopiedItems += Details_CopiedItems;
+                    Loaded.Add(Details);
+                }
+            }
+        }
+
+        private void Details_CopiedItems(object sender, EventArgs e)
+        {
+            MontlySchdulerDetailsModel temp = sender as MontlySchdulerDetailsModel;
+            CopiedList = temp.LampTimes.ToList();
+            if (CopiedList.Count > 0)
+                HaveCopyItems = true;
+            temp.CanPaste = false;
         }
 
         public void SetContainer(StackPanel container)
         {
             Container = container;
+            foreach (var item in Loaded)
+            {
+                Container.Children.Add(item);
+            }
         }
 
         internal void SetNumberOfLamps(int unitLampCount)
@@ -93,12 +132,6 @@ namespace Dynadimmer.Views.SchdularSelection
             foreach (var item in ((Lamp[])Enum.GetValues(typeof(Lamp))).ToList().GetRange(0, unitLampCount))
             {
                 LampsList.Add(item);
-                foreach (Month month in Enum.GetValues(typeof(Month)))
-                {
-                    MontlySchdulerDetails Details = new MontlySchdulerDetails(item, month);
-                    Loaded.Add(Details);
-                    Container.Children.Add(Details);
-                }
             }
             SelectedLamp = LampsList[0];
         }
@@ -124,6 +157,17 @@ namespace Dynadimmer.Views.SchdularSelection
             MontlySchdulerDetails result = Loaded.Find(x => x.Uniqid == tempid);
             //result.ShowItem();
             result.ReSend();
+        }
+
+        public UnitProperty Sent(Lamp lamp, Month month)
+        {
+            string tempid = MontlySchdulerDetails.CreateID(lamp, month);
+            MontlySchdulerDetails result = Loaded.Find(x => x.Uniqid == tempid);
+            if (result != null)
+                return Loaded.Find(x => x.Uniqid == tempid).Model;
+            return null;
+            //result.ShowItem();
+            //result.ReSend();
         }
         #endregion
     }

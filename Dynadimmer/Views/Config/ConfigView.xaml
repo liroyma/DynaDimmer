@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.Config"
              mc:Ignorable="d" Background="#efefef">
-    <GroupBox Header="Unit Clock" Margin="10" Padding="10" BorderBrush="Black">
+    <GroupBox Header="Unit Configuration" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"></RowDefinition>
@@ -18,7 +18,7 @@
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock  Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Unit Time:"></TextBlock>
-            <TextBox Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="1" Background="Aqua" Text="{Binding UnitTime}" Margin="0,5" HorizontalContentAlignment="Center" IsEnabled="False"/>
+            <TextBlock Padding="5" Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="1" TextAlignment="Left" VerticalAlignment="Center" Text="{Binding UnitTime}" Margin="0,5"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Number Of Lamps:"></TextBlock>
             <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UnitLampCount}" Margin="0,5" HorizontalContentAlignment="Center"></TextBox>

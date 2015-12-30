@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dynadimmer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,11 @@ namespace Dynadimmer.Views.SchdularSelection
         internal void UpdateNumberOfLamps(int unitLampCount)
         {
             modol.SetNumberOfLamps(unitLampCount);
+        }
+
+        internal UnitProperty UploadScadular(Lamp lamp, Month month)
+        {
+            return modol.Sent(lamp, month);
         }
     }
 }
