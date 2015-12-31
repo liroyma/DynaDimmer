@@ -30,6 +30,15 @@ namespace Dynadimmer.Models
             Upload.Add(control);
         }
 
+        public void Add(List<UnitProperty> controls)
+        {
+            foreach (var control in controls)
+            {
+                control.AllDone += Item_AllDone;
+                Upload.Add(control);
+            }
+        }
+
         private void Item_AllDone(object sender, EventArgs e)
         {
             Counter++;

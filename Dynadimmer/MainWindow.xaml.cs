@@ -23,32 +23,27 @@ namespace Dynadimmer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public IRDACummunication connection;
+        IRDAHandler connection;
+        LogHandler log;
+        WindowHandler viewer;
 
         public MainWindow()
         {
-            try
-            {
-                connection = new IRDACummunication(true);
-            }
-            catch
-            {
-                MessageBox.Show("Error in WCL library");
-            }
-            finally
-            {
-                if(connection==null) connection = new IRDACummunication(false);
-                connection.Connected += Connection_Connected;
-                InitializeComponent();
-                UnitProperty.SetConnection(connection);
-                this.DataContext = connection;
-                schdularselectionview.SetContainer(this.Container);
-                datetimeview.Visibility = connection.UnitTimeVisibility;
-                summerwinterview.Visibility = connection.SummerWinterVisibility;
-                configview.Visibility = connection.ConfigVisibility;
-                ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
-                connection.CheckStatus();
-            }
+            InitializeComponent();
+            log = (LogHandler)this.FindResource("Logger");
+            log.DoneSaving += Log_DoneSaving;
+            viewer = (WindowHandler)this.FindResource("Viewer");
+            connection = (IRDAHandler)this.FindResource("Connection");
+            connection.SetHandlers(log, viewer);
+            connection.Connected += Connection_Connected;
+            UnitProperty.SetConnection(connection);
+            this.DataContext = viewer;
+            schdularselectionview.SetContainer(this.Container);
+            datetimeview.Visibility = viewer.UnitTimeVisibility;
+            summerwinterview.Visibility = viewer.SummerWinterVisibility;
+            configview.Visibility = viewer.ConfigVisibility;
+            ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
+            connection.CheckStatus();
         }
 
         private void ConfigModel_GotData(object sender, EventArgs e)
@@ -60,21 +55,40 @@ namespace Dynadimmer
         private void Connection_Connected(object sender, EventArgs e)
         {
             Models.Action startaction = new Models.Action(configview.Model);
-            startaction.Add(schdularselectionview.UploadScadular(Views.SchdularSelection.Lamp.Lamp_1, Views.SchdularSelection.Month.January));
+            //startaction.Add(schdularselectionview.UploadScadular(Views.SchdularSelection.Lamp.Lamp_1, Views.SchdularSelection.Month.January));
+            startaction.Add(schdularselectionview.LoadAll());
             startaction.Start();
         }
 
+        bool close = false;
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            close = true;
+            e.Cancel = true;
             connection.Dispose();
+            log.Save();
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Log_DoneSaving(object sender, EventArgs e)
+        {
+            if (close)
+                App.Current.Shutdown();
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            datetimeview.Visibility = connection.UnitTimeVisibility;
-            summerwinterview.Visibility = connection.SummerWinterVisibility;
-            configview.Visibility = connection.ConfigVisibility;
-        } 
+            datetimeview.Visibility = viewer.UnitTimeVisibility;
+            summerwinterview.Visibility = viewer.SummerWinterVisibility;
+            configview.Visibility = viewer.ConfigVisibility;
+        }
+
+
     }
 
 }

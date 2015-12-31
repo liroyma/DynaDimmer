@@ -50,8 +50,8 @@ namespace Dynadimmer.Views.Schedulers.Inner
 
         private void MontlySchdulerDetails_UpdateView(object sender, EventArgs e)
         {
+            //UpdateView();
             UpdateView();
-            UpdateView1();
         }
 
         public static string CreateID(Lamp lamp, Month month)
@@ -71,11 +71,11 @@ namespace Dynadimmer.Views.Schedulers.Inner
 
         private void container_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            //UpdateView();
             UpdateView();
-            UpdateView1();
         }
 
-        internal void UpdateView1()
+        internal void UpdateView()
         {
             List<LampTime> lampTimes = ((MontlySchdulerDetailsModel)Model).LampTimes.ToList();
             container.Children.Clear();
@@ -153,7 +153,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
 
             BarView endbar = new BarView();
             endbar.Height = height - 40;
-            endbar.Width = firstandlaststep;
+            endbar.Width = firstandlaststep> 0?firstandlaststep:0;
             endbar.Precentage = lampTimes.Last().Precentage;
             Canvas.SetBottom(endbar, 20);
             Canvas.SetLeft(endbar, currentLeft);
@@ -162,7 +162,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
             container.Children.Add(lasttextBlock);
         }
 
-
         private double CalcTimeSpan(LampTime one, LampTime two)
         {
             if (two.Hour < one.Hour)
@@ -170,7 +169,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
             return ((two.Hour - one.Hour) * 60) + (two.Minute - one.Minute);
         }
 
-        internal void UpdateView()
+        internal void UpdateView1()
         {
             List<LampTime> lampTimes = ((MontlySchdulerDetailsModel)Model).LampTimes.ToList();
             container.Children.Clear();

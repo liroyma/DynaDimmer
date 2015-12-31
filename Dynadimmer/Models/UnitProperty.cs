@@ -11,9 +11,9 @@ namespace Dynadimmer.Models
 {
     public abstract class UnitProperty : INotifyPropertyChanged
     {
-        private static IRDACummunication connection;
+        private static IRDAHandler connection;
 
-        public static void SetConnection(IRDACummunication con)
+        public static void SetConnection(IRDAHandler con)
         {
             connection = con;
         }

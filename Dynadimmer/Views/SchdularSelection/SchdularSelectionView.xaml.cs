@@ -43,5 +43,10 @@ namespace Dynadimmer.Views.SchdularSelection
         {
             return modol.Sent(lamp, month);
         }
+
+        internal List<UnitProperty> LoadAll()
+        {
+            return modol.SentAll();
+        }
     }
 }

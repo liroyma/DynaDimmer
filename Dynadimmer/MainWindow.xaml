@@ -2,12 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:handlers="clr-namespace:Dynadimmer.Models"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer"
         x:Class="Dynadimmer.MainWindow" Closing="Window_Closing"
         mc:Ignorable="d" Height="700" Width="1000" WindowStartupLocation="CenterScreen" WindowState="{Binding WindowState}"
         Title="{Binding AppTitle}" MinHeight="700" MinWidth="1000">
     <Window.Resources>
+        <handlers:LogHandler x:Key="Logger" ></handlers:LogHandler>
+        <handlers:WindowHandler x:Key="Viewer"></handlers:WindowHandler>
+        <handlers:IRDAHandler x:Key="Connection"></handlers:IRDAHandler>
         <Style TargetType="Button" x:Key="ConnectButton" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="FontWeight" Value="Bold"/>
@@ -36,14 +40,18 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Exit" Command="{Binding Exit}"></MenuItem>
+                <MenuItem DataContext="{StaticResource Viewer}" Header="_Exit" Click="Button_Click" ></MenuItem>
             </MenuItem>
             <MenuItem Header="_Views">
                 <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
                 <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
                 <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
                 <Separator></Separator>
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
+                <MenuItem Header="_Log Panel" DataContext="{StaticResource Logger}" >
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="_Clear Log" IsEnabled="{Binding Reset}" Command="{Binding ClearLog}"></MenuItem>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
@@ -65,7 +73,7 @@
                 <Config:ConfigView x:Name="configview" Grid.Column="1" />
                 <SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" Grid.Column="0" />
             </Grid>
-            <Button Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
+            <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
                 <Button.Background>
                     <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
                         <GradientStop Color="{Binding ConnectionButtenColor}" Offset="0"/>
@@ -73,7 +81,7 @@
                     </LinearGradientBrush>
                 </Button.Background>
             </Button>
-            <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Exit}" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95">
+            <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95" Click="Button_Click">
                 <Button.Background>
                     <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
                         <GradientStop Color="LightGray" Offset="0"/>
@@ -82,12 +90,39 @@
                 </Button.Background>
             </Button>
         </Grid>
-        <StatusBar DockPanel.Dock="Bottom">
-            <TextBlock Width="200" Text="{Binding ConnectionInfo}" Foreground="{Binding ConnectionInfoColor}"></TextBlock>
-            <Separator></Separator>
-            <TextBlock Text="{Binding MessageInfo}" Foreground="{Binding MessageInfoColor}"></TextBlock>
+        <StatusBar DockPanel.Dock="Bottom" DataContext="{StaticResource Logger}">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0" >
+                <TextBlock Text="{Binding ConnectionInfo}" Foreground="{Binding ConnectionInfoColor}"></TextBlock>
+            </StatusBarItem>
+            <Separator Grid.Column="1" ></Separator>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock Text="{Binding MessageInfo}" Foreground="{Binding MessageInfoColor}"></TextBlock>
+            </StatusBarItem>
+            <Separator Grid.Column="3" ></Separator>
+            <StatusBarItem  Grid.Column="4">
+                <Grid>
+                    <ProgressBar Visibility="{Binding ProgressBarVisibility}" Width="200" Minimum="0" Maximum="{Binding TotalMessages}" Value="{Binding CurrentIndex}" ></ProgressBar>
+                    <TextBlock Width="200" VerticalAlignment="Center" HorizontalAlignment="{Binding SavingProccessTextPosition}"  DataContext="{StaticResource Logger}" Text="{Binding SavingProccess}"></TextBlock>
+                </Grid>
+            </StatusBarItem>
         </StatusBar>
-        <DataGrid DockPanel.Dock="Bottom" Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" Height="150" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid DataContext="{StaticResource Logger}" DockPanel.Dock="Bottom" Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" Height="150" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>

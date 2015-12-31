@@ -13,7 +13,7 @@ using Dynadimmer.Views.Schedulers;
 
 namespace Dynadimmer.Views.SchdularSelection
 {
-    class SchdulerSelectionModel : INotifyPropertyChanged
+    public class SchdulerSelectionModel : INotifyPropertyChanged
     {
         List<LampTime> CopiedList;
         List<MontlySchdulerDetails> Loaded = new List<MontlySchdulerDetails>();
@@ -99,6 +99,26 @@ namespace Dynadimmer.Views.SchdularSelection
                     Loaded.Add(Details);
                 }
             }
+        }
+
+        public void LoadAll()
+        {
+            Models.Action all = new Models.Action();
+            foreach (var item in Loaded)
+            {
+                all.Add(item.Model);
+            }
+            all.Start();
+        }
+
+        internal List<UnitProperty> SentAll()
+        {
+            List<UnitProperty> temp = new List<UnitProperty>();
+            foreach (var item in Loaded)
+            {
+                temp.Add(item.Model);
+            }
+            return temp;
         }
 
         private void Details_CopiedItems(object sender, EventArgs e)
