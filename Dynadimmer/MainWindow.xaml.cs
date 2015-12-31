@@ -56,7 +56,7 @@ namespace Dynadimmer
         {
             Models.Action startaction = new Models.Action(configview.Model);
             //startaction.Add(schdularselectionview.UploadScadular(Views.SchdularSelection.Lamp.Lamp_1, Views.SchdularSelection.Month.January));
-            startaction.Add(schdularselectionview.LoadAll());
+            //startaction.Add(schdularselectionview.LoadAll());
             startaction.Start();
         }
 

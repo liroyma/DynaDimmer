@@ -228,17 +228,17 @@ namespace Dynadimmer.Models
             foreach (var item in CopyUnitMessages)
             {
                 worker.ReportProgress(++index);
-                Thread.Sleep(200);
+                //Thread.Sleep(200);
             }
             foreach (var item in CopyNotifications)
             {
                 worker.ReportProgress(++index);
-                Thread.Sleep(200);
+                //Thread.Sleep(200);
             }
             foreach (var item in CopyConnectionMessages)
             {
                 worker.ReportProgress(++index);
-                Thread.Sleep(200);
+                //Thread.Sleep(200);
             }
         }
               
