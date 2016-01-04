@@ -12,10 +12,11 @@ namespace Dynadimmer.Models.Messages
 
         public DateTime Time { get; private set; }
         public Brush MessageColor { get; set; }
-        public string Info { get; private set; }
+        public string Info { get; set; }
 
         public GaneralMessage(string info)
         {
+            Time = DateTime.Now;
             Info = info;
             MessageColor = Brushes.Black;
         }

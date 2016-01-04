@@ -10,7 +10,11 @@ namespace Dynadimmer.Models
     {
         public static byte[] CheckCRC(List<byte> listdata)
         {
-            byte[] data = ASCIItoHEX(listdata);
+            byte[] array = listdata.GetRange(1, listdata.Count - 2).ToArray();
+            //listdata.RemoveAt(0);
+            //listdata.RemoveAt(listdata.Count - 1);
+
+            byte[] data = ASCIItoHEX(array);
 
             UInt16[] testPtr = new UInt16[data.Length];
 
@@ -75,12 +79,8 @@ namespace Dynadimmer.Models
             return newdata.ToArray();
         }
 
-        private static byte[] ASCIItoHEX(List<byte> listdata)
+        private static byte[] ASCIItoHEX(byte[] data)
         {
-            listdata.RemoveAt(0);
-            listdata.RemoveAt(listdata.Count - 1);
-            byte[] data = listdata.ToArray();
-
             byte[] buffer = new byte[data.Length / 2];
 
             for (int i = 0, j = 0; i < data.Length; i += 2, j++)

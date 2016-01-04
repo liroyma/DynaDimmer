@@ -7,7 +7,7 @@
              xmlns:tools="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:valid="clr-namespace:Dynadimmer.Views.Schedulers.Inner"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
-             mc:Ignorable="d" Background="White" d:DesignWidth="600" Visibility="{Binding ItemVisablility}">
+             mc:Ignorable="d" Background="White" d:DesignHeight="345" d:DesignWidth="1280" Visibility="{Binding ItemVisablility}">
     <UserControl.Resources>
         <ControlTemplate x:Key="TextBoxErrorTemplate">
             <StackPanel>
@@ -26,11 +26,11 @@
         </GroupBox.Header>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="{Binding ButtonsColumnWidth}"></RowDefinition>
+                <RowDefinition Height="{Binding ButtonsColumnWidth}"></RowDefinition>
+                <RowDefinition Height="{Binding ButtonsColumnWidth}"></RowDefinition>
+                <RowDefinition Height="{Binding ButtonsColumnWidth}"></RowDefinition>
+                <RowDefinition Height="{Binding ButtonsColumnWidth}"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -54,7 +54,7 @@
             </WrapPanel>
             <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" CommandParameter="{Binding Text,ElementName=TimePicker}"></Button>
             <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
-            <ListBox Grid.RowSpan="2" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}" MinWidth="120" MinHeight="80">
+            <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -70,10 +70,10 @@
             </ListBox>
             <Canvas Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
             <Button Grid.Row="0" Grid.Column="4" Content="Upload" Margin="10,5"  Command="{Binding Upload}"></Button>
-            <Button Grid.Row="1" Grid.Column="4" Content="Download" Margin="10,5" Command="{Binding Download}" IsEnabled="{Binding IsLoaded}"></Button>
-            <Button Grid.Row="2" Grid.Column="4" Content="Copy" Margin="10,5" Command="{Binding Copy}" IsEnabled="{Binding IsLoaded}"></Button>
-            <Button Grid.Row="3" Grid.Column="4" Content="Paste" Margin="10,5" Command="{Binding Paste}" IsEnabled="{Binding CanPaste}"></Button>
-            <Button Grid.Row="4" Grid.Column="4" Content="Close" Margin="10,5" Command="{Binding Close}"></Button>
+            <Button Grid.Row="1" Grid.Column="4" Content="Download" Margin="10,5" Command="{Binding Download}"></Button>
+            <Button Grid.Row="2" Grid.Column="4" Content="Copy" Margin="10,5"  Command="{Binding Copy}" ></Button>
+            <Button Grid.Row="3" Grid.Column="4" Content="Paste" Margin="10,5"  Command="{Binding Paste}" IsEnabled="{Binding CanPaste}"></Button>
+            <Button Grid.Row="4" Grid.Column="4" Content="Close" Margin="10,5"  Command="{Binding Close}"></Button>
         </Grid>
     </GroupBox>
 </UserControl>

@@ -33,7 +33,7 @@
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -163,6 +163,7 @@
     <Compile Include="Models\CRCManager.cs" />
     <Compile Include="Models\IRDAHandler.cs" />
     <Compile Include="Models\LogHandler.cs" />
+    <Compile Include="Models\Messages\AnswerHandler.cs" />
     <Compile Include="Models\Messages\ConnectionMessage.cs" />
     <Compile Include="Models\Messages\GaneralMessage.cs" />
     <Compile Include="Models\Messages\IncomeMessage.cs" />
@@ -182,10 +183,10 @@
       <DependentUpon>UnitDateTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DateTime\UnitDateTimeModel.cs" />
-    <Compile Include="Views\SchdularSelection\SchdularSelectionView.xaml.cs">
-      <DependentUpon>SchdularSelectionView.xaml</DependentUpon>
+    <Compile Include="Views\NewSchdularSelection\NewSchdularSelectionView.xaml.cs">
+      <DependentUpon>NewSchdularSelectionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SchdularSelection\SchdulerSelectionModel.cs" />
+    <Compile Include="Views\NewSchdularSelection\NewSchedularSelectionModel.cs" />
     <Compile Include="Views\Schedulers\BarView.xaml.cs">
       <DependentUpon>BarView.xaml</DependentUpon>
     </Compile>
@@ -218,7 +219,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SchdularSelection\SchdularSelectionView.xaml">
+    <Page Include="Views\NewSchdularSelection\NewSchdularSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

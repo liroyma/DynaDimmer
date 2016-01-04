@@ -1,4 +1,8 @@
-﻿<Window xmlns:Config="clr-namespace:Dynadimmer.Views.Config"  xmlns:SchdularSelection="clr-namespace:Dynadimmer.Views.SchdularSelection"  xmlns:DateTime="clr-namespace:Dynadimmer.Views.DateTime"  xmlns:SummerWinnter="clr-namespace:Dynadimmer.Views.SummerWinnter"  xmlns:Schedulers="clr-namespace:Dynadimmer.Views.Schedulers" 
+﻿<Window xmlns:NewSchdularSelection="clr-namespace:Dynadimmer.Views.NewSchdularSelection"  
+        xmlns:Config="clr-namespace:Dynadimmer.Views.Config"  
+        xmlns:DateTime="clr-namespace:Dynadimmer.Views.DateTime"  
+        xmlns:SummerWinnter="clr-namespace:Dynadimmer.Views.SummerWinnter"  
+        xmlns:Schedulers="clr-namespace:Dynadimmer.Views.Schedulers" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -40,6 +44,8 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
+                <MenuItem Header="_Load And Save To File..." Click="MenuItem_Click_1" IsEnabled="{Binding WindowEnable}"></MenuItem>
+                <MenuItem Header="_Load From File..." Click="MenuItem_Click_2" IsEnabled="{Binding WindowEnable}"></MenuItem>
                 <MenuItem DataContext="{StaticResource Viewer}" Header="_Exit" Click="Button_Click" ></MenuItem>
             </MenuItem>
             <MenuItem Header="_Views">
@@ -71,7 +77,8 @@
                 <DateTime:UnitDateTime x:Name="datetimeview" Grid.Column="1"/>
                 <SummerWinnter:UnitSummerWinnterClock x:Name="summerwinterview" Grid.Column="1"/>
                 <Config:ConfigView x:Name="configview" Grid.Column="1" />
-                <SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" Grid.Column="0" />
+                <!--<SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" Grid.Column="0" />-->
+                <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" />
             </Grid>
             <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
                 <Button.Background>
@@ -122,52 +129,60 @@
                 </Grid>
             </StatusBarItem>
         </StatusBar>
-        <DataGrid DataContext="{StaticResource Logger}" DockPanel.Dock="Bottom" Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" Height="150" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss.fff}" TextAlignment="Center" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Info" Width="200" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="10,0,0,0" Text="{Binding Info}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Decimal Message" Width="200" IsReadOnly="True" >
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="10,0,0,0" Text="{Binding DecimalFormatString}" TextAlignment="Left" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Hex Message" Width="200" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="10,0,0,0" TextAlignment="Left" Text="{Binding HexFormatString}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Ascii Message" Width="200" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="10,0,0,0" Text="{Binding AsciiFormatString}" TextAlignment="Left" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Setter Property="Foreground" Value="{Binding MessageColor}"/>
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
-        <ScrollViewer Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
-        </ScrollViewer>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition DataContext="{StaticResource Logger}" Height="{Binding SplitterHeight}"></RowDefinition>
+                <RowDefinition DataContext="{StaticResource Logger}" Height="{Binding LogHeight}"></RowDefinition>
+            </Grid.RowDefinitions>
+            <DataGrid Grid.Row="2" DataContext="{StaticResource Logger}"  Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss.fff}" TextAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Info" Width="200" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="10,0,0,0" Text="{Binding Info}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Decimal Message" Width="200" IsReadOnly="True" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="10,0,0,0" Text="{Binding DecimalFormatString}" TextAlignment="Left" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Hex Message" Width="200" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="10,0,0,0" TextAlignment="Left" Text="{Binding HexFormatString}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Ascii Message" Width="200" IsReadOnly="True">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="10,0,0,0" Text="{Binding AsciiFormatString}" TextAlignment="Left" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Foreground" Value="{Binding MessageColor}"/>
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+            <ScrollViewer Grid.Row="0" Padding="10" VerticalScrollBarVisibility="Auto">
+                <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
+            </ScrollViewer>
+            <GridSplitter Height="5" ResizeDirection="Rows" Grid.Row="1" Width="Auto"   HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" />
+        </Grid>
     </DockPanel>
 </Window>

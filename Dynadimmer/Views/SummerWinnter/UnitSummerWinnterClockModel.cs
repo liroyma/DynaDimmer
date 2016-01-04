@@ -10,7 +10,7 @@ namespace Dynadimmer.Views.SummerWinnter
 {
     class UnitSummerWinnterClockModel : UnitProperty
     {
-        private const int Header = 2;
+        public const int Header = 2;
 
         #region Properties
         private System.DateTime winterdate;
@@ -58,7 +58,7 @@ namespace Dynadimmer.Views.SummerWinnter
             CreateAndSendMessage(this, Header);
         }
 
-        public override void GotAnswer(IncomeMessage messase)
+        public override string GotAnswer(IncomeMessage messase)
         {
             byte[] data = messase.DecimalData;
             string dateString1 = String.Format("{0}/{1}/{2}", data[2], data[3], System.DateTime.Now.Year);
@@ -66,9 +66,14 @@ namespace Dynadimmer.Views.SummerWinnter
             SummerDate = System.DateTime.Parse(dateString1);
             WinterDate = System.DateTime.Parse(dateString2);
             base.SetView();
+            return Title;
         }
 
         public override void DidntGotAnswer()
+        {
+        }
+
+        public override void SaveData(System.Xml.XmlWriter writer, object extra)
         {
         }
     }

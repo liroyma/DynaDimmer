@@ -15,13 +15,12 @@ namespace Dynadimmer.Models.Messages
             MessageColor = Brushes.Green;
             List<byte> data = new List<byte>();
             data.Add(1);
-            byte[] test = CRCManager.CheckCRC(answer);
-            data.AddRange(test);
+            data.AddRange(CRCManager.CheckCRC(answer));
             data.Add(3);
 
             Header = data[1];
 
-            DataAscii = answer.ToArray();
+            DataAscii =  answer.ToArray();
             DecimalData = data.ToArray();
             
             DecimalFormatString = string.Join(" ", DecimalData);

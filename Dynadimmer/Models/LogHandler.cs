@@ -13,7 +13,7 @@ using System.Windows.Media;
 
 namespace Dynadimmer.Models
 {
-    public class LogHandler:MyUIHandler
+    public class LogHandler : MyUIHandler
     {
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
@@ -26,10 +26,11 @@ namespace Dynadimmer.Models
         #region Commands
         #region Clear Log
         public MyCommand ClearLog { get; set; }
-        
+
         private void ClearLog_CommandSent(object sender, EventArgs e)
         {
-            //Messages.Clear();
+            Reset = false;
+            Messages.Clear();
             Save();
         }
         #endregion
@@ -92,6 +93,28 @@ namespace Dynadimmer.Models
         }
 
 
+        private GridLength _LogHeight;
+        public GridLength LogHeight
+        {
+            get { return _LogHeight; }
+            set
+            {
+                _LogHeight = value;
+                NotifyPropertyChanged("LogHeight");
+            }
+        }
+
+        private GridLength _SplitterHeight;
+        public GridLength SplitterHeight
+        {
+            get { return _SplitterHeight; }
+            set
+            {
+                _SplitterHeight = value;
+                NotifyPropertyChanged("SplitterHeight");
+            }
+        }
+
         private string _savingproccess;
         public string SavingProccess
         {
@@ -121,6 +144,8 @@ namespace Dynadimmer.Models
             set
             {
                 _LogVisibility = value;
+                SplitterHeight = value == Visibility.Visible ? new GridLength(5, GridUnitType.Pixel) : new GridLength(0, GridUnitType.Pixel);
+                LogHeight = value == Visibility.Visible ? new GridLength(150) : new GridLength(1,GridUnitType.Star);
                 NotifyPropertyChanged("LogVisibility");
             }
         }
@@ -196,7 +221,7 @@ namespace Dynadimmer.Models
             worker.ProgressChanged += Worker_ProgressChanged;
             worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
             Messages = new ObservableCollection<UnitMessage>();
-            Reset = true;
+            Reset = false;
             ClearLog = new MyCommand();
             ClearLog.CommandSent += ClearLog_CommandSent;
         }
@@ -214,7 +239,7 @@ namespace Dynadimmer.Models
             CurrentIndex = e.ProgressPercentage;
             SavingProccess = string.Format("Saving log, {1} of {0}.", TotalMessages, e.ProgressPercentage);
         }
-        
+
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             List<UnitMessage> CopyUnitMessages = new List<UnitMessage>();
@@ -241,22 +266,23 @@ namespace Dynadimmer.Models
                 //Thread.Sleep(200);
             }
         }
-              
+
         public void Save()
         {
-            if(!worker.IsBusy)
-            worker.RunWorkerAsync();
+            if (!worker.IsBusy)
+                worker.RunWorkerAsync();
         }
         #endregion
 
         public void AddMessage(GaneralMessage message)
         {
-            if(message is UnitMessage)
+            Reset = true;
+            if (message is UnitMessage)
             {
                 UnitMessages.Add((UnitMessage)message);
                 Messages.Insert(0, (UnitMessage)message);
             }
-            else if(message is NotificationMessage)
+            else if (message is NotificationMessage)
             {
                 Notifications.Add((NotificationMessage)message);
                 MessageInfo = message.Info;
@@ -271,5 +297,5 @@ namespace Dynadimmer.Models
 
         }
     }
-    
+
 }

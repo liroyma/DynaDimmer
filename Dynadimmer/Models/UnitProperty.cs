@@ -17,9 +17,7 @@ namespace Dynadimmer.Models
         {
             connection = con;
         }
-
-        public event EventHandler AllDone;
-
+        
         public MyCommand Download { get; set; }
         public MyCommand Upload { get; set; }
 
@@ -47,12 +45,12 @@ namespace Dynadimmer.Models
             Upload.CommandSent += Upload_CommandSent;
         }
 
-        private void Download_CommandSent(object sender, EventArgs e)
+        public virtual void Download_CommandSent(object sender, EventArgs e)
         {
             SendDownLoad(sender);
         }
-        
-        private void Upload_CommandSent(object sender, EventArgs e)
+
+        public virtual void Upload_CommandSent(object sender, EventArgs e)
         {
             SendUpload(sender);
         }
@@ -60,14 +58,15 @@ namespace Dynadimmer.Models
         public abstract void SendDownLoad(object sender);
         public abstract void SendUpload(object sender);
 
-        public abstract void GotAnswer(IncomeMessage messase);
+        public abstract string GotAnswer(IncomeMessage messase);
 
         public void SetView()
         {
             IsLoaded = true;
-            if(AllDone!=null)
-                AllDone(null,null);
         }
+
+        public abstract void SaveData(System.Xml.XmlWriter writer, object extra);
+
         public abstract void DidntGotAnswer();
         
         #region Event Handler
@@ -86,6 +85,7 @@ namespace Dynadimmer.Models
         {
             connection.Write(prop, new OutMessage(string.Format("Sent {0}",prop.Title), header, data));
         }
+
     }
     
 

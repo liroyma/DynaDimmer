@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using Dynadimmer.Models;
 using Dynadimmer.Models.Messages;
+using System.Xml;
 
 namespace Dynadimmer.Views.DateTime
 {
     class UnitDateTimeModel : UnitProperty
     {
-        private const int Header = 1;
+        public const int Header = 1;
 
         DispatcherTimer _timer = new DispatcherTimer();
         System.DateTime _date;
@@ -45,6 +46,7 @@ namespace Dynadimmer.Views.DateTime
             Title = "Unit Time";
             SetTimer();
             _timer.Start();
+            IsLoaded = true;
         }
 
         public override void SendDownLoad(object sender)
@@ -65,16 +67,21 @@ namespace Dynadimmer.Views.DateTime
             CreateAndSendMessage(this, Header);
         }
 
-        public override void GotAnswer(IncomeMessage messase)
+        public override string GotAnswer(IncomeMessage messase)
         {
             byte[] data = messase.DecimalData;
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[3], data[4], data[5], data[6], data[7], data[8]);
             System.DateTime date = System.DateTime.Parse(dateString);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             base.SetView();
+            return Title;
         }
 
         public override void DidntGotAnswer()
+        {
+        }
+
+        public override void SaveData(XmlWriter writer, object extra)
         {
         }
 
