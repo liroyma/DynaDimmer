@@ -81,11 +81,16 @@ namespace Dynadimmer.Models
         }
         #endregion
 
-        public void CreateAndSendMessage(UnitProperty prop,byte header, params byte[] data)
+        public void CreateAndSendMessage(SendMessageType type,byte header, params byte[] data)
         {
-            connection.Write(prop, new OutMessage(string.Format("Sent {0}",prop.Title), header, data));
+            connection.Write(new OutMessage(string.Format("Sent {0} {1}.",type.ToString(),Title), header, data));
         }
 
+    }
+
+    public enum SendMessageType
+    {
+        Download,Upalod
     }
     
 

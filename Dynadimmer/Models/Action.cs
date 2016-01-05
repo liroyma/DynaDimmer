@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,8 @@ namespace Dynadimmer.Models
         XmlWriter writer;
         bool Save;
         string EndMessage;
+
+
 
         public event EventHandler<string> Done;
 
@@ -50,9 +53,13 @@ namespace Dynadimmer.Models
         {
             if (Save)
             {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "Dimmer documents (.dxml)|*.dxml"; 
+                if (saveFileDialog.ShowDialog() != true)
+                    return;
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.Indent = true;
-                writer = XmlWriter.Create(@"C:\Test\employees.xml", settings);
+                writer = XmlWriter.Create(saveFileDialog.FileName, settings);
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Dimmer");
             }

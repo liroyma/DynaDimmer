@@ -59,12 +59,12 @@ namespace Dynadimmer.Views.DateTime
             DATA.Add((byte)_date.Hour);
             DATA.Add((byte)_date.Minute);
             DATA.Add((byte)_date.Second);
-            CreateAndSendMessage(this, Header, DATA.ToArray());
+            CreateAndSendMessage(SendMessageType.Download,Header, DATA.ToArray());
         }
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(this, Header);
+            CreateAndSendMessage(SendMessageType.Upalod,Header);
         }
 
         public override string GotAnswer(IncomeMessage messase)

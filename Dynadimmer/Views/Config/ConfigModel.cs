@@ -64,12 +64,12 @@ namespace Dynadimmer.Views.Config
         {
             List<byte> DATA = new List<byte>();
             DATA.Add((byte)UnitLampCount);
-            CreateAndSendMessage(this, Header, DATA.ToArray());
+            CreateAndSendMessage(SendMessageType.Download, Header, DATA.ToArray());
         }
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(this, Header);
+            CreateAndSendMessage(SendMessageType.Upalod, Header);
         }
 
         public override void SaveData(XmlWriter writer, object extra)

@@ -186,21 +186,21 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         public override void SendDownLoad(object sender)
         {
-            CreateAndSendMessage(this, DownloadHeader, (byte[])sender);
+            CreateAndSendMessage(SendMessageType.Download, DownloadHeader, (byte[])sender);
         }
 
         public override void SendUpload(object sender)
         {
             LoadAll = false;
             if (sender is byte[])
-                CreateAndSendMessage(this, UploadHeader, (byte[])sender);
+                CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, (byte[])sender);
             else if (sender is Lamp)
                 StartAll((Lamp)sender);
             else
             {
                 MontlySchdulerDetailsModel model = FindSchduler(SelectedLamp, SelectedMonth);
                 Title = model.Title;
-                CreateAndSendMessage(this, UploadHeader, model.GetUploadData());
+                CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, model.GetUploadData());
             }
         }
 
@@ -238,7 +238,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         {
             LoadAll = true;
             Title = lamp.Name + " - All";
-            CreateAndSendMessage(this, UploadHeader, new byte[] { (byte)lamp.Index, 13 });
+            CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, new byte[] { (byte)lamp.Index, 13 });
         }
 
         private MontlySchdulerDetailsModel FindSchduler(Lamp lamp, Month month)

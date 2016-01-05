@@ -125,17 +125,19 @@ namespace Dynadimmer
                 action.Add(newschdularselectionview.Model, item);
             }
             action.Start();
-            Grid ss = new Grid();
-            RowDefinition rr = new RowDefinition();
-            rr.Height = new GridLength(1.0, GridUnitType.Star);
-
-            ss.RowDefinitions.Add(rr);
         }
 
         private void MenuItem_Click_2(object sender, RoutedEventArgs e)
         {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Filter = "Dimmer documents (.dxml)|*.dxml";
+
+            if (dlg.ShowDialog() != true)
+                return;
+
             XmlDocument doc = new XmlDocument();
-            doc.Load(@"C:\Test\employees.xml");
+            doc.Load(dlg.FileName);
 
             XmlNodeList ConfigutarionNodes = doc.DocumentElement.SelectNodes("/Dimmer/Configutarion");
             XmlNodeList LampNodes = doc.DocumentElement.SelectNodes("/Dimmer/Lamp");

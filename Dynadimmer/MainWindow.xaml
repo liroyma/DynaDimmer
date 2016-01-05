@@ -45,7 +45,7 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_Load And Save To File..." Click="MenuItem_Click_1" IsEnabled="{Binding WindowEnable}"></MenuItem>
-                <MenuItem Header="_Load From File..." Click="MenuItem_Click_2" IsEnabled="{Binding WindowEnable}"></MenuItem>
+                <MenuItem Header="_Load From File..." Click="MenuItem_Click_2"></MenuItem>
                 <MenuItem DataContext="{StaticResource Viewer}" Header="_Exit" Click="Button_Click" ></MenuItem>
             </MenuItem>
             <MenuItem Header="_Views">
@@ -129,60 +129,52 @@
                 </Grid>
             </StatusBarItem>
         </StatusBar>
-        <Grid DockPanel.Dock="Bottom">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"></RowDefinition>
-                <RowDefinition DataContext="{StaticResource Logger}" Height="{Binding SplitterHeight}"></RowDefinition>
-                <RowDefinition DataContext="{StaticResource Logger}" Height="{Binding LogHeight}"></RowDefinition>
-            </Grid.RowDefinitions>
-            <DataGrid Grid.Row="2" DataContext="{StaticResource Logger}"  Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss.fff}" TextAlignment="Center" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Info" Width="200" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Margin="10,0,0,0" Text="{Binding Info}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Decimal Message" Width="200" IsReadOnly="True" >
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Margin="10,0,0,0" Text="{Binding DecimalFormatString}" TextAlignment="Left" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Hex Message" Width="200" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Margin="10,0,0,0" TextAlignment="Left" Text="{Binding HexFormatString}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Ascii Message" Width="200" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Margin="10,0,0,0" Text="{Binding AsciiFormatString}" TextAlignment="Left" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Foreground" Value="{Binding MessageColor}"/>
-                    </Style>
-                </DataGrid.RowStyle>
-            </DataGrid>
-            <ScrollViewer Grid.Row="0" Padding="10" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
-            </ScrollViewer>
-            <GridSplitter Height="5" ResizeDirection="Rows" Grid.Row="1" Width="Auto"   HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" />
-        </Grid>
-    </DockPanel>
+        <DataGrid DockPanel.Dock="Bottom" DataContext="{StaticResource Logger}" Height="150"  Visibility="{Binding LogVisibility}" ItemsSource="{Binding Messages}" SelectionMode="Single"  GridLinesVisibility="Vertical" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Time" Width="80" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Time, StringFormat=HH:mm:ss.fff}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Info" Width="1*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0" Text="{Binding Info}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Decimal Message" Width="1*" IsReadOnly="True" >
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0" Text="{Binding DecimalFormatString}" TextAlignment="Left" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Hex Message" Width="1*" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0" TextAlignment="Left" Text="{Binding HexFormatString}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Ascii Message" Width="200" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="10,0,0,0" Text="{Binding AsciiFormatString}" TextAlignment="Left" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="{Binding MessageColor}"/>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+        <ScrollViewer DockPanel.Dock="Bottom" Padding="10" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
+        </ScrollViewer>
+     </DockPanel>
 </Window>

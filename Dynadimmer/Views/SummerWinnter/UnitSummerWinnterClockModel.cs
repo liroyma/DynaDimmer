@@ -50,12 +50,12 @@ namespace Dynadimmer.Views.SummerWinnter
             message.Add((byte)WinterDate.Day);
             message.Add((byte)WinterDate.Month);
             message.Add(0);
-            CreateAndSendMessage(this, Header, message.ToArray());
+            CreateAndSendMessage(SendMessageType.Download, Header, message.ToArray());
         }
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(this, Header);
+            CreateAndSendMessage(SendMessageType.Upalod, Header);
         }
 
         public override string GotAnswer(IncomeMessage messase)
