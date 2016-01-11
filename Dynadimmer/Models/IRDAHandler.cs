@@ -1,0 +1,336 @@
+﻿using Dynadimmer.Models.Messages;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Threading;
+using wcl;
+
+namespace Dynadimmer.Models
+{
+    public class IRDAHandler : MyUIHandler
+    {
+        public IRDAHandler()
+        {
+            Connect = new MyCommand();
+            Connect.CommandSent += Connect_CommandSent;
+            ConnectionTimer.Tick += t_Elapsed;
+            ConnectionTimer.Interval = TimeSpan.FromMilliseconds(5000);
+            FillAnswerTimer.Tick += FillAnswerTimer_Elapsed;
+            FillAnswerTimer.Interval = TimeSpan.FromMilliseconds(500);
+
+        }
+
+        public void InitWCL()
+        {
+            try
+            {
+                _wclAPI = new wclAPI();
+                _wclClient = new wclClient();
+                _wclIrDADiscovery = new wclIrDADiscovery();
+
+                _wclAPI.AfterLoad += new EventHandler(AfterLoad);
+                _wclAPI.AfterUnload += new EventHandler(AfterUnload);
+                _wclAPI.OnChanged += new EventHandler(OnChanged);
+
+                _wclIrDADiscovery.OnComplete += new wcl.wclIrDACompleteEventHandler(OnComplete);
+                _wclIrDADiscovery.OnStarted += new System.EventHandler(OnStarted);
+
+                _wclClient.OnDisconnect += new System.EventHandler(OnDisconnect);
+                _wclClient.OnData += new wcl.wclDataEventHandler(OnData);
+                _wclClient.OnConnect += new wcl.wclConnectEventHandler(OnConnect);
+                _wclClient.ConnectTimeout = 4000;
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        #region Handlers
+        LogHandler Log;
+        WindowHandler Viewer;
+
+        public void SetHandlers(LogHandler log, WindowHandler win)
+        {
+            Log = log;
+            Viewer = win;
+            IsConnected = false;
+        }
+
+        #endregion
+
+        #region Private Properties
+        wclAPI _wclAPI;
+        wclClient _wclClient;
+        wclIrDADiscovery _wclIrDADiscovery;
+        List<wclIrDADevice> Devices;
+
+        List<byte> answer = new List<byte>();
+        DispatcherTimer ConnectionTimer = new DispatcherTimer();
+        DispatcherTimer FillAnswerTimer = new DispatcherTimer();
+        #endregion
+
+        #region Commands
+        public MyCommand Connect { get; set; }
+        #endregion
+
+        #region Events
+        public event EventHandler<bool> Connected;
+        public event EventHandler<List<GaneralMessage>> Answered;
+        #endregion
+
+        #region UI Propeerties
+        private string connectionbuttentext;
+        public string ConnectionButtenText
+        {
+            get { return connectionbuttentext; }
+            set
+            {
+                connectionbuttentext = value;
+                NotifyPropertyChanged("ConnectionButtenText");
+            }
+        }
+
+        private Color connectionbuttencolor;
+        public Color ConnectionButtenColor
+        {
+            get { return connectionbuttencolor; }
+            set
+            {
+                connectionbuttencolor = value;
+                NotifyPropertyChanged("ConnectionButtenColor");
+            }
+        }
+
+        private bool isconnected;
+        public bool IsConnected
+        {
+            get { return isconnected; }
+            set
+            {
+                isconnected = value;
+                ConnectionButtenColor = isconnected ? Colors.LightCoral : Colors.LightGreen;
+                ConnectionButtenText = isconnected ? "Disconnect" : "Connect";
+                if (Connected != null)
+                    Connected(null, value);
+                NotifyPropertyChanged("IsConnected");
+            }
+        }
+        #endregion
+
+        #region Send and Recieved
+
+        private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
+        {
+            FillAnswerTimer.Stop();
+            List<GaneralMessage> mm = new List<GaneralMessage>();
+
+            while (answer.Contains(1))
+            {
+                int startindex = answer.FindIndex(x => x == 1);
+                if (startindex != 0)
+                {
+                    mm.Add(new JunkMessage(answer.GetRange(0, startindex)));
+                    answer.RemoveRange(0, startindex);
+                }
+                if (answer.Contains(3))
+                {
+                    int endindex = answer.FindIndex(x => x == 3);
+                    byte[] answer1 = answer.GetRange(0, endindex + 1).ToArray();
+                    try
+                    {
+                        IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", ""), answer1.ToList());
+                        mm.Add(mess);
+                    }
+                    catch
+                    {
+                        mm.Add(new JunkMessage(answer1.ToList()));
+                        mm.Add(new NotificationMessage("Error getting message.", Brushes.Red));
+                    }
+                    answer.RemoveRange(0, endindex + 1);
+                }
+                else
+                    break;
+            }
+            if (answer.Count > 0)
+            {
+                mm.Add(new JunkMessage(answer));
+                answer.Clear();
+            }
+            Answered(null, mm);
+        }
+
+        public void Write(OutMessage outMessage)
+        {
+            Viewer.WindowEnable = false;
+            FillAnswerTimer.Start();
+            Log.AddMessage(outMessage);
+            Log.AddMessage(new NotificationMessage(outMessage.Info, Brushes.Blue));
+            _wclClient.Write(outMessage.DataAscii, (uint)outMessage.DataAscii.Length);
+        }
+
+        #endregion
+
+        #region Client
+        private void OnConnect(object sender, wclConnectEventArgs e)
+        {
+            ConnectionTimer.Stop();
+            if (e.Error != wcl.wclErrors.WCL_E_SUCCESS)
+            {
+                IsConnected = false;
+                Log.AddMessage(new ConnectionMessage("Unable connect: " + wclErrors.wclGetErrorMessage(e.Error)));
+            }
+            else
+            {
+                IsConnected = true;
+                Log.AddMessage(new ConnectionMessage("Connected."));
+            }
+        }
+
+        private void OnData(object sender, wclDataEventArgs e)
+        {
+            FillAnswerTimer.Stop();
+            FillAnswerTimer.Start();
+            answer.AddRange(e.Data);
+        }
+
+        private void OnDisconnect(object sender, EventArgs e)
+        {
+            IsConnected = false;
+            Log.AddMessage(new ConnectionMessage("DisConnected."));
+        }
+        #endregion
+
+        #region Discovery
+        private void OnStarted(object sender, EventArgs e)
+        {
+            Log.AddMessage(new ConnectionMessage("Looking for Devices..."));
+        }
+
+        private void OnComplete(object sender, wclIrDACompleteEventArgs e)
+        {
+            ConnectionTimer.Stop();
+            if (e.Devices == null)
+            {
+                Log.AddMessage(new ConnectionMessage("Complete with error!", Brushes.Red));
+                return;
+            }
+            if (e.Devices.Count == 0)
+            {
+                Log.AddMessage(new ConnectionMessage("Nothing found!", Brushes.Red));
+                return;
+            }
+            Devices = new List<wclIrDADevice>();
+            for (UInt32 i = 0; i < e.Devices.Count; i++)
+            {
+                Devices.Add(e.Devices[i]);
+            }
+            Log.AddMessage(new ConnectionMessage("Connecting..."));
+            _wclClient.IrDAParams.Address = Devices[0].Address;
+            _wclClient.Transport = wcl.wclTransport.trIrDA;
+
+            wcl.wclErrors.wclShowError(_wclClient.Connect()).ToString();
+        }
+        #endregion
+
+        #region API
+        private void AfterUnload(object sender, EventArgs e)
+        {
+        }
+
+        private void AfterLoad(object sender, EventArgs e)
+        {
+            _wclIrDADiscovery.Discovery();
+        }
+
+        private void OnChanged(object sender, EventArgs e)
+        {
+            if (_wclAPI.Active)
+            {
+                Log.AddMessage(new ConnectionMessage("APi is Active"));
+            }
+            else
+            {
+                Log.AddMessage(new ConnectionMessage("API is not active", Brushes.Red));
+            }
+        }
+        #endregion
+
+        #region Connection
+
+        private void Connect_CommandSent(object sender, EventArgs e)
+        {
+            CheckStatus();
+        }
+
+        public void CheckStatus()
+        {
+            if (_wclClient == null)
+                return;
+            if (_wclClient.State == wclClientState.csConnecting)
+            {
+                _wclClient.Disconnect();
+            }
+            else if (_wclClient.State == wclClientState.csConnected)
+            {
+                _wclClient.Disconnect();
+            }
+            else
+            {
+                TryToConnect();
+            }
+        }
+
+        private void TryToConnect()
+        {
+            ConnectionTimer.Start();
+            Log.AddMessage(new ConnectionMessage("Connecting..."));
+            if (_wclAPI.Active)
+            {
+                if (_wclIrDADiscovery.Active)
+                {
+                    _wclClient.Connect();
+                }
+                else
+                {
+                    _wclIrDADiscovery.Discovery();
+                }
+            }
+            else
+            {
+                _wclAPI.Load();
+            }
+        }
+
+        private void t_Elapsed(object sender, EventArgs e)
+        {
+            ConnectionTimer.Stop();
+            Log.AddMessage(new ConnectionMessage("Failed to connect.", Brushes.Red));
+        }
+
+        public void Dispose()
+        {
+            if (_wclClient != null)
+                _wclClient.Dispose();
+            if (_wclIrDADiscovery != null)
+                _wclIrDADiscovery.Dispose();
+            if (_wclAPI != null)
+                _wclAPI.Dispose();
+        }
+
+        #endregion
+
+    }
+
+    /*  public class ListEventArgs : EventArgs
+      {
+          public  Data { get; set; }
+          public ListEventArgs(List<GaneralMessage> data)
+          {
+              Data = data;
+          }
+      }*/
+}
