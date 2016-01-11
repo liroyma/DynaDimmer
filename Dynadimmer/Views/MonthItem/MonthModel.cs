@@ -1,31 +1,40 @@
-﻿using System;
+﻿using Dynadimmer.Models;
+using Dynadimmer.Views.LampItem;
+using Dynadimmer.Views.NewSchdularSelection;
+using Dynadimmer.Views.Schedulers;
+using Dynadimmer.Views.Schedulers.Inner;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
-using Dynadimmer.Models;
-using Dynadimmer.Models.Messages;
-using Xceed.Wpf.Toolkit;
-using Dynadimmer.Views.NewSchdularSelection;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Xml;
 
-namespace Dynadimmer.Views.Schedulers.Inner
+namespace Dynadimmer.Views.MonthItem
 {
-    public class MontlySchdulerDetailsModel : MyUIHandler
+    public class MonthModel : MyUIHandler
     {
-        public NewSchedularSelectionModel Perent { get; set; }
+        public static UnitProperty Perent { get; set; }
+
+        public event EventHandler itemchanged;
+        public event EventHandler<Visibility> IsVisibleChanged;
+
         private Canvas GraghCanvas;
+        private byte[] MessageConstData = new byte[2];
 
         private const int ENDVALUE = 1440;
-
         private const int STARTHOUR = 15;
         private const int STARTMINUTE = 00;
 
-        private byte[] MessageConstData;
+
+
+        bool addorremove = false;
+
 
         #region Commands
         public MyCommand Upload { get; set; }
@@ -49,6 +58,30 @@ namespace Dynadimmer.Views.Schedulers.Inner
             }
         }
 
+        private string monthstring;
+        public string MonthString
+        {
+            get { return monthstring; }
+            set
+            {
+                monthstring = value;
+                Title = string.Format("{0} - {1}", LampName, MonthString);
+                NotifyPropertyChanged("MonthString");
+            }
+        }
+
+        private string _lampname;
+        public string LampName
+        {
+            get { return _lampname; }
+            set
+            {
+                _lampname = value;
+                Title = string.Format("{0} - {1}", LampName, MonthString);
+                NotifyPropertyChanged("LampName");
+            }
+        }
+
         private bool _fromfile;
         public bool FromFile
         {
@@ -56,7 +89,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
             set
             {
                 _fromfile = value;
-                ButtonsColumnWidth = value ? 0 : Double.NaN;
+                ButtonsColumnWidth = value ? 0 : 100;
                 NotifyPropertyChanged("FromFile");
             }
         }
@@ -71,7 +104,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 NotifyPropertyChanged("ButtonsColumnWidth");
             }
         }
-        
+
         private int illuminance;
         public int Illuminance
         {
@@ -80,17 +113,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
             {
                 illuminance = value;
                 NotifyPropertyChanged("Illuminance");
-            }
-        }
-
-        private string monthstring;
-        public string MonthString
-        {
-            get { return monthstring; }
-            set
-            {
-                monthstring = value;
-                NotifyPropertyChanged("MonthString");
             }
         }
 
@@ -128,17 +150,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
             }
         }
 
-        private System.Windows.Media.Brush bordercolor;
-        public System.Windows.Media.Brush BorderColor
-        {
-            get { return bordercolor; }
-            set
-            {
-                bordercolor = value;
-                NotifyPropertyChanged("BorderColor");
-            }
-        }
-
         public List<LampTime> BeforeStart = new List<LampTime>();
         public List<LampTime> AfterStart = new List<LampTime>();
 
@@ -148,6 +159,8 @@ namespace Dynadimmer.Views.Schedulers.Inner
             get { return itemvisablility; }
             set
             {
+                if (IsVisibleChanged != null && itemvisablility != value)
+                    IsVisibleChanged(null, value);
                 itemvisablility = value;
                 NotifyPropertyChanged("ItemVisablility");
             }
@@ -164,16 +177,37 @@ namespace Dynadimmer.Views.Schedulers.Inner
             }
         }
 
+        private bool _itemupdated;
+        public bool ItemUpdated
+        {
+            get { return _itemupdated; }
+            set
+            {
+                _itemupdated = value;
+                StarVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                if (addorremove && itemchanged != null)
+                {
+                    itemchanged(null, null);
+                    addorremove = false;
+                }
+                NotifyPropertyChanged("ItemUpdated");
+            }
+        }
+
+        private Visibility _starvisibility;
+        public Visibility StarVisibility
+        {
+            get { return _starvisibility; }
+            set
+            {
+                _starvisibility = value;
+                NotifyPropertyChanged("StarVisibility");
+            }
+        }
         #endregion
 
-        public MontlySchdulerDetailsModel(NewSchedularSelectionModel perent, Canvas canvas, Lamp lamp, Month month) : base()
+        public MonthModel()
         {
-            Perent = perent;
-            GraghCanvas = canvas;
-            MessageConstData = new byte[] { (byte)lamp.Index, (byte)month };
-            MonthString = month.ToString();
-            BorderColor = GetBorderColor(lamp.Index);
-            Title = string.Format("{0} - {1}", lamp.Name, MonthString);
             Add = new MyCommand();
             Add.CommandSent += Add_CommandSent;
             Close = new MyCommand();
@@ -190,13 +224,32 @@ namespace Dynadimmer.Views.Schedulers.Inner
             Download.CommandSent += Download_CommandSent;
             SelectedLampTime = null;
             Illuminance = 100;
-            lamptimes = new ObservableCollection<LampTime>();
+            LampTimes = new ObservableCollection<LampTime>();
+            FromFile = false;
             ItemVisablility = Visibility.Collapsed;
+        }
+
+        internal void Init(Month month, Canvas gragh)
+        {
+            MessageConstData[1] = (byte)month;
+            MonthString = month.ToString();
+            GraghCanvas = gragh;
+        }
+
+        internal void SetLamp(LampModel lamp)
+        {
+            MessageConstData[0] = (byte)lamp.Index;
+            LampName = lamp.Name;
+        }
+
+        internal byte[] GetUploadData()
+        {
+            return MessageConstData;
         }
 
         public void SetData(byte[] data)
         {
-            FromFile =false;
+            FromFile = false;
             AfterStart.Clear();
             BeforeStart.Clear();
             bool ended = false;
@@ -211,7 +264,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
                     break;
                 if (index > data.Length - 3)
                     ended = true;
-                //LampTime lt = new LampTime(data[index], data[index + 1], data[index + 2]);
                 LampTime lt = new LampTime(time, pre);
                 if (lt.Hour == STARTHOUR)
                 {
@@ -234,11 +286,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 }
             }
             UpadteList();
-        }
-
-        internal byte[] GetUploadData()
-        {
-            return MessageConstData;
+            ItemUpdated = false;
         }
 
         private void UpadteList()
@@ -253,11 +301,14 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 LampTimes.Add(item);
             }
             ItemVisablility = Visibility.Visible;
+            ItemUpdated = true;
             UpdateView();
         }
 
         internal void UpdateView()
         {
+            if (GraghCanvas == null)
+                return;
             GraghCanvas.Children.Clear();
 
             double width = GraghCanvas.ActualWidth;
@@ -342,59 +393,11 @@ namespace Dynadimmer.Views.Schedulers.Inner
             GraghCanvas.Children.Add(lasttextBlock);
         }
 
-        internal void SetTimes(XmlNodeList childNodes)
-        {
-            FromFile = true;
-            AfterStart.Clear();
-            BeforeStart.Clear();
-            foreach (XmlNode node in childNodes)
-            {
-                string time = node.Attributes["Time"].Value;
-                int pre = int.Parse(node.Attributes["Precentage"].Value);
-                LampTime lt = new LampTime(time, pre);
-                if (lt.Hour == STARTHOUR)
-                {
-                    if (lt.Minute >= STARTMINUTE)
-                    {
-                        AfterStart.Add(lt);
-                    }
-                    else
-                    {
-                        BeforeStart.Add(lt);
-                    }
-                }
-                else if (lt.Hour > STARTHOUR)
-                {
-                    AfterStart.Add(lt);
-                }
-                else
-                {
-                    BeforeStart.Add(lt);
-                }
-            }
-            UpadteList();
-        }
-
         private double CalcTimeSpan(LampTime one, LampTime two)
         {
             if (two.Hour < one.Hour)
                 return (((24 + two.Hour) - one.Hour) * 60) + (two.Minute - one.Minute);
             return ((two.Hour - one.Hour) * 60) + (two.Minute - one.Minute);
-        }
-
-        private Brush GetBorderColor(int lamp)
-        {
-            switch (lamp)
-            {
-                case 0:
-                case 2:
-                    return Brushes.LightBlue;
-                case 1:
-                case 3:
-                    return Brushes.LightCoral;
-                default:
-                    return Brushes.LightCyan;
-            }
         }
 
         private void Add_CommandSent(object sender, EventArgs e)
@@ -450,6 +453,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
             {
                 BeforeStart.Add(lt);
             }
+            addorremove = true;
             UpadteList();
         }
 
@@ -462,15 +466,20 @@ namespace Dynadimmer.Views.Schedulers.Inner
                     BeforeStart.Remove(lt);
                 if (AfterStart.Contains(lt))
                     AfterStart.Remove(lt);
+                if (itemchanged != null)
+                    itemchanged(null, null);
+                addorremove = true;
                 UpadteList();
             }
         }
 
         private void Paste_CommandSent(object sender, EventArgs e)
         {
+            if (!(Perent is NewSchedularSelectionModel))
+                return;
             AfterStart.Clear();
             BeforeStart.Clear();
-            foreach (var lt in Perent.CopiedList)
+            foreach (var lt in ((NewSchedularSelectionModel)Perent).CopiedList)
             {
                 if (lt.Hour == STARTHOUR)
                 {
@@ -493,22 +502,6 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 }
             }
             UpadteList();
-        }
-
-        private void Copy_CommandSent(object sender, EventArgs e)
-        {
-            Perent.Copy(this);
-        }
-
-        private void Close_CommandSent(object sender, EventArgs e)
-        {
-            ItemVisablility = Visibility.Collapsed;
-        }
-
-        public void Download_CommandSent(object sender, EventArgs e)
-        {
-            Perent.Title = this.Title;
-            Perent.SendDownLoad(GetData());
         }
 
         public byte[] GetData()
@@ -534,10 +527,62 @@ namespace Dynadimmer.Views.Schedulers.Inner
             return data.ToArray();
         }
 
+        private void Copy_CommandSent(object sender, EventArgs e)
+        {
+            if (!(Perent is NewSchedularSelectionModel))
+                return;
+            ((NewSchedularSelectionModel)Perent).Copy(this);
+        }
+
+        private void Close_CommandSent(object sender, EventArgs e)
+        {
+            ItemVisablility = Visibility.Collapsed;
+        }
+
         private void Upload_CommandSent(object sender, EventArgs e)
         {
             Perent.Title = this.Title;
             Perent.SendUpload(MessageConstData);
+        }
+
+        public void Download_CommandSent(object sender, EventArgs e)
+        {
+            Perent.Title = this.Title;
+            Perent.SendDownLoad(GetData());
+        }
+
+        internal void SetTimes(XmlNodeList childNodes)
+        {
+            FromFile = true;
+            AfterStart.Clear();
+            BeforeStart.Clear();
+            foreach (XmlNode node in childNodes)
+            {
+                string time = node.Attributes["Time"].Value;
+                int pre = int.Parse(node.Attributes["Precentage"].Value);
+                LampTime lt = new LampTime(time, pre);
+                if (lt.Hour == STARTHOUR)
+                {
+                    if (lt.Minute >= STARTMINUTE)
+                    {
+                        AfterStart.Add(lt);
+                    }
+                    else
+                    {
+                        BeforeStart.Add(lt);
+                    }
+                }
+                else if (lt.Hour > STARTHOUR)
+                {
+                    AfterStart.Add(lt);
+                }
+                else
+                {
+                    BeforeStart.Add(lt);
+                }
+            }
+            UpadteList();
+            ItemUpdated = false;
         }
     }
 }

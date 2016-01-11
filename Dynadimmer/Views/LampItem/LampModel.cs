@@ -1,0 +1,78 @@
+﻿using Dynadimmer.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using Dynadimmer.Views.MonthItem;
+using System.Xml;
+using System.Windows.Controls;
+using Dynadimmer.Views.NewSchdularSelection;
+
+namespace Dynadimmer.Views.LampItem
+{
+    public class LampModel : MyUIHandler
+    {
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                _name = value;
+                NotifyPropertyChanged("Name");
+            }
+        }
+
+        private Visibility _itemvisibility;
+        public Visibility ItemVisibility
+        {
+            get { return _itemvisibility; }
+            set
+            {
+                _itemvisibility = value;
+                NotifyPropertyChanged("ItemVisibility");
+            }
+        }
+        
+        public int Index { get; private set; }
+        public bool isConfig { get; set; }
+
+        List<MonthModel> months;
+        
+        public LampModel()
+        {
+            isConfig = false;
+            months = new List<MonthModel>();
+            ItemVisibility = Visibility.Collapsed;
+        }
+
+        public void Init(int index)
+        {
+            Name = "Lamp " + (index + 1);
+            Index = index;
+        }
+        
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        internal void SetMonth(UIElementCollection children)
+        {
+            foreach (var item in children)
+            {
+                if (item is MonthView)
+                {
+                    months.Add(((MonthView)item).Model);
+                }
+            }
+        }
+        
+        internal List<MonthModel> GetMonths()
+        {
+            return months;
+        }
+    }
+}

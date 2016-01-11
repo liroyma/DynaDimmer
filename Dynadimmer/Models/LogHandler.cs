@@ -215,7 +215,7 @@ namespace Dynadimmer.Models
         {
             SavingProccess = "";
             TotalMessages = 0;
-            LogChecked = Properties.Settings.Default.ViewLog;
+            //LogChecked = Properties.Settings.Default.ViewLog;
             worker.WorkerReportsProgress = true;
             worker.DoWork += Worker_DoWork;
             worker.ProgressChanged += Worker_ProgressChanged;

@@ -7,6 +7,7 @@ using System.Windows.Threading;
 using Dynadimmer.Models;
 using Dynadimmer.Models.Messages;
 using System.Xml;
+using Xceed.Wpf.Toolkit;
 
 namespace Dynadimmer.Views.DateTime
 {
@@ -55,7 +56,14 @@ namespace Dynadimmer.Views.DateTime
             DATA.Add((byte)((Int32)_date.DayOfWeek + 1));
             DATA.Add((byte)_date.Day);
             DATA.Add((byte)_date.Month);
-            DATA.Add((byte)(_date.Year % 2000));
+            int zz = int.Parse(_date.ToString("yy"));
+            if(zz == 0)
+            {
+                MessageBox.Show("Year can be equal to 0");
+                return;
+            }
+
+            DATA.Add((byte)(zz));
             DATA.Add((byte)_date.Hour);
             DATA.Add((byte)_date.Minute);
             DATA.Add((byte)_date.Second);

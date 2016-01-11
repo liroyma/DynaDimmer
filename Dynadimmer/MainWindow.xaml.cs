@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Dynadimmer.Models;
+﻿using Dynadimmer.Models;
+using Dynadimmer.Models.Actions;
 using Dynadimmer.Models.Messages;
-using System.ComponentModel;
-using Dynadimmer.Views.NewSchdularSelection;
-using System.Xml;
+using Dynadimmer.Views.MonthItem;
+using System;
+using System.Collections.Generic;
+using System.Windows;
 
 namespace Dynadimmer
 {
@@ -30,30 +17,68 @@ namespace Dynadimmer
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
-
         Models.Action action;
         bool close = false;
 
         public MainWindow()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
             log = (LogHandler)this.FindResource("Logger");
             log.DoneSaving += Log_DoneSaving;
+            Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
             connection = (IRDAHandler)this.FindResource("Connection");
+            connection.InitWCL();
             connection.SetHandlers(log, viewer);
             connection.Connected += Connection_Connected;
             connection.Answered += Connection_Answered;
             UnitProperty.SetConnection(connection);
+            MonthModel.Perent = newschdularselectionview.Model;
             answers = new AnswerHandler(log, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
             answers.allAnswersProssed += Answers_allAnswersProssed;
             this.DataContext = viewer;
-            newschdularselectionview.SetContainer(this.Container);
+            fileloadview.Model.SetContainer(this.MainContainer);
+            fileloadview.Model.ClickDownload += Model_ClickDownload;
+            newschdularselectionview.Model.SetContainer(this.MainContainer);
+            fileloadview.Model.WinVisibilityChanged += Model_WinVisibilityChanged;
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
-            ((Views.Config.ConfigModel)configview.Model).GotData += ConfigModel_GotData;
+            configview.Model.GotData += ConfigModel_GotData;
             connection.CheckStatus();
+        }
+
+        private void Model_ClickDownload(object sender, byte e)
+        {
+            action = new DownloadAllAction(this.MainContainer.GetLampsModels(), e,configview.Model, newschdularselectionview.Model);
+        }
+
+        private void Model_WinVisibilityChanged(object sender, Visibility e)
+        {
+            if (e == Visibility.Collapsed)
+            {
+                viewer.ConfigChecked = true;
+                datetimeview.Visibility = viewer.UnitTimeVisibility;
+                summerwinterview.Visibility = viewer.SummerWinterVisibility;
+                configview.Visibility = viewer.ConfigVisibility;
+                newschdularselectionview.Visibility = Visibility.Collapsed;
+                MainContainer.Model.FromFile = false;
+                if (connection.IsConnected)
+                    action = new StartAction(configview.Model);
+            }
+            else
+            {
+                newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
+                MainContainer.IsEnabled = true;
+                MainContainer.Model.FromFile = true;
+            }
         }
 
         private void Answers_allAnswersProssed(object sender, EventArgs e)
@@ -61,44 +86,57 @@ namespace Dynadimmer
             if (action != null)
             {
                 action.Next();
+                if (!action.AllDone)
+                {
+                    action.DoAction();
+                }
+                else
+                {
+                    viewer.WindowEnable = true;
+                }
+            }
+            else
+            {
+                viewer.WindowEnable = true;
             }
         }
 
-        private void Connection_Answered(object sender, ListEventArgs e)
+        private void Connection_Answered(object sender, List<GaneralMessage> e)
         {
-            answers.Handle(e.Data);
+            answers.Handle(e);
         }
 
         private void ConfigModel_GotData(object sender, EventArgs e)
         {
-            datetimeview.UpdateTime(((Views.Config.ConfigModel)configview.Model).UnitTime);
-            newschdularselectionview.UpdateNumberOfLamps(((Views.Config.ConfigModel)configview.Model).UnitLampCount);
+            datetimeview.UpdateTime(configview.Model.UnitTime);
+            newschdularselectionview.Model.SetNumberOfLamps(configview.Model.UnitLampCount);
         }
 
-        private void Connection_Connected(object sender, EventArgs e)
+        private void Connection_Connected(object sender, bool e)
         {
-            action = new Models.Action("", false, configview.Model);
-            action.Done += Action_Done;
-            action.Start();
-        }
-
-        private void Action_Done(object sender, string e)
-        {
-            if (e != "")
-                log.AddMessage(new NotificationMessage(e, Brushes.Green));
-            action = null;
+            configview.IsEnabled = e;
+            MainContainer.IsEnabled = e;
+            summerwinterview.IsEnabled = e;
+            datetimeview.IsEnabled = e;
+            newschdularselectionview.IsEnabled = e;
+            if (fileloadview.Model.WinVisibility != Visibility.Visible)
+                action = new StartAction(configview.Model);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             close = true;
             e.Cancel = true;
-            connection.Dispose();
-            log.Save();
+            if (connection != null)
+                connection.Dispose();
+            if (log != null)
+                log.Save();
+            else
+                App.Current.Shutdown();
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -116,37 +154,14 @@ namespace Dynadimmer
             configview.Visibility = viewer.ConfigVisibility;
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        private void MenuItem_Save(object sender, RoutedEventArgs e)
         {
-            action = new Models.Action("Done loading", true, configview.Model);
-            action.Done += Action_Done;
-            foreach (var item in newschdularselectionview.Model.LampsList)
-            {
-                action.Add(newschdularselectionview.Model, item);
-            }
-            action.Start();
+            action = new SaveAction(configview.Model, newschdularselectionview.Model);
         }
 
-        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        private void MenuItem_Load(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-
-            dlg.Filter = "Dimmer documents (.dxml)|*.dxml";
-
-            if (dlg.ShowDialog() != true)
-                return;
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(dlg.FileName);
-
-            XmlNodeList ConfigutarionNodes = doc.DocumentElement.SelectNodes("/Dimmer/Configutarion");
-            XmlNodeList LampNodes = doc.DocumentElement.SelectNodes("/Dimmer/Lamp");
-
-            var x = ConfigutarionNodes.Item(0).Attributes["LampCount"].Value;
-            foreach (XmlNode node in LampNodes)
-            {
-                newschdularselectionview.Model.AddLamp(node);
-            }
+            fileloadview.Model.ReadFromFile();
         }
     }
 

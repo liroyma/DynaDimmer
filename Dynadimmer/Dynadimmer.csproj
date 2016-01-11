@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Dynadimmer</RootNamespace>
     <AssemblyName>Programmable Dimmer</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -31,9 +31,9 @@
     <ProductName>Programmable Dimmer</ProductName>
     <PublisherName>Menorah</PublisherName>
     <SuiteName>menorah-dimmer</SuiteName>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>12</ApplicationRevision>
+    <AutorunEnabled>true</AutorunEnabled>
+    <ApplicationRevision>15</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -126,7 +126,9 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="wcl, Version=6.14.7.0, Culture=neutral, PublicKeyToken=c33610a096b7e41b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Softwares\WCL\NET\redist\x32\451\wcl.dll</HintPath>
+      <HintPath>.\wcl.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock, Version=2.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
@@ -159,7 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\Action.cs" />
+    <Compile Include="Models\Actions\Action.cs" />
+    <Compile Include="Models\Actions\DownloadAllAction.cs" />
+    <Compile Include="Models\Actions\StartAction.cs" />
+    <Compile Include="Models\Converters\AllConverters.cs" />
     <Compile Include="Models\CRCManager.cs" />
     <Compile Include="Models\IRDAHandler.cs" />
     <Compile Include="Models\LogHandler.cs" />
@@ -173,6 +178,7 @@
     <Compile Include="Models\MyCommand.cs" />
     <Compile Include="Models\Messages\OutMessage.cs" />
     <Compile Include="Models\MyUIHandler.cs" />
+    <Compile Include="Models\Actions\SaveAction.cs" />
     <Compile Include="Models\UnitProperty.cs" />
     <Compile Include="Models\WindowHandler.cs" />
     <Compile Include="Views\Config\ConfigModel.cs" />
@@ -183,6 +189,22 @@
       <DependentUpon>UnitDateTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DateTime\UnitDateTimeModel.cs" />
+    <Compile Include="Views\FileLoad\FileLoadModel.cs" />
+    <Compile Include="Views\FileLoad\FileLoadView.xaml.cs">
+      <DependentUpon>FileLoadView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LampItem\LampModel.cs" />
+    <Compile Include="Views\LampItem\LampView.xaml.cs">
+      <DependentUpon>LampView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainContainer\MainContainerModel.cs" />
+    <Compile Include="Views\MainContainer\MainContainerView.xaml.cs">
+      <DependentUpon>MainContainerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MonthItem\MonthModel.cs" />
+    <Compile Include="Views\MonthItem\MonthView.xaml.cs">
+      <DependentUpon>MonthView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\NewSchdularSelection\NewSchdularSelectionView.xaml.cs">
       <DependentUpon>NewSchdularSelectionView.xaml</DependentUpon>
     </Compile>
@@ -190,10 +212,6 @@
     <Compile Include="Views\Schedulers\BarView.xaml.cs">
       <DependentUpon>BarView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Schedulers\MontlySchdulerDetails.xaml.cs">
-      <DependentUpon>MontlySchdulerDetails.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Schedulers\MontlySchdulerDetailsModel.cs" />
     <Compile Include="Models\LampTime.cs" />
     <Compile Include="Views\SummerWinnter\UnitSummerWinnterClock.xaml.cs">
       <DependentUpon>UnitSummerWinnterClock.xaml</DependentUpon>
@@ -219,15 +237,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\FileLoad\FileLoadView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LampItem\LampView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainContainer\MainContainerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MonthItem\MonthView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\NewSchdularSelection\NewSchdularSelectionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Schedulers\BarView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Schedulers\MontlySchdulerDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -270,9 +300,9 @@
     <Resource Include="Menorah_Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -280,14 +310,24 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Visual.C++.14.0.x86">
+      <Visible>False</Visible>
+      <ProductName>Visual C++ "14" Runtime Libraries %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WCL\msvcp120.dll" />
-    <Content Include="WCL\msvcr120.dll" />
-    <Content Include="WCL\vccorlib120.dll" />
+    <Content Include="wcl\msvcp120.dll" />
+    <Content Include="wcl\msvcr120.dll" />
+    <Content Include="wcl\vccorlib120.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

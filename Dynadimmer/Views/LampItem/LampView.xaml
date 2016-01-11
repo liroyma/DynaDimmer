@@ -1,0 +1,27 @@
+﻿<UserControl xmlns:MonthItem="clr-namespace:Dynadimmer.Views.MonthItem"  x:Class="Dynadimmer.Views.LampItem.LampView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dynadimmer.Views.LampItem" Loaded="UserControl_Loaded"
+             mc:Ignorable="d" d:DesignWidth="600" Visibility="{Binding ItemVisibility}">
+    <GroupBox Padding="10">
+        <GroupBox.Header>
+            <TextBlock Text="{Binding Name}"></TextBlock>
+        </GroupBox.Header>
+    <StackPanel Name="monthcontainer">
+        <MonthItem:MonthView LampMonth="January" />
+        <MonthItem:MonthView LampMonth="February"/>
+        <MonthItem:MonthView LampMonth="March"/>
+        <MonthItem:MonthView LampMonth="April"/>
+        <MonthItem:MonthView LampMonth="May"/>
+        <MonthItem:MonthView LampMonth="June"/>
+        <MonthItem:MonthView LampMonth="July" />
+        <MonthItem:MonthView LampMonth="August" />
+        <MonthItem:MonthView LampMonth="September" />
+        <MonthItem:MonthView LampMonth="October" />
+        <MonthItem:MonthView LampMonth="November" />
+        <MonthItem:MonthView LampMonth="December" />
+        </StackPanel>
+    </GroupBox>
+</UserControl>

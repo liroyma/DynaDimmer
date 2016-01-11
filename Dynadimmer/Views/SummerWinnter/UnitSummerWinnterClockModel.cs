@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dynadimmer.Models;
 using Dynadimmer.Models.Messages;
+using System.Xml;
+using Xceed.Wpf.Toolkit;
 
 namespace Dynadimmer.Views.SummerWinnter
 {
@@ -43,6 +45,11 @@ namespace Dynadimmer.Views.SummerWinnter
 
         public override void SendDownLoad(object sender)
         {
+            if (SummerDate.Month > WinterDate.Month || (SummerDate.Month == WinterDate.Month && SummerDate.Day > WinterDate.Day))
+            {
+                MessageBox.Show("Winter clock change can't be before Summer clock change.");
+                return;
+            }
             List<byte> message = new List<byte>();
             message.Add((byte)SummerDate.Day);
             message.Add((byte)SummerDate.Month);

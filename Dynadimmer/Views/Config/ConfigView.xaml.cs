@@ -21,7 +21,7 @@ namespace Dynadimmer.Views.Config
     /// </summary>
     public partial class ConfigView : UserControl
     {
-        public UnitProperty Model { get; private set; }
+        public ConfigModel Model { get; private set; }
         public ConfigView()
         {
             Model = new ConfigModel();

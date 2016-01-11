@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace Dynadimmer.Views.Config
 {
-    class ConfigModel: UnitProperty
+    public class ConfigModel : UnitProperty
     {
         public const int Header = 3;
 
@@ -39,7 +39,7 @@ namespace Dynadimmer.Views.Config
         }
         #endregion
 
-        public ConfigModel():base()
+        public ConfigModel() : base()
         {
             Title = "Unit Configuration";
         }
@@ -55,15 +55,24 @@ namespace Dynadimmer.Views.Config
             System.DateTime date = System.DateTime.Parse(dateString);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             UnitLampCount = messase.DecimalData[9];
-            GotData(null,null);
+            if(Notify)
+                GotData(null, null);
+            Notify = true;
             base.SetView();
             return Title;
         }
+        private bool Notify = true;
 
         public override void SendDownLoad(object sender)
         {
             List<byte> DATA = new List<byte>();
-            DATA.Add((byte)UnitLampCount);
+            if (sender == null)
+                DATA.Add((byte)UnitLampCount);
+            else
+            {
+                Notify = false;
+                DATA.Add((byte)sender);
+            }
             CreateAndSendMessage(SendMessageType.Download, Header, DATA.ToArray());
         }
 

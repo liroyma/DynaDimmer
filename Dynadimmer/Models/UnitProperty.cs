@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml;
 using Dynadimmer.Models.Messages;
+using Dynadimmer.Views.Schedulers.Inner;
 
 namespace Dynadimmer.Models
 {
@@ -44,6 +46,7 @@ namespace Dynadimmer.Models
             Upload = new MyCommand();
             Upload.CommandSent += Upload_CommandSent;
         }
+
 
         public virtual void Download_CommandSent(object sender, EventArgs e)
         {
@@ -85,7 +88,6 @@ namespace Dynadimmer.Models
         {
             connection.Write(new OutMessage(string.Format("Sent {0} {1}.",type.ToString(),Title), header, data));
         }
-
     }
 
     public enum SendMessageType

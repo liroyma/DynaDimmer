@@ -1,0 +1,199 @@
+﻿using Dynadimmer.Models;
+using Dynadimmer.Models.Actions;
+using Dynadimmer.Models.Messages;
+using Dynadimmer.Views.Config;
+using Dynadimmer.Views.LampItem;
+using Dynadimmer.Views.MainContainer;
+using Dynadimmer.Views.MonthItem;
+using Dynadimmer.Views.NewSchdularSelection;
+using Microsoft.Win32;
+using System;
+using System.Windows;
+using System.Xml;
+
+namespace Dynadimmer.Views.FileLoad
+{
+    public class FileLoadModel : MyUIHandler
+    {
+        public const int DownloadHeader = 11;
+
+        public event EventHandler<byte> ClickDownload;
+
+
+        public event EventHandler<Visibility> WinVisibilityChanged;
+        
+        private MainContainerView Container;
+
+        private Visibility isvisibility;
+        public Visibility WinVisibility
+        {
+            get { return isvisibility; }
+            set
+            {
+                isvisibility = value;
+                if (WinVisibilityChanged != null)
+                    WinVisibilityChanged(null, value);
+                NotifyPropertyChanged("WinVisibility");
+            }
+        }
+
+        private string _FilePath;
+        public string FilePath
+        {
+            get { return _FilePath; }
+            set
+            {
+                _FilePath = value;
+                NotifyPropertyChanged("FilePath");
+            }
+        }
+
+        private bool _madechanges;
+        public bool MadeChanges
+        {
+            get { return _madechanges; }
+            set
+            {
+                _madechanges = value;
+                NotifyPropertyChanged("MadeChanges");
+            }
+        }
+
+        #region Commands
+        public MyCommand DownLoadAll { get; set; }
+        public MyCommand Save { get; set; }
+        public MyCommand Close { get; set; }
+
+        private void Close_CommandSent(object sender, EventArgs e)
+        {
+            Container.Reset();
+            WinVisibility = Visibility.Collapsed;
+        }
+
+        private void Save_CommandSent(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Dimmer documents (.dxml)|*.dxml";
+            if (saveFileDialog.ShowDialog() != true)
+                return;
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            XmlWriter writer = XmlWriter.Create(saveFileDialog.FileName, settings);
+            writer.WriteStartDocument();
+            writer.WriteStartElement("Dimmer");
+
+            writer.WriteStartElement("Configutarion");
+            writer.WriteAttributeString("LampCount", UnitLampCount.ToString());
+            writer.WriteEndElement();
+
+            foreach (var lampitem in Container.GetLampsViews())
+            {
+                if (lampitem.Model.isConfig)
+                {
+                    SaveData(writer, lampitem.Model);
+                }
+            }
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+            writer.Close();
+            writer.Dispose();
+            MadeChanges = false;
+        }
+
+        private void DownLoadAll_CommandSent(object sender, EventArgs e)
+        {
+            if (ClickDownload != null)
+                ClickDownload(null, (byte)UnitLampCount);
+        }
+        #endregion
+
+        public FileLoadModel()
+        {
+            DownLoadAll = new MyCommand();
+            DownLoadAll.CommandSent += DownLoadAll_CommandSent;
+            Save = new MyCommand();
+            Save.CommandSent += Save_CommandSent;
+            Close = new MyCommand();
+            Close.CommandSent += Close_CommandSent;
+            WinVisibility = Visibility.Collapsed;
+        }
+
+        internal void SetContainer(MainContainerView container)
+        {
+            Container = container;
+        }
+
+        public void ReadFromFile()
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            dlg.Filter = "Dimmer documents (.dxml)|*.dxml";
+
+            if (dlg.ShowDialog() != true)
+                return;
+
+            WinVisibility = Visibility.Visible;
+            XmlDocument doc = new XmlDocument();
+            doc.Load(dlg.FileName);
+            FilePath = dlg.FileName;
+
+            Container.Reset();
+
+            XmlNodeList ConfigutarionNodes = doc.DocumentElement.SelectNodes("/Dimmer/Configutarion");
+            XmlNodeList LampNodes = doc.DocumentElement.SelectNodes("/Dimmer/Lamp");
+            UnitLampCount = int.Parse(ConfigutarionNodes.Item(0).Attributes["LampCount"].Value);
+            Container.Model.LampCount = UnitLampCount;
+
+
+            for (int i = 0; i < Container.GetLampsModels().Count; i++)
+            {
+                Container.GetLampsModels()[i].isConfig = i < UnitLampCount;
+            }
+
+            foreach (XmlNode lampitem in LampNodes)
+            {
+                int z = int.Parse(lampitem.Attributes["LampIndex"].Value);
+                LampView templamp = Container.FindLamp(z);
+                foreach (XmlNode monthitem in lampitem.ChildNodes)
+                {
+                    Month month = (Month)Enum.Parse(typeof(Month), monthitem.Attributes["Month"].Value);
+                    MonthView tempmonth = templamp.FindMonth(month);
+                    tempmonth.Model.SetTimes(monthitem.ChildNodes);
+                    tempmonth.Model.itemchanged += sadkjlad;
+                }
+            }
+        }
+
+        private void sadkjlad(object sender, EventArgs e)
+        {
+            MadeChanges = true;
+        }
+
+        int UnitLampCount;
+
+        public void SaveData(XmlWriter writer, object extra)
+        {
+            LampModel lamp = (LampModel)extra;
+            writer.WriteStartElement("Lamp");
+            writer.WriteAttributeString("LampName", lamp.Name);
+            writer.WriteAttributeString("LampIndex", lamp.Index.ToString());
+            foreach (var item in lamp.GetMonths())
+            {
+                writer.WriteStartElement("Month");
+                writer.WriteAttributeString("Month", item.MonthString);
+                foreach (var time in item.LampTimes)
+                {
+                    writer.WriteStartElement("Time");
+                    writer.WriteAttributeString("Precentage", time.Precentage.ToString());
+                    writer.WriteAttributeString("Time", time.TimeString);
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement();
+                item.ItemUpdated = false;
+            }
+            writer.WriteEndElement();
+        }
+
+
+    }
+}

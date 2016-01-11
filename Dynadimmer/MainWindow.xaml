@@ -1,4 +1,4 @@
-﻿<Window xmlns:NewSchdularSelection="clr-namespace:Dynadimmer.Views.NewSchdularSelection"  
+﻿<Window xmlns:MainContainer="clr-namespace:Dynadimmer.Views.MainContainer"  xmlns:FileLoad="clr-namespace:Dynadimmer.Views.FileLoad"  xmlns:NewSchdularSelection="clr-namespace:Dynadimmer.Views.NewSchdularSelection"  
         xmlns:Config="clr-namespace:Dynadimmer.Views.Config"  
         xmlns:DateTime="clr-namespace:Dynadimmer.Views.DateTime"  
         xmlns:SummerWinnter="clr-namespace:Dynadimmer.Views.SummerWinnter"  
@@ -42,61 +42,6 @@
         </Style>
     </Window.Resources>
     <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Load And Save To File..." Click="MenuItem_Click_1" IsEnabled="{Binding WindowEnable}"></MenuItem>
-                <MenuItem Header="_Load From File..." Click="MenuItem_Click_2"></MenuItem>
-                <MenuItem DataContext="{StaticResource Viewer}" Header="_Exit" Click="Button_Click" ></MenuItem>
-            </MenuItem>
-            <MenuItem Header="_Views">
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
-                <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
-                <Separator></Separator>
-                <MenuItem Header="_Log Panel" DataContext="{StaticResource Logger}" >
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
-                    <Separator></Separator>
-                    <MenuItem Header="_Clear Log" IsEnabled="{Binding Reset}" Command="{Binding ClearLog}"></MenuItem>
-                </MenuItem>
-            </MenuItem>
-        </Menu>
-        <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="150"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition></RowDefinition>
-                <RowDefinition></RowDefinition>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" IsEnabled="{Binding WindowEnable}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <DateTime:UnitDateTime x:Name="datetimeview" Grid.Column="1"/>
-                <SummerWinnter:UnitSummerWinnterClock x:Name="summerwinterview" Grid.Column="1"/>
-                <Config:ConfigView x:Name="configview" Grid.Column="1" />
-                <!--<SchdularSelection:SchdularSelectionView x:Name="schdularselectionview" Grid.Column="0" />-->
-                <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" />
-            </Grid>
-            <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
-                        <GradientStop Color="{Binding ConnectionButtenColor}" Offset="0"/>
-                        <GradientStop Color="White" Offset="2"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-            <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95" Click="Button_Click">
-                <Button.Background>
-                    <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
-                        <GradientStop Color="LightGray" Offset="0"/>
-                        <GradientStop Color="White" Offset="2"/>
-                    </LinearGradientBrush>
-                </Button.Background>
-            </Button>
-        </Grid>
         <StatusBar DockPanel.Dock="Bottom" DataContext="{StaticResource Logger}">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -173,8 +118,65 @@
                 </Style>
             </DataGrid.RowStyle>
         </DataGrid>
-        <ScrollViewer DockPanel.Dock="Bottom" Padding="10" VerticalScrollBarVisibility="Auto">
-            <StackPanel Name="Container" IsEnabled="{Binding WindowEnable}" Background="White"></StackPanel>
-        </ScrollViewer>
-     </DockPanel>
+        <DockPanel IsEnabled="{Binding WindowEnable}">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Load And Save To File..." Click="MenuItem_Save"></MenuItem>
+                    <MenuItem Header="_Load From File..." Click="MenuItem_Load"></MenuItem>
+                    <MenuItem Header="_Exit" Click="ExitButton_Click" ></MenuItem>
+                </MenuItem>
+                <MenuItem Header="_Views">
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Header="_Log Panel" DataContext="{StaticResource Logger}" >
+                        <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
+                        <Separator></Separator>
+                        <MenuItem Header="_Clear Log" IsEnabled="{Binding Reset}" Command="{Binding ClearLog}"></MenuItem>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+            <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition ></RowDefinition>
+                    <RowDefinition ></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <DateTime:UnitDateTime x:Name="datetimeview"  Grid.Column="2"/>
+                    <SummerWinnter:UnitSummerWinnterClock x:Name="summerwinterview" Grid.Column="2"/>
+                    <Config:ConfigView x:Name="configview" Grid.Column="2" />
+                    <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" Grid.Column="1" />
+                    <FileLoad:FileLoadView x:Name="fileloadview" Grid.Column="0" />
+                </Grid>
+                <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                            <GradientStop Color="{Binding ConnectionButtenColor}" Offset="0"/>
+                            <GradientStop Color="White" Offset="2"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95" Click="ExitButton_Click">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                            <GradientStop Color="LightGray" Offset="0"/>
+                            <GradientStop Color="White" Offset="2"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </Grid>
+            <MainContainer:MainContainerView DockPanel.Dock="Bottom" x:Name="MainContainer" Background="White" />
+        </DockPanel>
+    </DockPanel>
+    
 </Window>

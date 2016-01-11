@@ -35,7 +35,7 @@ namespace Dynadimmer.Models
                 NotifyPropertyChanged("WindowEnable");
             }
         }
-
+        
         private bool _UnitClockChecked;
         public bool UnitClockChecked
         {
