@@ -1,5 +1,4 @@
-﻿using Dynadimmer.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,24 +13,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Dynadimmer.Views.Config
+namespace Dynadimmer.Views.UnitID
 {
     /// <summary>
-    /// Interaction logic for ConfigView.xaml
+    /// Interaction logic for UnitIDView.xaml
     /// </summary>
-    public partial class ConfigView : UserControl
+    public partial class UnitIDView : UserControl
     {
-        public ConfigModel Model { get; private set; }
-        public ConfigView()
+        public UnitIDModel Model { get; set; }
+
+        public UnitIDView()
         {
-            Model = new ConfigModel();
+            Model = new UnitIDModel();
             InitializeComponent();
             this.DataContext = Model;
-        }
-
-        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
-        {
-            Model.IsValid = false;
         }
     }
 }

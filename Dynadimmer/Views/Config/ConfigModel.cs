@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Dynadimmer.Models.Messages;
 using System.Xml;
+using System.Windows.Controls;
+using System.Globalization;
 
 namespace Dynadimmer.Views.Config
 {
@@ -34,9 +36,35 @@ namespace Dynadimmer.Views.Config
             set
             {
                 unitlampcount = value;
+                IsValid = true;
                 NotifyPropertyChanged("UnitLampCount");
             }
         }
+
+        private bool isloadedandvalid;
+        public bool IsLoadedAndValid
+        {
+            get { return isloadedandvalid; }
+            set
+            {
+                isloadedandvalid = value;
+                NotifyPropertyChanged("IsLoadedAndValid");
+            }
+        }
+
+        private bool isvalid;
+        public bool IsValid
+        {
+            get { return isvalid; }
+            set
+            {
+                isvalid = value;
+                IsLoadedAndValid = IsValid && IsLoaded;
+                NotifyPropertyChanged("IsValid");
+            }
+        }
+
+
         #endregion
 
         public ConfigModel() : base()
@@ -52,13 +80,15 @@ namespace Dynadimmer.Views.Config
         {
             byte[] data = messase.DecimalData;
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[3], data[4], data[5], data[6], data[7], data[8]);
-            System.DateTime date = System.DateTime.Parse(dateString);
+            CultureInfo cultureinfo = new CultureInfo("he-IL");
+            System.DateTime date = System.DateTime.Parse(dateString, cultureinfo);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             UnitLampCount = messase.DecimalData[9];
-            if(Notify)
+            if (Notify)
                 GotData(null, null);
             Notify = true;
             base.SetView();
+            IsValid = true;
             return Title;
         }
         private bool Notify = true;
@@ -78,7 +108,7 @@ namespace Dynadimmer.Views.Config
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(SendMessageType.Upalod, Header);
+            CreateAndSendMessage(SendMessageType.Upload, Header);
         }
 
         public override void SaveData(XmlWriter writer, object extra)
@@ -86,6 +116,19 @@ namespace Dynadimmer.Views.Config
             writer.WriteStartElement("Configutarion");
             writer.WriteAttributeString("LampCount", UnitLampCount.ToString());
             writer.WriteEndElement();
+        }
+    }
+
+    public class NonEmptyStringValidationRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            int x;
+            if (int.TryParse(value.ToString(), out x))
+                return (x >= 0 && x <= 2)
+                    ? new ValidationResult(true, null)
+                    : new ValidationResult(false, "Must be number between 0 to 2.");
+            return new ValidationResult(false, "Must be a number");
         }
     }
 }

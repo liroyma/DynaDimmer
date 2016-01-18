@@ -92,7 +92,7 @@ namespace Dynadimmer.Models
 
     public enum SendMessageType
     {
-        Download,Upalod
+        Download,Upload
     }
     
 

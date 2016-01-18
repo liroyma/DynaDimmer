@@ -7,7 +7,7 @@
              mc:Ignorable="d"  d:DesignWidth="600"  d:DesignHeight="600"  >
     <ScrollViewer  Padding="10" VerticalScrollBarVisibility="Auto">
         <StackPanel Name="lampContainer">
-            <TextBlock Padding="5" Background="LightBlue" FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Visibility="{Binding ItemVisable}" Text="{Binding LampCount, StringFormat=Total Number Of Lamps: \{0\}}"></TextBlock>
+            <TextBlock Padding="5" Background="#efefef" FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Visibility="{Binding ItemVisable}" Text="{Binding LampCount, StringFormat=Total Number Of Lamps: \{0\}}"></TextBlock>
             <LampItem:LampView LampIndex="0" />
             <LampItem:LampView LampIndex="1" />
         </StackPanel>

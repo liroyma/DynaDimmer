@@ -26,22 +26,29 @@ namespace Dynadimmer
             {
                 InitializeComponent();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show(e.InnerException.Message);
             }
             log = (LogHandler)this.FindResource("Logger");
             log.DoneSaving += Log_DoneSaving;
             Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
             connection = (IRDAHandler)this.FindResource("Connection");
-            connection.InitWCL();
+            try
+            {
+                connection.InitWCL();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             connection.SetHandlers(log, viewer);
             connection.Connected += Connection_Connected;
             connection.Answered += Connection_Answered;
             UnitProperty.SetConnection(connection);
             MonthModel.Perent = newschdularselectionview.Model;
-            answers = new AnswerHandler(log, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
+            answers = new AnswerHandler(log, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
             answers.allAnswersProssed += Answers_allAnswersProssed;
             this.DataContext = viewer;
             fileloadview.Model.SetContainer(this.MainContainer);
@@ -49,15 +56,18 @@ namespace Dynadimmer
             newschdularselectionview.Model.SetContainer(this.MainContainer);
             fileloadview.Model.WinVisibilityChanged += Model_WinVisibilityChanged;
             datetimeview.Visibility = viewer.UnitTimeVisibility;
+            unitidview.Visibility = viewer.UnitIDVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
             configview.Model.GotData += ConfigModel_GotData;
-            connection.CheckStatus();
+            viewer.WindowEnable = true;
+            if (connection.IsInit)
+                connection.CheckStatus();
         }
 
         private void Model_ClickDownload(object sender, byte e)
         {
-            action = new DownloadAllAction(this.MainContainer.GetLampsModels(), e,configview.Model, newschdularselectionview.Model);
+            action = new DownloadAllAction(this.MainContainer.GetLampsModels(), e, configview.Model, newschdularselectionview.Model);
         }
 
         private void Model_WinVisibilityChanged(object sender, Visibility e)
@@ -65,20 +75,30 @@ namespace Dynadimmer
             if (e == Visibility.Collapsed)
             {
                 viewer.ConfigChecked = true;
+                unitidview.Visibility = viewer.UnitIDVisibility;
                 datetimeview.Visibility = viewer.UnitTimeVisibility;
                 summerwinterview.Visibility = viewer.SummerWinterVisibility;
                 configview.Visibility = viewer.ConfigVisibility;
                 newschdularselectionview.Visibility = Visibility.Collapsed;
+                configview.IsEnabled = connection.IsConnected;
+                MainContainer.IsEnabled = connection.IsConnected;
+                summerwinterview.IsEnabled = connection.IsConnected;
+                datetimeview.IsEnabled = connection.IsConnected;
+                unitidview.IsEnabled = connection.IsConnected;
+                newschdularselectionview.IsEnabled = connection.IsConnected;
                 MainContainer.Model.FromFile = false;
                 if (connection.IsConnected)
+                {
                     action = new StartAction(configview.Model);
+                }
             }
             else
             {
-                newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
+                datetimeview.Visibility = newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
                 MainContainer.IsEnabled = true;
                 MainContainer.Model.FromFile = true;
             }
+            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
         }
 
         private void Answers_allAnswersProssed(object sender, EventArgs e)
@@ -86,6 +106,10 @@ namespace Dynadimmer
             if (action != null)
             {
                 action.Next();
+                if (!connection.IsConnected)
+                {
+                    action.Stop();
+                }
                 if (!action.AllDone)
                 {
                     action.DoAction();
@@ -114,12 +138,17 @@ namespace Dynadimmer
 
         private void Connection_Connected(object sender, bool e)
         {
-            configview.IsEnabled = e;
-            MainContainer.IsEnabled = e;
-            summerwinterview.IsEnabled = e;
-            datetimeview.IsEnabled = e;
-            newschdularselectionview.IsEnabled = e;
-            if (fileloadview.Model.WinVisibility != Visibility.Visible)
+            if (!MainContainer.Model.FromFile)
+            {
+                configview.IsEnabled = e;
+                MainContainer.IsEnabled = e;
+                summerwinterview.IsEnabled = e;
+                datetimeview.IsEnabled = e;
+                unitidview.IsEnabled = e;
+                newschdularselectionview.IsEnabled = e;
+            }
+            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
+            if (fileloadview.Model.WinVisibility != Visibility.Visible && e)
                 action = new StartAction(configview.Model);
         }
 
@@ -152,6 +181,7 @@ namespace Dynadimmer
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
+            unitidview.Visibility = viewer.UnitIDVisibility;
         }
 
         private void MenuItem_Save(object sender, RoutedEventArgs e)

@@ -3,6 +3,7 @@ using Dynadimmer.Views.DateTime;
 using Dynadimmer.Views.FileLoad;
 using Dynadimmer.Views.NewSchdularSelection;
 using Dynadimmer.Views.SummerWinnter;
+using Dynadimmer.Views.UnitID;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ namespace Dynadimmer.Models.Messages
         private UnitDateTimeModel UnitDateTime;
         private NewSchedularSelectionModel NewSchedularSelection;
         private UnitSummerWinnterClockModel UnitSummerWinnterClock;
+        private UnitIDModel UnitID;
         private LogHandler Log;
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
@@ -43,6 +45,8 @@ namespace Dynadimmer.Models.Messages
                     NewSchedularSelection = (NewSchedularSelectionModel)prop;
                 else if (prop is UnitSummerWinnterClockModel)
                     UnitSummerWinnterClock = (UnitSummerWinnterClockModel)prop;
+                else if (prop is UnitIDModel)
+                    UnitID = (UnitIDModel)prop;
             }
         }
 
@@ -91,6 +95,9 @@ namespace Dynadimmer.Models.Messages
             item.Info = "Recived ";
             switch (item.Header)
             {
+                case UnitIDModel.Header:
+                    item.Info += UnitID.GotAnswer(item);
+                    break;
                 case ConfigModel.Header:
                     item.Info += Config.GotAnswer(item);
                     break;
@@ -137,6 +144,7 @@ namespace Dynadimmer.Models.Messages
             switch (mess.DecimalData[5])
             {
                 case 0:
+                    NewSchedularSelection.GotDownloadAnswer(mess);
                     color = Brushes.Green;
                     str = "Changes in " + title + " saved.";
                     break;

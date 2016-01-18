@@ -21,9 +21,9 @@
         </ControlTemplate>
     </UserControl.Resources>
     <Border Padding="5" Margin="5" BorderThickness="3" Background="#F0F0F0">
-        <StackPanel Background="Yellow" >
+        <StackPanel Background="LightBlue" >
             <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,5">
-                <TextBlock  Text="{Binding MonthString}" TextAlignment="Center" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
+                <TextBlock  Text="{Binding Title}" TextAlignment="Center" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
                 <TextBlock Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
             </WrapPanel>
             <Grid Background="#efefef">

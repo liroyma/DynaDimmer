@@ -79,6 +79,13 @@ namespace Dynadimmer.Models
 
         public abstract void BeforeNext();
         public abstract string BeforeDone();
+
+        internal void Stop()
+        {
+            Counter = 0;
+            AllDone = true;
+            Log.AddMessage(new NotificationMessage("Unable to complete the process.", Brushes.Red));
+        }
     }
 
 }

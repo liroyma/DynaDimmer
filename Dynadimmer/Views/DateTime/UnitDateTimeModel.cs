@@ -72,14 +72,15 @@ namespace Dynadimmer.Views.DateTime
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(SendMessageType.Upalod,Header);
+            CreateAndSendMessage(SendMessageType.Upload,Header);
         }
 
         public override string GotAnswer(IncomeMessage messase)
         {
             byte[] data = messase.DecimalData;
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[3], data[4], data[5], data[6], data[7], data[8]);
-            System.DateTime date = System.DateTime.Parse(dateString);
+            System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
+            System.DateTime date = System.DateTime.Parse(dateString,cultureinfo);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             base.SetView();
             return Title;

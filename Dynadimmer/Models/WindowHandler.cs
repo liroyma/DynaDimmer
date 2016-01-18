@@ -7,10 +7,21 @@ using System.Windows;
 
 namespace Dynadimmer.Models
 {
-    public class WindowHandler: MyUIHandler
+    public class WindowHandler : MyUIHandler
     {
-        public string AppVersion { get; private set; }
-        public string AppTitle { get; private set; }
+        private const string _AppName = "Menorah Programmable Dimmer";
+
+        private int _RemoteID;
+        public int RemoteID
+        {
+            get { return _RemoteID; }
+            set
+            {
+                _RemoteID = value;
+                AppTitle = string.Format("{0} {1} - Remote ID: {2}", _AppName, AppVersion, RemoteID);
+                NotifyPropertyChanged("RemoteID");
+            }
+        }
 
         private WindowState _windowState;
         public System.Windows.WindowState WindowState
@@ -25,6 +36,40 @@ namespace Dynadimmer.Models
             }
         }
 
+        private string _AppTitle;
+        public string AppTitle
+        {
+            get { return _AppTitle; }
+            set
+            {
+                _AppTitle = value;
+                NotifyPropertyChanged("AppTitle");
+            }
+        }
+
+        private string _AppVersion;
+        public string AppVersion
+        {
+            get { return _AppVersion; }
+            set
+            {
+                _AppVersion = value;
+                AppTitle = string.Format("{0} {1} {2}", _AppName, AppVersion, RemoteID);
+                NotifyPropertyChanged("AppVersion");
+            }
+        }
+
+        private bool isconnectedandnotfromfile;
+        public bool IsConnectedAndNotFromFile
+        {
+            get { return isconnectedandnotfromfile; }
+            set
+            {
+                isconnectedandnotfromfile = value;
+                NotifyPropertyChanged("IsConnectedAndNotFromFile");
+            }
+        }
+
         private bool windowenable;
         public bool WindowEnable
         {
@@ -35,7 +80,25 @@ namespace Dynadimmer.Models
                 NotifyPropertyChanged("WindowEnable");
             }
         }
-        
+
+        private bool _UnitIDChecked;
+        public bool UnitIDChecked
+        {
+            get { return _UnitIDChecked; }
+            set
+            {
+                _UnitIDChecked = value;
+                UnitIDVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                if (value)
+                {
+                    SummerWinterChecked = false;
+                    ConfigChecked = false;
+                    UnitClockChecked = false;
+                }
+                NotifyPropertyChanged("UnitIDChecked");
+            }
+        }
+
         private bool _UnitClockChecked;
         public bool UnitClockChecked
         {
@@ -48,6 +111,7 @@ namespace Dynadimmer.Models
                 {
                     SummerWinterChecked = false;
                     ConfigChecked = false;
+                    UnitIDChecked = false;
                 }
                 NotifyPropertyChanged("UnitClockChecked");
             }
@@ -65,6 +129,7 @@ namespace Dynadimmer.Models
                 {
                     UnitClockChecked = false;
                     ConfigChecked = false;
+                    UnitIDChecked = false;
                 }
                 NotifyPropertyChanged("SummerWinterChecked");
             }
@@ -82,10 +147,23 @@ namespace Dynadimmer.Models
                 {
                     UnitClockChecked = false;
                     SummerWinterChecked = false;
+                    UnitIDChecked = false;
                 }
                 NotifyPropertyChanged("ConfigChecked");
             }
         }
+
+        private Visibility _UnitIDVisibility;
+        public Visibility UnitIDVisibility
+        {
+            get { return _UnitIDVisibility; }
+            set
+            {
+                _UnitIDVisibility = value;
+                NotifyPropertyChanged("UnitIDVisibility");
+            }
+        }
+
 
         private Visibility _UnitTimeVisibility;
         public Visibility UnitTimeVisibility
@@ -122,12 +200,12 @@ namespace Dynadimmer.Models
 
         public WindowHandler()
         {
+            RemoteID = 1234;
             ConfigChecked = true;
             WindowState = Properties.Settings.Default.WindowState;
-            AppTitle = "Menorah Programmable Dimmer";
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                AppTitle += "  - V" + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+                AppVersion = "V" + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
             }
         }
     }

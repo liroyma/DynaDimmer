@@ -62,7 +62,7 @@ namespace Dynadimmer.Views.SummerWinnter
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(SendMessageType.Upalod, Header);
+            CreateAndSendMessage(SendMessageType.Upload, Header);
         }
 
         public override string GotAnswer(IncomeMessage messase)
@@ -70,8 +70,9 @@ namespace Dynadimmer.Views.SummerWinnter
             byte[] data = messase.DecimalData;
             string dateString1 = String.Format("{0}/{1}/{2}", data[2], data[3], System.DateTime.Now.Year);
             string dateString2 = String.Format("{0}/{1}/{2}", data[5], data[6], System.DateTime.Now.Year);
-            SummerDate = System.DateTime.Parse(dateString1);
-            WinterDate = System.DateTime.Parse(dateString2);
+            System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
+            SummerDate = System.DateTime.Parse(dateString1,cultureinfo);
+            WinterDate = System.DateTime.Parse(dateString2,cultureinfo);
             base.SetView();
             return Title;
         }

@@ -88,6 +88,10 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 else
                 {
                     item.isConfig = false;
+                    foreach (MonthModel month in item.GetMonths())
+                    {
+                        month.ItemVisablility = Visibility.Collapsed;
+                    }
                 }
             }
             if (LampsList.Count == 0)
@@ -115,6 +119,17 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         }
 
+        public void GotDownloadAnswer(IncomeMessage messase)
+        {
+            byte[] data = messase.DecimalData;
+            if (data[5] == 0)
+            {
+                LampView templamp = Container.FindLamp(data[3]);
+                MonthView tempmonth = templamp.FindMonth((Month)data[4]);
+                tempmonth.Model.ItemUpdated = false;
+            }
+        }
+
         public override void SendDownLoad(object sender)
         {
             if (sender is MonthModel)
@@ -130,7 +145,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         public override void SendUpload(object sender)
         {
             if (sender is byte[])
-                CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, (byte[])sender);
+                CreateAndSendMessage(SendMessageType.Upload, UploadHeader, (byte[])sender);
               else if (sender is LampModel)
                   StartAll((LampModel)sender);
             else
@@ -138,8 +153,16 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 LampView templamp = Container.FindLamp(SelectedLamp);
                 MonthView tempmonth = templamp.FindMonth(SelectedMonth);
                 Title = tempmonth.Model.Title;
-                CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, tempmonth.Model.GetUploadData());
+                CreateAndSendMessage(SendMessageType.Upload, UploadHeader, tempmonth.Model.GetUploadData());
             }
+        }
+
+        internal void SetDownloadData(byte v)
+        {
+        }
+
+        internal void SetDownloadData()
+        {
         }
 
         public override void SaveData(System.Xml.XmlWriter writer, object extra)
@@ -167,7 +190,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         private void StartAll(LampModel lamp)
         {
             Title = lamp.Name + " - All";
-            CreateAndSendMessage(SendMessageType.Upalod, UploadHeader, new byte[] { (byte)lamp.Index, 13 });
+            CreateAndSendMessage(SendMessageType.Upload, UploadHeader, new byte[] { (byte)lamp.Index, 13 });
         }
 
         public void Copy(MonthModel model)

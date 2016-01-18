@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Dynadimmer.Views.UnitID.UnitIDView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dynadimmer.Views.UnitID"
+             mc:Ignorable="d" Background="#efefef">
+    <GroupBox Header="Summer Winter Clock" Margin="10" Padding="10" BorderBrush="Black">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35"></RowDefinition>
+                <RowDefinition Height="35"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"></ColumnDefinition>
+                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="Auto" ></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Unit ID:"></TextBlock>
+            <TextBox TextAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="1"/>
+            <Button Grid.Column="1" Grid.Row="1"  Content="Upload" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
+            <Button Grid.Column="2" Grid.Row="1" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
+        </Grid>
+    </GroupBox>
+</UserControl>

@@ -12,14 +12,14 @@ namespace Dynadimmer.Models
 {
     public class IRDAHandler : MyUIHandler
     {
+        public bool IsInit { get; private set; }
+
         public IRDAHandler()
         {
             Connect = new MyCommand();
             Connect.CommandSent += Connect_CommandSent;
-            ConnectionTimer.Tick += t_Elapsed;
-            ConnectionTimer.Interval = TimeSpan.FromMilliseconds(5000);
             FillAnswerTimer.Tick += FillAnswerTimer_Elapsed;
-            FillAnswerTimer.Interval = TimeSpan.FromMilliseconds(500);
+            FillAnswerTimer.Interval = TimeSpan.FromMilliseconds(1200);
 
         }
 
@@ -31,9 +31,9 @@ namespace Dynadimmer.Models
                 _wclClient = new wclClient();
                 _wclIrDADiscovery = new wclIrDADiscovery();
 
-                _wclAPI.AfterLoad += new EventHandler(AfterLoad);
-                _wclAPI.AfterUnload += new EventHandler(AfterUnload);
-                _wclAPI.OnChanged += new EventHandler(OnChanged);
+                /* _wclAPI.AfterLoad += new EventHandler(AfterLoad);
+                 _wclAPI.AfterUnload += new EventHandler(AfterUnload);
+                 _wclAPI.OnChanged += new EventHandler(OnChanged);*/
 
                 _wclIrDADiscovery.OnComplete += new wcl.wclIrDACompleteEventHandler(OnComplete);
                 _wclIrDADiscovery.OnStarted += new System.EventHandler(OnStarted);
@@ -41,11 +41,14 @@ namespace Dynadimmer.Models
                 _wclClient.OnDisconnect += new System.EventHandler(OnDisconnect);
                 _wclClient.OnData += new wcl.wclDataEventHandler(OnData);
                 _wclClient.OnConnect += new wcl.wclConnectEventHandler(OnConnect);
-                _wclClient.ConnectTimeout = 4000;
-            }
-            catch (Exception e)
-            {
+                _wclClient.ConnectTimeout = 60000;
 
+                _wclAPI.Load();
+                IsInit = true;
+            }
+            catch
+            {
+                IsInit = false;
             }
         }
 
@@ -69,7 +72,7 @@ namespace Dynadimmer.Models
         List<wclIrDADevice> Devices;
 
         List<byte> answer = new List<byte>();
-        DispatcherTimer ConnectionTimer = new DispatcherTimer();
+        // DispatcherTimer ConnectionTimer = new DispatcherTimer();
         DispatcherTimer FillAnswerTimer = new DispatcherTimer();
         #endregion
 
@@ -177,7 +180,6 @@ namespace Dynadimmer.Models
         #region Client
         private void OnConnect(object sender, wclConnectEventArgs e)
         {
-            ConnectionTimer.Stop();
             if (e.Error != wcl.wclErrors.WCL_E_SUCCESS)
             {
                 IsConnected = false;
@@ -212,7 +214,6 @@ namespace Dynadimmer.Models
 
         private void OnComplete(object sender, wclIrDACompleteEventArgs e)
         {
-            ConnectionTimer.Stop();
             if (e.Devices == null)
             {
                 Log.AddMessage(new ConnectionMessage("Complete with error!", Brushes.Red));
@@ -230,9 +231,8 @@ namespace Dynadimmer.Models
             }
             Log.AddMessage(new ConnectionMessage("Connecting..."));
             _wclClient.IrDAParams.Address = Devices[0].Address;
-            _wclClient.Transport = wcl.wclTransport.trIrDA;
-
-            wcl.wclErrors.wclShowError(_wclClient.Connect()).ToString();
+            _wclClient.Transport = wclTransport.trIrDA;
+            wclErrors.wclShowError(_wclClient.Connect()).ToString();
         }
         #endregion
 
@@ -263,52 +263,25 @@ namespace Dynadimmer.Models
 
         private void Connect_CommandSent(object sender, EventArgs e)
         {
-            CheckStatus();
+            if (IsInit)
+                CheckStatus();
         }
 
         public void CheckStatus()
         {
             if (_wclClient == null)
                 return;
-            if (_wclClient.State == wclClientState.csConnecting)
-            {
-                _wclClient.Disconnect();
-            }
-            else if (_wclClient.State == wclClientState.csConnected)
+            if (_wclClient.State == wclClientState.csConnecting || _wclClient.State == wclClientState.csConnected)
             {
                 _wclClient.Disconnect();
             }
             else
             {
-                TryToConnect();
+                IsConnected = false;
+                string x = wclErrors.wclGetErrorMessage(_wclIrDADiscovery.Discovery());
+                if(x != String.Empty) Log.AddMessage(new ConnectionMessage("USB is not connected", Brushes.Red));
+                // Log.AddMessage(new ConnectionMessage(x,Brushes.Red));
             }
-        }
-
-        private void TryToConnect()
-        {
-            ConnectionTimer.Start();
-            Log.AddMessage(new ConnectionMessage("Connecting..."));
-            if (_wclAPI.Active)
-            {
-                if (_wclIrDADiscovery.Active)
-                {
-                    _wclClient.Connect();
-                }
-                else
-                {
-                    _wclIrDADiscovery.Discovery();
-                }
-            }
-            else
-            {
-                _wclAPI.Load();
-            }
-        }
-
-        private void t_Elapsed(object sender, EventArgs e)
-        {
-            ConnectionTimer.Stop();
-            Log.AddMessage(new ConnectionMessage("Failed to connect.", Brushes.Red));
         }
 
         public void Dispose()
@@ -324,13 +297,4 @@ namespace Dynadimmer.Models
         #endregion
 
     }
-
-    /*  public class ListEventArgs : EventArgs
-      {
-          public  Data { get; set; }
-          public ListEventArgs(List<GaneralMessage> data)
-          {
-              Data = data;
-          }
-      }*/
 }

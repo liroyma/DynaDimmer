@@ -21,9 +21,17 @@
             <TextBlock Padding="5" Grid.ColumnSpan="3" Grid.Row="0" Grid.Column="1" TextAlignment="Left" VerticalAlignment="Center" Text="{Binding UnitTime}" Margin="0,5"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Number Of Lamps:"></TextBlock>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UnitLampCount}" Margin="0,5" HorizontalContentAlignment="Center"></TextBox>
+            <TextBox Margin="2,5" HorizontalContentAlignment="Center" Grid.Row="1" Grid.Column="1" Validation.Error="TextBox_Error" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}">
+                <TextBox.Text>
+                    <Binding Path="UnitLampCount" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                        <Binding.ValidationRules>
+                            <local:NonEmptyStringValidationRule  ValidatesOnTargetUpdated="True"  />
+                        </Binding.ValidationRules>
+                    </Binding>
+                </TextBox.Text>
+            </TextBox>
             <Button Grid.Row="1" Grid.Column="2" Content="Upload" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
-            <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
+            <Button Grid.Row="1" Grid.Column="3" IsEnabled="{Binding IsLoadedAndValid}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
         </Grid>
     </GroupBox>
 </UserControl>

@@ -31,10 +31,7 @@ namespace Dynadimmer.Views.MonthItem
         private const int STARTHOUR = 15;
         private const int STARTMINUTE = 00;
 
-
-
         bool addorremove = false;
-
 
         #region Commands
         public MyCommand Upload { get; set; }
