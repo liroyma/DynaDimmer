@@ -23,8 +23,8 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="80"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Margin="5"></TextBox>
-                <Button Grid.Column="1" Margin="5" Content="Browse..."></Button>
+                <TextBox Text="{Binding FilesPath}" Grid.Column="0" Margin="5"></TextBox>
+                <Button Command="{Binding Browse}" Grid.Column="1" Margin="5" Content="Browse..."></Button>
             </Grid>
         </GroupBox>
         <GroupBox  BorderBrush="Black" Margin="5" Padding="5" Header="Hours" Grid.Row="2" Grid.Column="1">

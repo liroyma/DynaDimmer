@@ -94,5 +94,17 @@ namespace Dynadimmer.Properties {
                 this["LastPrice"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FilesPath {
+            get {
+                return ((string)(this["FilesPath"]));
+            }
+            set {
+                this["FilesPath"] = value;
+            }
+        }
     }
 }

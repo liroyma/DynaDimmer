@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 
 namespace Dynadimmer.Views.Setttings
 {
@@ -132,12 +133,12 @@ namespace Dynadimmer.Views.Setttings
 
         #endregion
 
-
         #region Commands
         public MyCommand Remove { get; set; }
         public MyCommand Add { get; set; }
         public MyCommand Save { get; set; }
         public MyCommand Close { get; set; }
+        public MyCommand Browse { get; set; }
 
         private void Close_CommandSent(object sender, EventArgs e)
         {
@@ -150,9 +151,8 @@ namespace Dynadimmer.Views.Setttings
         private void Save_CommandSent(object sender, EventArgs e)
         {
             Properties.Settings.Default.HoursList = String.Join(";", HoursList.ToArray());
-            Properties.Settings.Default.Save();
-
             Properties.Settings.Default.PricesList = String.Join(";", PriceList.ToArray());
+            Properties.Settings.Default.FilesPath = FilesPath;
             Properties.Settings.Default.Save();
         }
 
@@ -198,14 +198,33 @@ namespace Dynadimmer.Views.Setttings
                     break;
             }
         }
-
         
+        private void Browse_CommandSent(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            DialogResult result = folderBrowserDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+                FilesPath = folderBrowserDialog1.SelectedPath;
+        }
         #endregion
+
+        private string _filespath;
+        public string FilesPath
+        {
+            get { return _filespath; }
+            set
+            {
+                _filespath = value;
+                NotifyPropertyChanged("FilesPath");
+            }
+        }
 
         public AppSettingsModel()
         {
             Save = new MyCommand();
             Save.CommandSent += Save_CommandSent;
+            Browse = new MyCommand();
+            Browse.CommandSent += Browse_CommandSent;
             Close = new MyCommand();
             Close.CommandSent += Close_CommandSent;
             Add = new MyCommand();
@@ -220,6 +239,9 @@ namespace Dynadimmer.Views.Setttings
 
         private void ReadFromSettings()
         {
+            FilesPath  = Properties.Settings.Default.FilesPath;
+            if(FilesPath==string.Empty)
+                FilesPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string hoursstring = Properties.Settings.Default.HoursList;
             if (hoursstring != string.Empty)
             {

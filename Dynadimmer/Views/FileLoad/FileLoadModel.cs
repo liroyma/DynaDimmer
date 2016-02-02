@@ -141,6 +141,7 @@ namespace Dynadimmer.Views.FileLoad
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
 
             dlg.Filter = "Dimmer documents (.dxml)|*.dxml";
+            dlg.InitialDirectory = Properties.Settings.Default.FilesPath;
 
             if (dlg.ShowDialog() != true)
                 return;

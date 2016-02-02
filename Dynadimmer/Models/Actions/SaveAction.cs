@@ -40,6 +40,7 @@ namespace Dynadimmer.Models
             if (Save)
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.InitialDirectory = Properties.Settings.Default.FilesPath;
                 saveFileDialog.Filter = "Dimmer documents (.dxml)|*.dxml";
                 if (saveFileDialog.ShowDialog() != true)
                     return;
