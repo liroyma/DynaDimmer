@@ -21,7 +21,7 @@ namespace Dynadimmer.Views.FileLoad
 
 
         public event EventHandler<Visibility> WinVisibilityChanged;
-        
+
         private MainContainerView Container;
 
         private Visibility isvisibility;
@@ -36,6 +36,19 @@ namespace Dynadimmer.Views.FileLoad
                 NotifyPropertyChanged("WinVisibility");
             }
         }
+
+
+        private bool _downLoadenable;
+        public bool DownLoadEnable
+        {
+            get { return _downLoadenable; }
+            set
+            {
+                _downLoadenable = value;
+                NotifyPropertyChanged("DownLoadEnable");
+            }
+        }
+
 
         private string _FilePath;
         public string FilePath
@@ -140,31 +153,32 @@ namespace Dynadimmer.Views.FileLoad
             Container.Reset();
 
             XmlNodeList ConfigutarionNodes = doc.DocumentElement.SelectNodes("/Dimmer/Configutarion");
-            XmlNodeList LampNodes = doc.DocumentElement.SelectNodes("/Dimmer/Lamp");
             UnitLampCount = int.Parse(ConfigutarionNodes.Item(0).Attributes["LampCount"].Value);
             Container.Model.LampCount = UnitLampCount;
-
-
             for (int i = 0; i < Container.GetLampsModels().Count; i++)
             {
                 Container.GetLampsModels()[i].isConfig = i < UnitLampCount;
             }
 
+            XmlNodeList LampNodes = doc.DocumentElement.SelectNodes("/Dimmer/Lamp");
             foreach (XmlNode lampitem in LampNodes)
             {
                 int z = int.Parse(lampitem.Attributes["LampIndex"].Value);
                 LampView templamp = Container.FindLamp(z);
+                templamp.Model.LampPower = int.Parse(lampitem.Attributes["LampPower"].Value);
                 foreach (XmlNode monthitem in lampitem.ChildNodes)
                 {
                     Month month = (Month)Enum.Parse(typeof(Month), monthitem.Attributes["Month"].Value);
                     MonthView tempmonth = templamp.FindMonth(month);
                     tempmonth.Model.SetTimes(monthitem.ChildNodes);
-                    tempmonth.Model.itemchanged += sadkjlad;
+                    tempmonth.Model.itemchanged += MonthItem_Changd;
                 }
             }
+            Container.Model.Lamp1Power = Container.FindLamp(0).Model.isConfig ? Container.FindLamp(0).Model.LampPower : 0;
+            Container.Model.Lamp2Power = Container.FindLamp(1).Model.isConfig ? Container.FindLamp(1).Model.LampPower : 0;
         }
 
-        private void sadkjlad(object sender, EventArgs e)
+        private void MonthItem_Changd(object sender, EventArgs e)
         {
             MadeChanges = true;
         }

@@ -24,7 +24,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         public const int DownloadHeader = 11;
 
         MainContainerView Container;
-        
+
         public List<LampTime> CopiedList { get; private set; }
 
         public Month[] MonthsList { get; set; }
@@ -75,46 +75,16 @@ namespace Dynadimmer.Views.NewSchdularSelection
             Container = container;
         }
 
-        public void SetNumberOfLamps(int unitLampCount)
-        {
-            LampsList.Clear();
-            foreach (LampModel item in Container.GetLampsModels())
-            {
-                if (item.Index < unitLampCount)
-                {
-                    item.isConfig = true;
-                    LampsList.Add(item);
-                }
-                else
-                {
-                    item.isConfig = false;
-                    foreach (MonthModel month in item.GetMonths())
-                    {
-                        month.ItemVisablility = Visibility.Collapsed;
-                    }
-                }
-            }
-            if (LampsList.Count == 0)
-            {
-                WinVisibility = Visibility.Collapsed;
-            }
-            else
-            {
-                SelectedLamp = LampsList[0];
-                WinVisibility = Visibility.Visible;
-            }
-        }
-
         public override void DidntGotAnswer()
         {
         }
 
         public override string GotAnswer(IncomeMessage messase)
         {
-            byte[] data = messase.DecimalData;
-            LampView templamp = Container.FindLamp(data[2]);
-            MonthView tempmonth = templamp.FindMonth((Month)data[3]);
-            tempmonth.Model.SetData(data);
+            byte[] data = messase.OnlyData;
+            LampView templamp = Container.FindLamp(data[0]);
+            MonthView tempmonth = templamp.FindMonth((Month)data[1]);
+            tempmonth.Model.SetData(data.ToList());
             return tempmonth.Model.Title;
 
         }
@@ -146,8 +116,8 @@ namespace Dynadimmer.Views.NewSchdularSelection
         {
             if (sender is byte[])
                 CreateAndSendMessage(SendMessageType.Upload, UploadHeader, (byte[])sender);
-              else if (sender is LampModel)
-                  StartAll((LampModel)sender);
+            else if (sender is LampModel)
+                StartAll((LampModel)sender);
             else
             {
                 LampView templamp = Container.FindLamp(SelectedLamp);
@@ -165,26 +135,77 @@ namespace Dynadimmer.Views.NewSchdularSelection
         {
         }
 
+        protected override void OnGotData(Information.UnitInfo info)
+        {
+            IsLoaded = true;
+            base.OnGotData(info);
+        }
+
+        public override void UpdateData(Information.UnitInfo info)
+        {
+            LampsList.Clear();
+            foreach (LampModel item in Container.GetLampsModels())
+            {
+                if (item.Index < info.LampsCount)
+                {
+                    item.isConfig = true;
+                    switch (item.Index)
+                    {
+                        case 0:
+                            item.LampPower = info.Lamp1Power;
+                            break;
+                        case 1:
+                            item.LampPower = info.Lamp2Power;
+                            break;
+                    }
+
+
+                    LampsList.Add(item);
+                }
+                else
+                {
+                    item.isConfig = false;
+                    foreach (MonthModel month in item.GetMonths())
+                    {
+                        month.ItemVisablility = Visibility.Collapsed;
+                    }
+                }
+            }
+            if (LampsList.Count == 0)
+            {
+                WinVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                SelectedLamp = LampsList[0];
+                WinVisibility = Visibility.Visible;
+            }
+        }
+
         public override void SaveData(System.Xml.XmlWriter writer, object extra)
         {
-             LampModel lamp = (LampModel)extra;
-             writer.WriteStartElement("Lamp");
-             writer.WriteAttributeString("LampName", lamp.Name);
-             writer.WriteAttributeString("LampIndex", lamp.Index.ToString());
-             foreach (var item in lamp.GetMonths())
-             {
-                 writer.WriteStartElement("Month");
-                 writer.WriteAttributeString("Month", item.MonthString);
-                 foreach (var time in item.LampTimes)
-                 {
-                     writer.WriteStartElement("Time");
-                     writer.WriteAttributeString("Precentage", time.Precentage.ToString());
-                     writer.WriteAttributeString("Time", time.TimeString);
-                     writer.WriteEndElement();
-                 }
-                 writer.WriteEndElement();
-             }
-             writer.WriteEndElement();
+            LampModel lamp = (LampModel)extra;
+            writer.WriteStartElement("Lamp");
+            writer.WriteAttributeString("LampName", lamp.Name);
+            writer.WriteAttributeString("LampIndex", lamp.Index.ToString());
+            writer.WriteAttributeString("LampPower", lamp.LampPower.ToString());
+            foreach (var item in lamp.GetMonths())
+            {
+                writer.WriteStartElement("Month");
+                writer.WriteAttributeString("Month", item.MonthString);
+                foreach (var time in item.LampTimes)
+                {
+                    writer.WriteStartElement("Time");
+                    writer.WriteAttributeString("Precentage", time.Precentage.ToString());
+                    writer.WriteAttributeString("Time", time.TimeString);
+                    writer.WriteEndElement();
+                }
+                writer.WriteStartElement("EndTime");
+                writer.WriteAttributeString("Time", item.EndTime.TimeString);
+                writer.WriteEndElement();
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
         }
 
         private void StartAll(LampModel lamp)

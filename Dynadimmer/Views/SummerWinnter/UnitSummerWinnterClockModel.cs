@@ -7,6 +7,7 @@ using Dynadimmer.Models;
 using Dynadimmer.Models.Messages;
 using System.Xml;
 using Xceed.Wpf.Toolkit;
+using Dynadimmer.Views.Information;
 
 namespace Dynadimmer.Views.SummerWinnter
 {
@@ -83,6 +84,16 @@ namespace Dynadimmer.Views.SummerWinnter
 
         public override void SaveData(System.Xml.XmlWriter writer, object extra)
         {
+        }
+
+        public override void UpdateData(UnitInfo info)
+        {
+        }
+
+        protected override void OnGotData(UnitInfo info)
+        {
+            IsLoaded = true;
+            base.OnGotData(info);
         }
     }
 }

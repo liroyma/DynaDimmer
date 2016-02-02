@@ -20,8 +20,9 @@ namespace Dynadimmer.Models.Actions
             return "";
         }
 
-        public override void BeforeNext()
+        public override bool BeforeNext()
         {
+            return Upload[Counter].IsLoaded;
         }
     }
 }

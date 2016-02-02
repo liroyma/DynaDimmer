@@ -32,6 +32,18 @@ namespace Dynadimmer.Views.Config
         private void TextBox_Error(object sender, ValidationErrorEventArgs e)
         {
             Model.IsValid = false;
+            switch(((TextBox)sender).Uid)
+            {
+                case "count":
+                    Model.CountValid = false;
+                    break;
+                case "lamp1":
+                    Model.Lamp1Valid = false;
+                    break;
+                case "lamp2":
+                    Model.Lamp2Valid = false;
+                    break;
+            }
         }
     }
 }

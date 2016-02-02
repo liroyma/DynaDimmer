@@ -12,19 +12,18 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dynadimmer.Models;
 
-namespace Dynadimmer.Views.DateTime
+namespace Dynadimmer.Views.Information
 {
     /// <summary>
-    /// Interaction logic for UnitDateTime.xaml
+    /// Interaction logic for InformationView.xaml
     /// </summary>
-    public partial class UnitDateTime : UserControl
+    public partial class InformationView : UserControl
     {
-        public UnitDateTimeModel Model { get; private set; }
-        public UnitDateTime()
+        public InformationModel Model { get; set; }
+        public InformationView()
         {
-            Model = new UnitDateTimeModel();
+            Model = new InformationModel();
             InitializeComponent();
             this.DataContext = Model;
         }

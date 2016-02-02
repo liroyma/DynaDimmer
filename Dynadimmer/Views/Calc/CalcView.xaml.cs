@@ -12,21 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dynadimmer.Models;
 
-namespace Dynadimmer.Views.DateTime
+namespace Dynadimmer.Views.Calc
 {
     /// <summary>
-    /// Interaction logic for UnitDateTime.xaml
+    /// Interaction logic for CalcView.xaml
     /// </summary>
-    public partial class UnitDateTime : UserControl
+    public partial class CalcView : UserControl
     {
-        public UnitDateTimeModel Model { get; private set; }
-        public UnitDateTime()
+        public CalcModel Model { get; private set; }
+        public CalcView()
         {
-            Model = new UnitDateTimeModel();
+            Model = new CalcModel();
             InitializeComponent();
             this.DataContext = Model;
+            //Model.SetLampListAndCalc(list);
         }
     }
 }

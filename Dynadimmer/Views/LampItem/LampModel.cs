@@ -39,6 +39,28 @@ namespace Dynadimmer.Views.LampItem
         public int Index { get; private set; }
         public bool isConfig { get; set; }
 
+        private int _lamppower;
+        public int LampPower
+        {
+            get { return _lamppower; }
+            set
+            {
+                _lamppower = value;
+                NotifyPropertyChanged("LampPower");
+            }
+        }
+
+        private bool _allloaded;
+        public bool AllLoaded
+        {
+            get { return _allloaded; }
+            set
+            {
+                _allloaded = value;
+                NotifyPropertyChanged("AllLoaded");
+            }
+        }
+
         List<MonthModel> months;
         
         public LampModel()
@@ -66,10 +88,24 @@ namespace Dynadimmer.Views.LampItem
                 if (item is MonthView)
                 {
                     months.Add(((MonthView)item).Model);
+                    ((MonthView)item).Model.Loaded += Model_Loaded;
                 }
             }
         }
-        
+
+        private void Model_Loaded(object sender, EventArgs e)
+        {
+            foreach (var item in months)
+            {
+                if (!item.IsLoaded)
+                {
+                    AllLoaded = false;
+                    return;
+                }
+            }
+            AllLoaded = true;
+        }
+
         internal List<MonthModel> GetMonths()
         {
             return months;

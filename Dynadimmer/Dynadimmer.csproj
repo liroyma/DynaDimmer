@@ -33,7 +33,7 @@
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>27</ApplicationRevision>
+    <ApplicationRevision>35</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -179,6 +179,13 @@
     <Compile Include="Models\Actions\SaveAction.cs" />
     <Compile Include="Models\UnitProperty.cs" />
     <Compile Include="Models\WindowHandler.cs" />
+    <Compile Include="Views\Calc\CalcModel.cs" />
+    <Compile Include="Views\Calc\CalcView.xaml.cs">
+      <DependentUpon>CalcView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Calc\CalcWindow.xaml.cs">
+      <DependentUpon>CalcWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Config\ConfigModel.cs" />
     <Compile Include="Views\Config\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
@@ -190,6 +197,10 @@
     <Compile Include="Views\FileLoad\FileLoadModel.cs" />
     <Compile Include="Views\FileLoad\FileLoadView.xaml.cs">
       <DependentUpon>FileLoadView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Information\InformationModel.cs" />
+    <Compile Include="Views\Information\InformationView.xaml.cs">
+      <DependentUpon>InformationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LampItem\LampModel.cs" />
     <Compile Include="Views\LampItem\LampView.xaml.cs">
@@ -211,6 +222,10 @@
       <DependentUpon>BarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\LampTime.cs" />
+    <Compile Include="Views\Setttings\AppSettings.xaml.cs">
+      <DependentUpon>AppSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Setttings\AppSettingsModel.cs" />
     <Compile Include="Views\SummerWinnter\UnitSummerWinnterClock.xaml.cs">
       <DependentUpon>UnitSummerWinnterClock.xaml</DependentUpon>
     </Compile>
@@ -231,6 +246,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Calc\CalcView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Calc\CalcWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Config\ConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -240,6 +263,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FileLoad\FileLoadView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Information\InformationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -260,6 +287,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Schedulers\BarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Setttings\AppSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

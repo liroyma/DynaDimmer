@@ -1,7 +1,9 @@
-﻿using Dynadimmer.Views.NewSchdularSelection;
+﻿using Dynadimmer.Views.Information;
+using Dynadimmer.Views.NewSchdularSelection;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,10 +16,12 @@ namespace Dynadimmer.Models
     {
         XmlWriter writer;
         bool Save;
+        string filename;
+        uint unitid;
 
         public SaveAction(params UnitProperty[] controls) : base(controls)
         {
-            System.Windows.MessageBoxResult result = MessageBox.Show("Do you whans to save?","",
+            System.Windows.MessageBoxResult result = MessageBox.Show("Do you want to save?","Save to file",
                 button:System.Windows.MessageBoxButton.YesNoCancel,
                 icon:System.Windows.MessageBoxImage.Question,
                 defaultResult:System.Windows.MessageBoxResult.Cancel);
@@ -39,21 +43,29 @@ namespace Dynadimmer.Models
                 saveFileDialog.Filter = "Dimmer documents (.dxml)|*.dxml";
                 if (saveFileDialog.ShowDialog() != true)
                     return;
+                if (File.Exists(saveFileDialog.FileName))
+                    File.Delete(saveFileDialog.FileName);
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.Indent = true;
-                writer = XmlWriter.Create(saveFileDialog.FileName, settings);
+                filename = saveFileDialog.FileName.Split('.')[0];
+                writer = XmlWriter.Create(filename, settings);
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Dimmer");
             }
             Start();
         }
 
-        public override void BeforeNext()
+        public override bool BeforeNext()
         {
             if (Save)
+            {
                 Upload[Counter].SaveData(writer, Extra[Counter]);
-        }
+                if (Upload[Counter] is InformationModel)
+                    unitid = ((InformationModel)Upload[Counter]).Info.UnitID;
+            }
+            return true;
 
+        }
         public override string BeforeDone()
         {
             if (Save)
@@ -62,6 +74,7 @@ namespace Dynadimmer.Models
                 writer.WriteEndDocument();
                 writer.Close();
                 writer.Dispose();
+                File.Move(filename, Path.ChangeExtension(filename, "."+unitid+".dxml"));
                 return "All Data Save to File";
             }
             return "All Data Loaded";

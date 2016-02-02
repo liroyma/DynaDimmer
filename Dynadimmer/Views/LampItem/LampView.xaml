@@ -7,21 +7,24 @@
              mc:Ignorable="d" d:DesignWidth="600" Visibility="{Binding ItemVisibility}">
     <GroupBox Padding="10">
         <GroupBox.Header>
-            <TextBlock Text="{Binding Name}"></TextBlock>
+            <WrapPanel>
+                <TextBlock Text="{Binding Name}"></TextBlock>
+                <TextBlock Text="{Binding LampPower,StringFormat= - ({0})}"></TextBlock>
+            </WrapPanel>
         </GroupBox.Header>
-    <StackPanel Name="monthcontainer">
-        <MonthItem:MonthView LampMonth="January" />
-        <MonthItem:MonthView LampMonth="February"/>
-        <MonthItem:MonthView LampMonth="March"/>
-        <MonthItem:MonthView LampMonth="April"/>
-        <MonthItem:MonthView LampMonth="May"/>
-        <MonthItem:MonthView LampMonth="June"/>
-        <MonthItem:MonthView LampMonth="July" />
-        <MonthItem:MonthView LampMonth="August" />
-        <MonthItem:MonthView LampMonth="September" />
-        <MonthItem:MonthView LampMonth="October" />
-        <MonthItem:MonthView LampMonth="November" />
-        <MonthItem:MonthView LampMonth="December" />
+        <StackPanel Name="monthcontainer">
+            <MonthItem:MonthView LampMonth="January" />
+            <MonthItem:MonthView LampMonth="February"/>
+            <MonthItem:MonthView LampMonth="March"/>
+            <MonthItem:MonthView LampMonth="April"/>
+            <MonthItem:MonthView LampMonth="May"/>
+            <MonthItem:MonthView LampMonth="June"/>
+            <MonthItem:MonthView LampMonth="July" />
+            <MonthItem:MonthView LampMonth="August" />
+            <MonthItem:MonthView LampMonth="September" />
+            <MonthItem:MonthView LampMonth="October" />
+            <MonthItem:MonthView LampMonth="November" />
+            <MonthItem:MonthView LampMonth="December" />
         </StackPanel>
     </GroupBox>
 </UserControl>

@@ -1,4 +1,4 @@
-﻿<Window xmlns:UnitID="clr-namespace:Dynadimmer.Views.UnitID"  xmlns:MainContainer="clr-namespace:Dynadimmer.Views.MainContainer"  xmlns:FileLoad="clr-namespace:Dynadimmer.Views.FileLoad"  xmlns:NewSchdularSelection="clr-namespace:Dynadimmer.Views.NewSchdularSelection"  
+﻿<Window xmlns:Information="clr-namespace:Dynadimmer.Views.Information"  xmlns:UnitID="clr-namespace:Dynadimmer.Views.UnitID"  xmlns:MainContainer="clr-namespace:Dynadimmer.Views.MainContainer"  xmlns:FileLoad="clr-namespace:Dynadimmer.Views.FileLoad"  xmlns:NewSchdularSelection="clr-namespace:Dynadimmer.Views.NewSchdularSelection"  
         xmlns:Config="clr-namespace:Dynadimmer.Views.Config"  
         xmlns:DateTime="clr-namespace:Dynadimmer.Views.DateTime"  
         xmlns:SummerWinnter="clr-namespace:Dynadimmer.Views.SummerWinnter"  
@@ -123,11 +123,18 @@
                 <MenuItem Header="_File">
                     <MenuItem IsEnabled="{Binding IsConnectedAndNotFromFile}" Header="_Load From Unit..." Click="MenuItem_Save"></MenuItem>
                     <MenuItem Header="_Load From File..." Click="MenuItem_Load"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem IsCheckable="True" IsChecked="{Binding IsBroadCast}" Header="_Broadcast"/>
+                    <MenuItem Header="_Calc..." Click="MenuItem_Calc"></MenuItem>
+                    <Separator></Separator>
+                    <MenuItem Click="MenuItem_Settings" Header="_Settings"/>
+                    <Separator></Separator>
                     <MenuItem Header="_Exit" Click="ExitButton_Click" ></MenuItem>
                 </MenuItem>
                 <MenuItem Header="_Views">
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitInfoChecked}" Header="_Unit Information"></MenuItem>
                     <Separator></Separator>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
@@ -159,6 +166,7 @@
                     <SummerWinnter:UnitSummerWinnterClock x:Name="summerwinterview" Grid.Column="2"/>
                     <Config:ConfigView x:Name="configview" Grid.Column="2" />
                     <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" Grid.Column="1" />
+                    <Information:InformationView x:Name="infoview" Grid.Column="2"/>
                     <FileLoad:FileLoadView x:Name="fileloadview" Grid.Column="0" />
                 </Grid>
                 <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">

@@ -11,14 +11,38 @@ namespace Dynadimmer.Models
     {
         private const string _AppName = "Menorah Programmable Dimmer";
 
-        private int _RemoteID;
-        public int RemoteID
+        private bool isbroadcast;
+        public bool IsBroadCast
+        {
+            get { return isbroadcast; }
+            set
+            {
+                isbroadcast = value;
+                RemoteIDString = value ? "Broadcast" : RemoteID.ToString();
+                NotifyPropertyChanged("IsBroadCast");
+            }
+        }
+        
+        private uint _RemoteID;
+        public uint RemoteID
         {
             get { return _RemoteID; }
             set
             {
                 _RemoteID = value;
-                AppTitle = string.Format("{0} {1} - Remote ID: {2}", _AppName, AppVersion, RemoteID);
+                RemoteIDString = RemoteID.ToString();
+                NotifyPropertyChanged("RemoteID");
+            }
+        }
+
+        private string _RemoteIDstring;
+        public string RemoteIDString
+        {
+            get { return _RemoteIDstring; }
+            set
+            {
+                _RemoteIDstring = value;
+                AppTitle = string.Format("{0} {1} - Remote ID: {2}", _AppName, AppVersion, RemoteIDString);
                 NotifyPropertyChanged("RemoteID");
             }
         }
@@ -54,7 +78,7 @@ namespace Dynadimmer.Models
             set
             {
                 _AppVersion = value;
-                AppTitle = string.Format("{0} {1} {2}", _AppName, AppVersion, RemoteID);
+                AppTitle = string.Format("{0} {1} {2}", _AppName, AppVersion, RemoteIDString);
                 NotifyPropertyChanged("AppVersion");
             }
         }
@@ -81,6 +105,25 @@ namespace Dynadimmer.Models
             }
         }
 
+        private bool _UnitInfoChecked;
+        public bool UnitInfoChecked
+        {
+            get { return _UnitInfoChecked; }
+            set
+            {
+                _UnitInfoChecked = value;
+                UnitInfoVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                if (value)
+                {
+                    SummerWinterChecked = false;
+                    ConfigChecked = false;
+                    UnitClockChecked = false;
+                    UnitIDChecked = false;
+                }
+                NotifyPropertyChanged("UnitInfoChecked");
+            }
+        }
+
         private bool _UnitIDChecked;
         public bool UnitIDChecked
         {
@@ -94,9 +137,16 @@ namespace Dynadimmer.Models
                     SummerWinterChecked = false;
                     ConfigChecked = false;
                     UnitClockChecked = false;
+                    UnitInfoChecked = false;
                 }
                 NotifyPropertyChanged("UnitIDChecked");
             }
+        }
+
+        internal byte[] GetUnitID()
+        {
+
+            return IsBroadCast ? new byte[] { 255, 255, 255, 255 } : BitConverter.GetBytes(RemoteID).Reverse().ToArray();
         }
 
         private bool _UnitClockChecked;
@@ -112,6 +162,7 @@ namespace Dynadimmer.Models
                     SummerWinterChecked = false;
                     ConfigChecked = false;
                     UnitIDChecked = false;
+                    UnitInfoChecked = false;
                 }
                 NotifyPropertyChanged("UnitClockChecked");
             }
@@ -130,6 +181,7 @@ namespace Dynadimmer.Models
                     UnitClockChecked = false;
                     ConfigChecked = false;
                     UnitIDChecked = false;
+                    UnitInfoChecked = false;
                 }
                 NotifyPropertyChanged("SummerWinterChecked");
             }
@@ -148,8 +200,20 @@ namespace Dynadimmer.Models
                     UnitClockChecked = false;
                     SummerWinterChecked = false;
                     UnitIDChecked = false;
+                    UnitInfoChecked = false;
                 }
                 NotifyPropertyChanged("ConfigChecked");
+            }
+        }
+
+        private Visibility _UnitInfoVisibility;
+        public Visibility UnitInfoVisibility
+        {
+            get { return _UnitInfoVisibility; }
+            set
+            {
+                _UnitInfoVisibility = value;
+                NotifyPropertyChanged("UnitInfoVisibility");
             }
         }
 
@@ -200,8 +264,8 @@ namespace Dynadimmer.Models
 
         public WindowHandler()
         {
-            RemoteID = 1234;
-            ConfigChecked = true;
+            RemoteID = 0;
+            UnitInfoChecked = true;
             WindowState = Properties.Settings.Default.WindowState;
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {

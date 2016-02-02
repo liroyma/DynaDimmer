@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.UnitID"
              mc:Ignorable="d" Background="#efefef">
-    <GroupBox Header="Summer Winter Clock" Margin="10" Padding="10" BorderBrush="Black">
+    <GroupBox Header="Unit ID" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"></RowDefinition>
@@ -17,7 +17,7 @@
                 <ColumnDefinition Width="Auto" ></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Unit ID:"></TextBlock>
-            <TextBox TextAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="1"/>
+            <TextBox TextAlignment="Center" Text="{Binding UnitID}" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="1"/>
             <Button Grid.Column="1" Grid.Row="1"  Content="Upload" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
             <Button Grid.Column="2" Grid.Row="1" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
         </Grid>

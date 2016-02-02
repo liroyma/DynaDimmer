@@ -46,5 +46,53 @@ namespace Dynadimmer.Properties {
                 this["ViewLog"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string HoursList {
+            get {
+                return ((string)(this["HoursList"]));
+            }
+            set {
+                this["HoursList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastHour {
+            get {
+                return ((string)(this["LastHour"]));
+            }
+            set {
+                this["LastHour"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PricesList {
+            get {
+                return ((string)(this["PricesList"]));
+            }
+            set {
+                this["PricesList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastPrice {
+            get {
+                return ((string)(this["LastPrice"]));
+            }
+            set {
+                this["LastPrice"] = value;
+            }
+        }
     }
 }

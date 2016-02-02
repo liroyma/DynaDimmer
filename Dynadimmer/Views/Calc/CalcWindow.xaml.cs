@@ -10,23 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dynadimmer.Models;
+using Dynadimmer.Views.LampItem;
+using Dynadimmer.Views.Schedulers;
 
-namespace Dynadimmer.Views.DateTime
+namespace Dynadimmer.Views.Calc
 {
     /// <summary>
-    /// Interaction logic for UnitDateTime.xaml
+    /// Interaction logic for CalcWindow.xaml
     /// </summary>
-    public partial class UnitDateTime : UserControl
+    public partial class CalcWindow : Window
     {
-        public UnitDateTimeModel Model { get; private set; }
-        public UnitDateTime()
+        public CalcModel Model { get; private set; }
+        public CalcWindow(List<LampModel> list)
         {
-            Model = new UnitDateTimeModel();
+            Model = new CalcModel();
             InitializeComponent();
             this.DataContext = Model;
+            Model.SetLampListAndCalc(list);
         }
+
     }
 }

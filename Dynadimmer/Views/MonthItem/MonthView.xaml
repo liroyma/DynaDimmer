@@ -38,13 +38,16 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="75"></ColumnDefinition>
                     <ColumnDefinition Width="80"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition MaxWidth="150" Width="{Binding ButtonsColumnWidth}"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock Margin="5" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Select Time:</TextBlock>
-                <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center"  Name="TimePicker" Value="15:00" TimeInterval="00:30" ShowButtonSpinner="True"/>
-                <TextBlock Margin="5" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Illuminance:</TextBlock>
-                <WrapPanel Margin="5" Grid.Row="1" Grid.Column="1">
+                <TextBlock Margin="5" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">End Time:</TextBlock>
+                <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center" Text="{Binding EndTimeString,UpdateSourceTrigger=PropertyChanged}" TimeInterval="00:30" ShowButtonSpinner="True"/>
+                <TextBlock Margin="5" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Select Time:</TextBlock>
+                <tools:TimePicker Margin="5" Grid.Row="1" Grid.Column="1" TextAlignment="Center"  Name="TimePicker" Value="15:00" TimeInterval="00:30" ShowButtonSpinner="True"/>
+                <TextBlock Margin="5" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Illuminance:</TextBlock>
+                <WrapPanel VerticalAlignment="Center" Margin="2" Grid.Row="2" Grid.Column="1">
                     <TextBox x:Name="Box"  Width="50" TextAlignment="Center">
                         <Binding Path="Illuminance" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
@@ -54,9 +57,9 @@
                     </TextBox>
                     <TextBlock Margin="5" VerticalAlignment="Center"><Run Text="%"/></TextBlock>
                 </WrapPanel>
-                <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" CommandParameter="{Binding Text,ElementName=TimePicker}"></Button>
-                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
-                <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
+                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" CommandParameter="{Binding Text,ElementName=TimePicker}"></Button>
+                <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
+                <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -70,7 +73,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Canvas Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
+                <Canvas Grid.Row="0" Grid.Column="3" Grid.RowSpan="7" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
                 <Button Grid.Row="0" Grid.Column="4" Content="Upload" Margin="10,5"  Command="{Binding Upload}"></Button>
                 <Button Grid.Row="1" Grid.Column="4" Content="Download" Margin="10,5" Command="{Binding Download}"></Button>
                 <Button Grid.Row="2" Grid.Column="4" Content="Copy" Margin="10,5"  Command="{Binding Copy}" ></Button>

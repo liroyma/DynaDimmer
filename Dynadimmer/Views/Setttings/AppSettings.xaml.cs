@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,23 +11,26 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Dynadimmer.Models;
 
-namespace Dynadimmer.Views.DateTime
+namespace Dynadimmer.Views.Setttings
 {
     /// <summary>
-    /// Interaction logic for UnitDateTime.xaml
+    /// Interaction logic for AppSettings.xaml
     /// </summary>
-    public partial class UnitDateTime : UserControl
+    public partial class AppSettings : Window
     {
-        public UnitDateTimeModel Model { get; private set; }
-        public UnitDateTime()
+        AppSettingsModel model;
+        public AppSettings()
         {
-            Model = new UnitDateTimeModel();
+            model = new AppSettingsModel();
             InitializeComponent();
-            this.DataContext = Model;
+            this.DataContext = model;
+        }
+
+        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
+        {
+            model.PriceAddEnable = false;
         }
     }
 }

@@ -55,14 +55,12 @@ namespace Dynadimmer.Models
 
         public void Next()
         {
-            BeforeNext();
-            Counter++;
-            if (Counter < Upload.Count)
+            if (BeforeNext() && ++Counter < Upload.Count)
             {
                 //if (!Upload[Counter].IsLoaded)
-                    //DoAction();
+                //DoAction();
                 //else
-                  //  Next();
+                //  Next();
             }
             else
             {
@@ -77,7 +75,7 @@ namespace Dynadimmer.Models
             Upload[Counter].SendUpload(Extra[Counter]);
         }
 
-        public abstract void BeforeNext();
+        public abstract bool BeforeNext();
         public abstract string BeforeDone();
 
         internal void Stop()

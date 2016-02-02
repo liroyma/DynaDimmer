@@ -7,17 +7,18 @@ using System.Windows.Media;
 
 namespace Dynadimmer.Models.Messages
 {
-    public class OutMessage: UnitMessage
+    public class OutMessage : UnitMessage
     {
-        public OutMessage(string info,byte header, params byte[] data):base(info)
+        public OutMessage(string info, byte[] unitid, byte header, params byte[] data) : base(info)
         {
             MessageColor = Brushes.Blue;
-            DataAscii = Createmessage(true, header, data);
-            DecimalData = Createmessage(false, header, data);
+            DataAscii = Createmessage(true, unitid, header, data);
+            DecimalData = Createmessage(false, unitid, header, data);
 
             DecimalFormatString = string.Join(" ", DecimalData);
             HexFormatString = string.Join(" ", ConvertDecToHex(DecimalData));
             AsciiFormatString = string.Join(" ", DataAscii);
+            //once = true;
         }
 
         private string[] ConvertDecToHex(byte[] decimalarray)
@@ -30,19 +31,21 @@ namespace Dynadimmer.Models.Messages
             return list.ToArray();
         }
 
-        private byte[] Createmessage(bool isAscii, byte header, params byte[] data)
+        private byte[] Createmessage(bool isAscii, byte[] unitid, byte header, params byte[] data)
         {
             List<byte> fulldata = new List<byte>();
             fulldata.Add(StartOutMessage);
-            fulldata.AddRange(Message(isAscii, header, data));
+            fulldata.AddRange(Message(isAscii, unitid, header, data));
             fulldata.Add(EndOutMessage);
             return fulldata.ToArray();
 
         }
-
-        private byte[] Message(bool isAscii, byte Header, params byte[] data)
+        static bool once = false;
+        private byte[] Message(bool isAscii, byte[] unitid, byte Header, params byte[] data)
         {
             List<byte> list = new List<byte>();
+           // if (!once)
+                list.AddRange(unitid);
             list.Add(Header);
             if (data != null)
             {

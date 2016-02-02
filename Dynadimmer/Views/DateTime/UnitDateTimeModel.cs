@@ -8,10 +8,11 @@ using Dynadimmer.Models;
 using Dynadimmer.Models.Messages;
 using System.Xml;
 using Xceed.Wpf.Toolkit;
+using Dynadimmer.Views.Information;
 
 namespace Dynadimmer.Views.DateTime
 {
-    class UnitDateTimeModel : UnitProperty
+    public class UnitDateTimeModel : UnitProperty
     {
         public const int Header = 1;
 
@@ -83,6 +84,7 @@ namespace Dynadimmer.Views.DateTime
             System.DateTime date = System.DateTime.Parse(dateString,cultureinfo);
             UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
             base.SetView();
+            OnGotData(new UnitInfo() { UnitClock = UnitTime });
             return Title;
         }
 
@@ -92,6 +94,18 @@ namespace Dynadimmer.Views.DateTime
 
         public override void SaveData(XmlWriter writer, object extra)
         {
+        }
+
+        public override void UpdateData(UnitInfo info)
+        {
+            UnitTime = info.UnitClock;
+        }
+
+        protected override void OnGotData(UnitInfo info)
+        {
+            UnitTime = info.UnitClock;
+            IsLoaded = true;
+            base.OnGotData(info);
         }
 
         #region Timer
@@ -105,6 +119,12 @@ namespace Dynadimmer.Views.DateTime
         {
             _date = System.DateTime.Now;
             ComputerTime = _date.DayOfWeek + " - " + _date.ToString("dd/MM/yy HH:mm:ss");
+        }
+
+        internal void UpdateData(string unitClock)
+        {
+            UnitTime = unitClock;
+            IsLoaded = true;
         }
 
         #endregion

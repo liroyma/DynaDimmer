@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="Dynadimmer.Views.Calc.CalcView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Dynadimmer.Views.Calc"
+             mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Background="LightBlue" Grid.Row="0">
+            <WrapPanel HorizontalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" Margin="0,15,15,15" Grid.Row="0" Grid.Column="0" Text="Select Hours:"></TextBlock>
+                <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ComboBox>
+                <TextBlock VerticalAlignment="Center" Margin="15,15,0,15" Grid.Row="0" Grid.Column="2" Text="Select Price:"></TextBlock>
+                <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ComboBox>
+            </WrapPanel>
+        </Grid>
+        <Grid Background="LightBlue" Grid.Row="0" Grid.Column="1">
+            <Button Margin="10" VerticalAlignment="Center" Width="80" Command="{Binding CalcCommand}" Content="Calc"></Button>
+        </Grid>
+        <Grid Grid.ColumnSpan="2" Background="#efefef" Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="1" Text="{Binding CalcedPrice,StringFormat=Price: {0}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"></TextBlock>
+            <TextBlock Grid.Column="0" Text="{Binding CalcedHour,StringFormat=Hours: {0}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"></TextBlock>
+        </Grid>
+        <DataGrid Grid.ColumnSpan="5" Grid.Row="3" ItemsSource="{Binding LampCaclList}"  SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="*" Header="Lamp" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LampName}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Power" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LampPower}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Yearly" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding YearlyUse}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Yearly Cost" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding YearlyCost}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Yearly Savings" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding YearlySavings}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Yearly Savings Cost" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding YearlyCostSavings}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Savings Precent" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding YearlySavingsPreeent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

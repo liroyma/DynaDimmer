@@ -1,9 +1,13 @@
 ﻿using Dynadimmer.Models;
 using Dynadimmer.Models.Actions;
 using Dynadimmer.Models.Messages;
+using Dynadimmer.Views.Calc;
+using Dynadimmer.Views.LampItem;
 using Dynadimmer.Views.MonthItem;
+using Dynadimmer.Views.Setttings;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace Dynadimmer
@@ -46,39 +50,77 @@ namespace Dynadimmer
             connection.SetHandlers(log, viewer);
             connection.Connected += Connection_Connected;
             connection.Answered += Connection_Answered;
-            UnitProperty.SetConnection(connection);
+            UnitProperty.SetConnection(connection, viewer);
             MonthModel.Perent = newschdularselectionview.Model;
-            answers = new AnswerHandler(log, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
+            answers = new AnswerHandler(log, infoview.Model,unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
             answers.allAnswersProssed += Answers_allAnswersProssed;
             this.DataContext = viewer;
             fileloadview.Model.SetContainer(this.MainContainer);
-            fileloadview.Model.ClickDownload += Model_ClickDownload;
             newschdularselectionview.Model.SetContainer(this.MainContainer);
-            fileloadview.Model.WinVisibilityChanged += Model_WinVisibilityChanged;
+
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             unitidview.Visibility = viewer.UnitIDVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
-            configview.Model.GotData += ConfigModel_GotData;
+            infoview.Visibility = viewer.UnitInfoVisibility;
+
+            fileloadview.Model.ClickDownload += FileLoad_ClickDownload;
+            fileloadview.Model.WinVisibilityChanged += FileLoad_WinVisibilityChanged;
+
+            infoview.Model.GotData += Model_GotData;
+            unitidview.Model.GotData += Model_GotData;
+            datetimeview.Model.GotData += Model_GotData;
+            configview.Model.GotData += Model_GotData;
+            summerwinterview.Model.GotData += Model_GotData;
+
             viewer.WindowEnable = true;
             if (connection.IsInit)
                 connection.CheckStatus();
         }
 
-        private void Model_ClickDownload(object sender, byte e)
+        private void Model_GotData(object sender, Views.Information.UnitInfo info)
+        {
+            if (sender.GetType() == infoview.Model.GetType())
+            {
+                newschdularselectionview.Model.UpdateData(info);
+                unitidview.Model.UpdateData(info);
+                datetimeview.Model.UpdateData(info);
+                configview.Model.UpdateData(info);
+                viewer.RemoteID = info.UnitID;
+            }
+            else if (sender.GetType() == unitidview.Model.GetType())
+            {
+                infoview.Model.UpdateData(info);
+                viewer.RemoteID = info.UnitID;
+            }
+            else if (sender.GetType() == datetimeview.Model.GetType())
+            {
+                infoview.Model.UpdateData(info);
+            }
+            else if (sender.GetType() == configview.Model.GetType())
+            {
+                infoview.Model.UpdateData(info);
+                newschdularselectionview.Model.UpdateData(info);
+            }
+           
+        }
+
+        #region Models Events
+        private void FileLoad_ClickDownload(object sender, byte e)
         {
             action = new DownloadAllAction(this.MainContainer.GetLampsModels(), e, configview.Model, newschdularselectionview.Model);
         }
 
-        private void Model_WinVisibilityChanged(object sender, Visibility e)
+        private void FileLoad_WinVisibilityChanged(object sender, Visibility e)
         {
             if (e == Visibility.Collapsed)
             {
-                viewer.ConfigChecked = true;
+                viewer.UnitInfoChecked = true;
                 unitidview.Visibility = viewer.UnitIDVisibility;
                 datetimeview.Visibility = viewer.UnitTimeVisibility;
                 summerwinterview.Visibility = viewer.SummerWinterVisibility;
                 configview.Visibility = viewer.ConfigVisibility;
+                infoview.Visibility = viewer.UnitInfoVisibility;
                 newschdularselectionview.Visibility = Visibility.Collapsed;
                 configview.IsEnabled = connection.IsConnected;
                 MainContainer.IsEnabled = connection.IsConnected;
@@ -87,53 +129,27 @@ namespace Dynadimmer
                 unitidview.IsEnabled = connection.IsConnected;
                 newschdularselectionview.IsEnabled = connection.IsConnected;
                 MainContainer.Model.FromFile = false;
+                infoview.Model.Info = new Views.Information.UnitInfo();
+                infoview.Model.NoDataVisibility = Visibility.Visible;
                 if (connection.IsConnected)
                 {
-                    action = new StartAction(configview.Model);
+                    action = new StartAction(infoview.Model);
                 }
             }
             else
             {
-                datetimeview.Visibility = newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
+                infoview.Visibility = datetimeview.Visibility = newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
                 MainContainer.IsEnabled = true;
                 MainContainer.Model.FromFile = true;
             }
             viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
         }
-
-        private void Answers_allAnswersProssed(object sender, EventArgs e)
-        {
-            if (action != null)
-            {
-                action.Next();
-                if (!connection.IsConnected)
-                {
-                    action.Stop();
-                }
-                if (!action.AllDone)
-                {
-                    action.DoAction();
-                }
-                else
-                {
-                    viewer.WindowEnable = true;
-                }
-            }
-            else
-            {
-                viewer.WindowEnable = true;
-            }
-        }
-
+        #endregion
+     
+        #region Connection Events
         private void Connection_Answered(object sender, List<GaneralMessage> e)
         {
             answers.Handle(e);
-        }
-
-        private void ConfigModel_GotData(object sender, EventArgs e)
-        {
-            datetimeview.UpdateTime(configview.Model.UnitTime);
-            newschdularselectionview.Model.SetNumberOfLamps(configview.Model.UnitLampCount);
         }
 
         private void Connection_Connected(object sender, bool e)
@@ -145,13 +161,18 @@ namespace Dynadimmer
                 summerwinterview.IsEnabled = e;
                 datetimeview.IsEnabled = e;
                 unitidview.IsEnabled = e;
+                infoview.IsEnabled = e;
                 newschdularselectionview.IsEnabled = e;
             }
             viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
+            fileloadview.Model.DownLoadEnable = e;
             if (fileloadview.Model.WinVisibility != Visibility.Visible && e)
-                action = new StartAction(configview.Model);
+                action = new StartAction(infoview.Model);
         }
 
+        #endregion
+
+        #region UI Events
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             close = true;
@@ -170,28 +191,78 @@ namespace Dynadimmer
             this.Close();
         }
 
-        private void Log_DoneSaving(object sender, EventArgs e)
-        {
-            if (close)
-                App.Current.Shutdown();
-        }
-
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
             unitidview.Visibility = viewer.UnitIDVisibility;
+            infoview.Visibility = viewer.UnitInfoVisibility;
         }
 
         private void MenuItem_Save(object sender, RoutedEventArgs e)
         {
-            action = new SaveAction(configview.Model, newschdularselectionview.Model);
+            action = new SaveAction(infoview.Model, newschdularselectionview.Model);
         }
 
         private void MenuItem_Load(object sender, RoutedEventArgs e)
         {
             fileloadview.Model.ReadFromFile();
+        }
+
+        private void MenuItem_Settings(object sender, RoutedEventArgs e)
+        {
+            AppSettings settings = new AppSettings();
+            settings.Owner = this;
+            settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            settings.ShowDialog();
+        }
+
+        private void MenuItem_Calc(object sender, RoutedEventArgs e)
+        {
+            List<LampModel> models = this.MainContainer.GetLampsModels().Where(x=>x.isConfig && x.AllLoaded ).ToList();
+            if (models.Count == 0)
+            {
+                MessageBox.Show("Not all data is avilable", "Data error");
+                return;
+            }
+            CalcWindow calc = new CalcWindow(models);
+            calc.Owner = this;
+            calc.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            calc.ShowDialog();
+        }
+
+        #endregion
+
+        private void Answers_allAnswersProssed(object sender, EventArgs e)
+        {
+            if (action != null)
+            {
+                action.Next();
+                if (!connection.IsConnected)
+                {
+                    action.Stop();
+                }
+                if (!action.AllDone)
+                {
+                    action.DoAction();
+                }
+                else
+                {
+                    viewer.WindowEnable = true;
+                    action = null;
+                }
+            }
+            else
+            {
+                viewer.WindowEnable = true;
+            }
+        }
+       
+        private void Log_DoneSaving(object sender, EventArgs e)
+        {
+            if (close)
+                App.Current.Shutdown();
         }
     }
 

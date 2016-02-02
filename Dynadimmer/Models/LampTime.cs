@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,35 +9,69 @@ namespace Dynadimmer.Views.Schedulers
 {
     public class LampTime
     {
-        public int Hour { get; set; }
-        public int Minute { get; set; }
-        public int Precentage { get; set; }
-        public string TimeString { get; set; }
+        public const int STARTHOUR = 15;
+        public const int STARTMINUTE = 00;
 
-        public LampTime(int hour ,int minute, int precentage)
+        public int Precentage { get; set; }
+
+        private string timestring;
+        public string TimeString
         {
-            Hour = hour;
-            Minute = minute;
-            TimeString = string.Format("{0}:{1}", Hour.ToString("D2"), Minute.ToString("D2"));
+            get { return timestring; }
+            private set
+            {
+                timestring = value;
+                date = System.DateTime.Parse(TimeString);
+                if (date.Hour < STARTHOUR || date.Hour > 23)
+                    date = date.AddDays(1);
+            }
+        }
+
+        public System.DateTime date { get; private set; }
+
+        public LampTime(int hour, int minute, int precentage)
+        {
+            TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
             Precentage = precentage;
         }
 
         public LampTime(int time, int precentage)
         {
-            Hour = time / 60;
-            Minute = time % 60;
-            TimeString = string.Format("{0}:{1}", Hour.ToString("D2"), Minute.ToString("D2"));
+            if (time == 1440)
+                TimeString = "00:00";
+            else
+            {
+                int hour = time / 60;
+                int minute = time % 60;
+                TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
+            }
             Precentage = precentage;
         }
 
         public LampTime(string timestring, int precentage)
         {
             TimeString = timestring;
-            string[] temp = TimeString.Split(':');
-            Hour = int.Parse(temp[0]);
-            Minute = int.Parse(temp[1]);
             Precentage = precentage;
         }
 
+        internal void UpdateTime(string timestring)
+        {
+            if (timestring == "24:0")
+                TimeString = "07:00";
+            else
+                TimeString = timestring;
+        }
+
+        internal void UpdateTime(int time)
+        {
+            if (time == 1440)
+                TimeString = "00:00";
+            else
+            {
+                int hour = time / 60;
+                int minute = time % 60;
+                TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace Dynadimmer.Models.Messages
     public class IncomeMessage : UnitMessage
     {
         public byte Header { get; private set; }
+        public byte[] OnlyData { get; private set; }
+
         public IncomeMessage(string info,List<byte> answer):base(info)
         {
             MessageColor = Brushes.Green;
@@ -22,7 +24,8 @@ namespace Dynadimmer.Models.Messages
 
             DataAscii =  answer.ToArray();
             DecimalData = data.ToArray();
-            
+            OnlyData = DecimalData.ToList().GetRange(2, DecimalData.Length - 3).ToArray();
+
             DecimalFormatString = string.Join(" ", DecimalData);
             HexFormatString = string.Join(" ", ConvertDecToHex(DecimalData));
             AsciiFormatString = string.Join(" ", DataAscii);

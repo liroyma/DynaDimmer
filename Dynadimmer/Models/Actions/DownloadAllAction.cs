@@ -45,8 +45,9 @@ namespace Dynadimmer.Models.Actions
             return "Lamp Config and All Programs Downloaded to the Unit";
         }
 
-        public override void BeforeNext()
+        public override bool BeforeNext()
         {
+            return true;
         }
 
         public override void DoAction()
