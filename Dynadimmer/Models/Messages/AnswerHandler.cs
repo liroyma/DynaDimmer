@@ -146,6 +146,8 @@ namespace Dynadimmer.Models.Messages
         private void HandleInnerMassege(IncomeMessage item)
         {
             item.Info += "inner error";
+            item.MessageColor = Brushes.White;
+            item.MessageBackground = Brushes.Red;
         }
 
         private string GetTitle(byte[] data)

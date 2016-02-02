@@ -86,7 +86,11 @@ namespace Dynadimmer
                 unitidview.Model.UpdateData(info);
                 datetimeview.Model.UpdateData(info);
                 configview.Model.UpdateData(info);
-                viewer.RemoteID = info.UnitID;
+                if (viewer.RemoteID != info.UnitID)
+                {
+                    viewer.RemoteID = info.UnitID;
+                    MainContainer.Reset();
+                }
             }
             else if (sender.GetType() == unitidview.Model.GetType())
             {

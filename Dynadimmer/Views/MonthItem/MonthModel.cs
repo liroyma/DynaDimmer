@@ -243,7 +243,10 @@ namespace Dynadimmer.Views.MonthItem
                     else
                         EndTime.UpdateTime(value);
                     if (LampTimes.Count > 0 && EndTime.date <= LampTimes.Last().date)
+                    {
+                        EndTime.UpdateTime(oldvalue);
                         return;
+                    }
                     UpdateView();
                 }
                 _endtimestring = value;

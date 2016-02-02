@@ -115,6 +115,7 @@
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Setter Property="Foreground" Value="{Binding MessageColor}"/>
+                    <Setter Property="Background" Value="{Binding MessageBackground}"/>
                 </Style>
             </DataGrid.RowStyle>
         </DataGrid>
