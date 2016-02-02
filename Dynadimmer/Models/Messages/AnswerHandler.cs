@@ -133,7 +133,7 @@ namespace Dynadimmer.Models.Messages
             catch
             {
                 item.MessageColor = Brushes.Red;
-                item.Info = "Error in data";
+                item.Info = "Error analysing the data";
             }
             finally
             {

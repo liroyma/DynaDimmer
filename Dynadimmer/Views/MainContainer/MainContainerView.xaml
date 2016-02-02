@@ -22,13 +22,13 @@
                         <ColumnDefinition></ColumnDefinition>
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center"  Text="{Binding LampCount, StringFormat=Total Number Of Lamps: \{0\}}"></TextBlock>
-                    <WrapPanel HorizontalAlignment="Center" Grid.Row="1" Visibility="{Binding Lamp1Visibility}" Grid.Column="0">
-                        <TextBlock  Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="Lamp 1 Power:"></TextBlock>
+                    <TextBlock Margin="5" Grid.Row="0" Grid.ColumnSpan="2" Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center"  Text="{Binding LampCount, StringFormat=Total Number Of Luminaires: \{0\}}"></TextBlock>
+                    <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Row="1" Visibility="{Binding Lamp1Visibility}" Grid.Column="0">
+                        <TextBlock  Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="Luminaire 1 Power:"></TextBlock>
                         <TextBox  Width="40" Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="{Binding Lamp1Power}"></TextBox>
                     </WrapPanel>
-                    <WrapPanel HorizontalAlignment="Center" Grid.Row="1" Visibility="{Binding Lamp2Visibility}" Grid.Column="1">
-                        <TextBlock Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="Lamp 2 Power: "></TextBlock>
+                    <WrapPanel Margin="5" HorizontalAlignment="Center" Grid.Row="1" Visibility="{Binding Lamp2Visibility}" Grid.Column="1">
+                        <TextBlock Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="Luminaire 2 Power: "></TextBlock>
                         <TextBox  Width="40" Padding="5"  FontSize="20" FontWeight="ExtraBold" TextAlignment="Center" Text="{Binding Lamp2Power}"></TextBox>
                     </WrapPanel>
                 </Grid>

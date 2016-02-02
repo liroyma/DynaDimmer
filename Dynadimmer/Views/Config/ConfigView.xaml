@@ -18,7 +18,7 @@
                 <ColumnDefinition Width="50"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Lamp 1 Power:"></TextBlock>
+            <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Luminaire 1 Power:"></TextBlock>
             <TextBox Visibility="{Binding Lamp1Visibility}" Grid.Row="1" Validation.Error="TextBox_Error" Uid="lamp1" Grid.Column="1" Margin="2,5" HorizontalContentAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
                     <Binding Path="Lamp1Power" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
@@ -28,7 +28,7 @@
                     </Binding>
                 </TextBox.Text>
             </TextBox>
-            <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Text="Lamp 2 Power:"></TextBlock>
+            <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Text="Luminaire 2 Power:"></TextBlock>
             <TextBox Visibility="{Binding Lamp2Visibility}" Validation.Error="TextBox_Error" Uid="lamp2"  Grid.Row="1" Grid.Column="3" Margin="2,5" HorizontalContentAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
                     <Binding Path="Lamp2Power" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
@@ -39,7 +39,7 @@
                 </TextBox.Text>
             </TextBox>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Text="Number Of Lamps:"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Text="Number Of Luminaires:"></TextBlock>
             <TextBox Margin="2,5" HorizontalContentAlignment="Center" Width="50" Grid.Row="0" Grid.Column="2" Validation.Error="TextBox_Error" Uid="count" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
                     <Binding Path="UnitLampCount" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >

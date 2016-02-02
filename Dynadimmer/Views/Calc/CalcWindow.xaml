@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer.Views.Calc"
         mc:Ignorable="d"
-        Title="CalcWindow" Height="300" Width="600">
+        Title="CalcWindow" Height="300" MinWidth="880" Width="880">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
@@ -18,10 +18,10 @@
         </Grid.RowDefinitions>
         <Grid Background="LightBlue" Grid.Row="0">
             <WrapPanel HorizontalAlignment="Center">
-                <TextBlock VerticalAlignment="Center" Margin="0,15,15,15" Grid.Row="0" Grid.Column="0" Text="Select Hours:"></TextBlock>
-                <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ComboBox>
-                <TextBlock VerticalAlignment="Center" Margin="15,15,0,15" Grid.Row="0" Grid.Column="2" Text="Select Price:"></TextBlock>
-                <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ComboBox>
+                <TextBlock VerticalAlignment="Center" Margin="0,15,15,15" Grid.Row="0" Grid.Column="0" Text="Annual operating Hours:"></TextBlock>
+                <ComboBox HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ComboBox>
+                <TextBlock VerticalAlignment="Center" Margin="50,15,15,15" Grid.Row="0" Grid.Column="2" Text="KWh (NIS):"></TextBlock>
+                <ComboBox HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ComboBox>
             </WrapPanel>
         </Grid>
         <Grid Background="LightBlue" Grid.Row="0" Grid.Column="1">
@@ -37,49 +37,49 @@
         </Grid>
         <DataGrid Grid.ColumnSpan="5" Grid.Row="3" ItemsSource="{Binding LampCaclList}"  SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Width="*" Header="Lamp" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Luminaire" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding LampName}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Power" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Luminaire Power (W)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding LampPower}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Yearly" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual Consumption (KWh)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding YearlyUse}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Yearly Cost" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual Cost (NIS)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding YearlyCost}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Yearly Savings" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual Energy Saving (KWh)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding YearlySavings}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Yearly Savings Cost" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual Savings Cost (NIS)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding YearlyCostSavings}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Savings Precent" IsReadOnly="True">
+                <DataGridTemplateColumn Width="1*" Header="Annual Saving (%)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding YearlySavingsPreeent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />

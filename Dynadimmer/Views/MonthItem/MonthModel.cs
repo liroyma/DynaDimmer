@@ -334,10 +334,10 @@ namespace Dynadimmer.Views.MonthItem
                 if (i + 2 > data.Count - 1)
                 {
                     if (time == ENDVALUE)
-                        // EndTimeString = string.Format("{0}:{1}", 7.ToString("D2"), 0.ToString("D2"));
-                        EndTimeString = string.Format("{0}:{1}", 7, 0);
+                         EndTimeString = string.Format("{0}:{1}", 7.ToString("D2"), 0.ToString("D2"));
+                        //EndTimeString = string.Format("{0}:{1}", 7, 0);
                     else
-                        EndTimeString = string.Format("{0:D2}:{1:2D}", time / 60, time % 60);
+                        EndTimeString = string.Format("{0:D2}:{1:D2}", time / 60, time % 60);
                     break;
                 }
                 int pre = data[i + 2];

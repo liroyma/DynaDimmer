@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.NewSchdularSelection"
              mc:Ignorable="d" Background="#efefef" Visibility="{Binding WinVisibility,Mode=TwoWay}" >
-    <GroupBox Header="Lamps" Margin="10" Padding="10" BorderBrush="Black">
+    <GroupBox Header="Luminaires" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"></RowDefinition>
@@ -16,7 +16,7 @@
                 <ColumnDefinition Width="120"></ColumnDefinition>
                 <ColumnDefinition Width="Auto" ></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Text="Select Lamp Number:"></TextBlock>
+            <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Text="Select Luminaire:"></TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" Text="Select Month:"></TextBlock>
             <ComboBox  Grid.Column="1" Grid.Row="0" Margin="10,5" ItemsSource="{Binding LampsList}" SelectedItem="{Binding SelectedLamp}" />
             <ComboBox  Grid.Column="1" Grid.Row="1" Margin="10,5" ItemsSource="{Binding MonthsList}" SelectedItem="{Binding SelectedMonth}"/>

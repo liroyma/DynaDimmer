@@ -72,7 +72,7 @@ namespace Dynadimmer.Views.LampItem
 
         public void Init(int index)
         {
-            Name = "Lamp " + (index + 1);
+            Name = "Luminaire " + (index + 1);
             Index = index;
         }
         
