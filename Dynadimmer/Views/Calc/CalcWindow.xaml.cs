@@ -22,13 +22,35 @@ namespace Dynadimmer.Views.Calc
     public partial class CalcWindow : Window
     {
         public CalcModel Model { get; private set; }
-        public CalcWindow(List<LampModel> list)
+        public CalcWindow()
         {
             Model = new CalcModel();
             InitializeComponent();
             this.DataContext = Model;
-            Model.SetLampListAndCalc(list);
+        }
+        
+        public void SetList(List<LampModel> list,string unitid)
+        {
+            Model.SetLampListAndCalc(list, unitid);
         }
 
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Note that you can have more than one file.
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (var file in files)
+                {
+                    Model.Read(file);
+                }
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
+        }
     }
 }

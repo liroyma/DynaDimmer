@@ -16,15 +16,15 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Grid Background="LightBlue" Grid.Row="0">
-            <WrapPanel HorizontalAlignment="Center">
+            <!--<WrapPanel HorizontalAlignment="Center">
                 <TextBlock VerticalAlignment="Center" Margin="0,15,15,15" Grid.Row="0" Grid.Column="0" Text="Select Hours:"></TextBlock>
                 <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ComboBox>
                 <TextBlock VerticalAlignment="Center" Margin="15,15,0,15" Grid.Row="0" Grid.Column="2" Text="Select Price:"></TextBlock>
                 <ComboBox VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ComboBox>
-            </WrapPanel>
+            </WrapPanel>-->
         </Grid>
         <Grid Background="LightBlue" Grid.Row="0" Grid.Column="1">
-            <Button Margin="10" VerticalAlignment="Center" Width="80" Command="{Binding CalcCommand}" Content="Calc"></Button>
+            <Button Margin="10" VerticalAlignment="Center" Width="80" Content="Calc"></Button>
         </Grid>
         <Grid Grid.ColumnSpan="2" Background="#efefef" Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>

@@ -17,6 +17,7 @@ namespace Dynadimmer
     /// </summary>
     public partial class MainWindow : Window
     {
+        CalcWindow calc;
         IRDAHandler connection;
         LogHandler log;
         WindowHandler viewer;
@@ -34,6 +35,9 @@ namespace Dynadimmer
             {
                 MessageBox.Show(e.InnerException.Message);
             }
+            calc = new CalcWindow();
+            //calc.Owner = this;
+            //calc.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             log = (LogHandler)this.FindResource("Logger");
             log.DoneSaving += Log_DoneSaving;
             Models.Action.Log = log;
@@ -52,7 +56,7 @@ namespace Dynadimmer
             connection.Answered += Connection_Answered;
             UnitProperty.SetConnection(connection, viewer);
             MonthModel.Perent = newschdularselectionview.Model;
-            answers = new AnswerHandler(log, infoview.Model,unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
+            answers = new AnswerHandler(log, infoview.Model, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
             answers.allAnswersProssed += Answers_allAnswersProssed;
             this.DataContext = viewer;
             fileloadview.Model.SetContainer(this.MainContainer);
@@ -106,7 +110,7 @@ namespace Dynadimmer
                 infoview.Model.UpdateData(info);
                 newschdularselectionview.Model.UpdateData(info);
             }
-           
+
         }
 
         #region Models Events
@@ -149,7 +153,7 @@ namespace Dynadimmer
             viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
         }
         #endregion
-     
+
         #region Connection Events
         private void Connection_Answered(object sender, List<GaneralMessage> e)
         {
@@ -158,6 +162,7 @@ namespace Dynadimmer
 
         private void Connection_Connected(object sender, bool e)
         {
+            datetimeview.Model.SendingClock(false);
             if (!MainContainer.Model.FromFile)
             {
                 configview.IsEnabled = e;
@@ -167,6 +172,7 @@ namespace Dynadimmer
                 unitidview.IsEnabled = e;
                 infoview.IsEnabled = e;
                 newschdularselectionview.IsEnabled = e;
+                datetimeview.Model.SendingClock(e);
             }
             viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
             fileloadview.Model.DownLoadEnable = e;
@@ -202,6 +208,9 @@ namespace Dynadimmer
             configview.Visibility = viewer.ConfigVisibility;
             unitidview.Visibility = viewer.UnitIDVisibility;
             infoview.Visibility = viewer.UnitInfoVisibility;
+            if (viewer.SummerWinterChecked)
+                summerwinterview.Model.SendUpload(null);
+            datetimeview.Model.SendingClock(viewer.UnitClockChecked || viewer.UnitInfoChecked);
         }
 
         private void MenuItem_Save(object sender, RoutedEventArgs e)
@@ -224,18 +233,23 @@ namespace Dynadimmer
 
         private void MenuItem_Calc(object sender, RoutedEventArgs e)
         {
-            List<LampModel> models = this.MainContainer.GetLampsModels().Where(x=>x.isConfig && x.AllLoaded ).ToList();
-            if (models.Count == 0)
+            if (MainContainer.Model.FromFile)
             {
-                MessageBox.Show("Not all data is avilable", "Data error");
-                return;
+                calc.Model.Read(fileloadview.Model.FilePath);
             }
-            CalcWindow calc = new CalcWindow(models);
-            calc.Owner = this;
-            calc.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            calc.ShowDialog();
-        }
+            else
+            {
+                List<LampModel> models = this.MainContainer.GetLampsModels().Where(x => x.isConfig && x.AllLoaded).ToList();
+                if (models.Count == 0)
+                {
 
+                    if (MessageBoxResult.No == MessageBox.Show("Not all data is avilable", "Data error", MessageBoxButton.YesNo))
+                        return;
+                }
+                calc.SetList(models, viewer.RemoteIDString);
+            }
+            calc.Show();
+        }
         #endregion
 
         private void Answers_allAnswersProssed(object sender, EventArgs e)
@@ -262,7 +276,7 @@ namespace Dynadimmer
                 viewer.WindowEnable = true;
             }
         }
-       
+
         private void Log_DoneSaving(object sender, EventArgs e)
         {
             if (close)

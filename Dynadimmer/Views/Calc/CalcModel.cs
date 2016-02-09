@@ -1,5 +1,6 @@
 ﻿using Dynadimmer.Models;
 using Dynadimmer.Views.LampItem;
+using Dynadimmer.Views.MonthItem;
 using Dynadimmer.Views.Schedulers;
 using System;
 using System.Collections.Generic;
@@ -7,62 +8,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace Dynadimmer.Views.Calc
 {
     public class CalcModel : MyUIHandler
     {
-        public MyCommand CalcCommand { get; set; }
-        private List<LampModel> LampList { get; set; }
+        public MyCommand ClearCommand { get; set; }
 
-        private List<string> hourslist;
-        public List<string> HoursList
+        private ObservableCollection<string> fileslist;
+        public ObservableCollection<string> FilesList
         {
-            get { return hourslist; }
+            get { return fileslist; }
             set
             {
-                hourslist = value;
-                NotifyPropertyChanged("HoursList");
+                fileslist = value;
+                NotifyPropertyChanged("FilesList");
             }
         }
-
-        private string selectedhour;
-        public string SelectedHour
-        {
-            get { return selectedhour; }
-            set
-            {
-                selectedhour = value;
-                Properties.Settings.Default.LastHour = value;
-                Properties.Settings.Default.Save();
-                NotifyPropertyChanged("SelectedHour");
-            }
-        }
-
-        private List<string> pricelist;
-        public List<string> PriceList
-        {
-            get { return pricelist; }
-            set
-            {
-                pricelist = value;
-                NotifyPropertyChanged("PriceList");
-            }
-        }
-
-        private string selectedprice;
-        public string SelectedPrice
-        {
-            get { return selectedprice; }
-            set
-            {
-                selectedprice = value;
-                Properties.Settings.Default.LastPrice = value;
-                Properties.Settings.Default.Save();
-                NotifyPropertyChanged("SelectedPrice");
-            }
-        }
-
 
         private string calcedprice;
         public string CalcedPrice
@@ -97,11 +60,186 @@ namespace Dynadimmer.Views.Calc
                 NotifyPropertyChanged("LampCaclList");
             }
         }
-        
 
+        
         public CalcModel()
         {
             LampCaclList = new ObservableCollection<LampClaculation>();
+            FilesList = new ObservableCollection<string>();
+            ClearCommand = new MyCommand();
+            ClearCommand.CommandSent += ClearCommand_CommandSent;
+        }
+
+        internal void Read(string path)
+        {
+            if (System.IO.Path.GetExtension(path) != ".dxml" || FilesList.Contains(path))
+                return;
+            FilesList.Add(path);
+            foreach (var lamp in ReadFromFileModel.Read(path))
+            {
+                LampCaclList.Add(new LampClaculation(lamp, "File", path));
+            }
+            LampClaculation.colorindex++;
+        }
+
+        private void ClearCommand_CommandSent(object sender, EventArgs e)
+        {
+            LampCaclList.Clear();
+            FilesList.Clear();
+        }
+
+        internal void SetLampListAndCalc(List<LampModel> lamplist, string unitid)
+        {
+            foreach (var item in LampCaclList.Where(x => x.Source == "Unit").ToList())
+            {
+                LampCaclList.Remove(item);
+            }     
+            foreach (var lamp in lamplist)
+            {
+                LampCaclList.Insert(0,new LampClaculation(lamp, "Unit", unitid));
+            }
+            LampClaculation.colorindex++;
+        }
+
+    }
+
+    public class LampClaculation : MyUIHandler
+    {
+        static SolidColorBrush[] colors = new SolidColorBrush[] { Brushes.LightBlue, Brushes.LightCoral };
+        public static int colorindex = 0;
+
+        public string LampName { get; set; }
+        public int LampPower { get; set; }
+        public SolidColorBrush ItemBackground { get; set; }
+        public string FileID { get; set; }
+        public string FilePath { get; set; }
+        public string Source { get; set; }
+
+        public double yearlyuse;
+        public double YearlyUse
+        {
+            get { return yearlyuse; }
+            set
+            {
+                yearlyuse = value;
+                NotifyPropertyChanged("YearlyUse");
+            }
+        }
+
+        public double yearlycost;
+        public double YearlyCost
+        {
+            get { return yearlycost; }
+            set
+            {
+                yearlycost = value;
+                NotifyPropertyChanged("YearlyCost");
+            }
+        }
+
+        public double yearlysavings;
+        public double YearlySavings
+        {
+            get { return yearlysavings; }
+            set
+            {
+                yearlysavings = value;
+                NotifyPropertyChanged("YearlySavings");
+            }
+        }
+
+        public double yearlycostsavings;
+        public double YearlyCostSavings
+        {
+            get { return yearlycostsavings; }
+            set
+            {
+                yearlycostsavings = value;
+                NotifyPropertyChanged("YearlyCostSavings");
+            }
+        }
+
+        public double yearlysavingspreeent;
+        public double YearlySavingsPreeent
+        {
+            get { return yearlysavingspreeent; }
+            set
+            {
+                yearlysavingspreeent = value;
+                NotifyPropertyChanged("YearlySavingsPreeent");
+            }
+        }
+
+        public List<MonthModel> Months;
+
+        private List<string> hourslist;
+        public List<string> HoursList
+        {
+            get { return hourslist; }
+            set
+            {
+                hourslist = value;
+                NotifyPropertyChanged("HoursList");
+            }
+        }
+
+        private string selectedhour;
+        public string SelectedHour
+        {
+            get { return selectedhour; }
+            set
+            {
+                selectedhour = value;
+                Calc();
+                Properties.Settings.Default.LastHour = value;
+                Properties.Settings.Default.Save();
+                NotifyPropertyChanged("SelectedHour");
+            }
+        }
+
+        private List<string> pricelist;
+        public List<string> PriceList
+        {
+            get { return pricelist; }
+            set
+            {
+                pricelist = value;
+                NotifyPropertyChanged("PriceList");
+            }
+        }
+
+        private string selectedprice;
+        public string SelectedPrice
+        {
+            get { return selectedprice; }
+            set
+            {
+                selectedprice = value;
+                Calc();
+                Properties.Settings.Default.LastPrice = value;
+                Properties.Settings.Default.Save();
+                NotifyPropertyChanged("SelectedPrice");
+            }
+        }
+
+        bool init;
+        public LampClaculation(LampModel lamp, string source, string info)
+        {
+            Source = source;
+            if (Source == "File")
+            {
+                FilePath = info;
+                string filename = System.IO.Path.GetFileNameWithoutExtension(info);
+                string[] infosplit = info.Split('.');
+                FileID = infosplit.Length > 1 ? infosplit[1] : "0";
+                ItemBackground = colors[colorindex % colors.Length];
+            }
+            if (Source == "Unit")
+            {
+                FileID = info;
+                ItemBackground = Brushes.Ivory;
+            }
+            init = true;
             SelectedPrice = Properties.Settings.Default.LastPrice;
             SelectedHour = Properties.Settings.Default.LastHour;
             string hoursstring = Properties.Settings.Default.HoursList;
@@ -122,69 +260,40 @@ namespace Dynadimmer.Views.Calc
                     PriceList.Add(item);
                 }
             }
-            CalcCommand = new MyCommand();
-            CalcCommand.CommandSent += CalcCommand_CommandSent;
-        }
-
-        public void SetLampListAndCalc(List<LampModel> lamplist)
-        {
-            LampList = lamplist;
-            CalcCommand_CommandSent(null, null);
-        }
-
-        private void CalcCommand_CommandSent(object sender, EventArgs e)
-        {
-            LampCaclList.Clear();
-            if (SelectedPrice == string.Empty || SelectedHour == string.Empty)
-                return;
-            CalcedHour = SelectedHour;
-            CalcedPrice = SelectedPrice;
-            foreach (var lamp in LampList)
-            {
-                LampCaclList.Add(new LampClaculation(lamp,int.Parse(SelectedHour),double.Parse(SelectedPrice)));
-            }           
-        }
-    }
-
-    public class LampClaculation
-    {
-        public string LampName { get; set; }
-        public int LampPower { get; set; }
-        public double YearlyUse { get; set; }
-        public double YearlyCost { get; set; }
-        public double YearlySavings { get; set; }
-        public double YearlyCostSavings { get; set; }
-        public double YearlySavingsPreeent { get; set; }
-
-        public LampClaculation(LampModel lamp,int yearly,double cost)
-        {
+            Months = lamp.GetMonths();
             LampName = lamp.Name;
             LampPower = lamp.LampPower;
-            YearlyUse = lamp.LampPower * (double)yearly / 1000.0;
-            YearlyCost = YearlyUse * cost;
+            init = false;
+            Calc();
+
+        }
+
+        private void Calc()
+        {
+            if (init)
+                return;
+            YearlyUse = LampPower * double.Parse(SelectedHour) / 1000.0;
+            YearlyCost = YearlyUse * double.Parse(SelectedPrice);
             YearlySavings = 0;
-            foreach (var item in lamp.GetMonths())
+            foreach (var item in Months)
             {
                 double daycalc = 0;
                 for (int i = 0; i < item.LampTimes.Count; i++)
                 {
                     double span;
                     if (item.LampTimes.Last() == item.LampTimes[i])
-                        span = (lamp.LampPower * CalcTimeSpan(item.LampTimes[i], item.EndTime) / 1000) * ((100.0 - item.LampTimes[i].Precentage) / 100);
+                        span = (LampPower * LampTime.CalcTotalHoursSpan(item.LampTimes[i], item.EndTime) / 1000) * ((100.0 - item.LampTimes[i].Precentage) / 100);
                     else
-                        span = (lamp.LampPower * CalcTimeSpan(item.LampTimes[i], item.LampTimes[i]) / 1000) * ((100.0 - item.LampTimes[i].Precentage) / 100);
+                        span = (LampPower * LampTime.CalcTotalHoursSpan(item.LampTimes[i], item.LampTimes[i]) / 1000) * ((100.0 - item.LampTimes[i].Precentage) / 100);
                     daycalc += span;
                 }
                 YearlySavings += daycalc * item.MonthDays;
             }
-            YearlyCostSavings = YearlySavings * cost;
-            YearlySavingsPreeent = (YearlyCost==0)?0:(YearlyCostSavings / YearlyCost*100);
+            YearlyCostSavings = YearlySavings * double.Parse(SelectedPrice); 
+            YearlySavingsPreeent = (YearlyCost == 0) ? 0 : (YearlyCostSavings / YearlyCost * 100);
         }
 
-        private double CalcTimeSpan(LampTime one, LampTime two)
-        {
-            return (two.date - one.date).TotalHours;
-        }
+       
 
     }
 }

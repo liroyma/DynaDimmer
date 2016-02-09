@@ -110,7 +110,19 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 illuminance = value;
+                IlluminanceError = false;
                 NotifyPropertyChanged("Illuminance");
+            }
+        }
+
+        private bool illuminanceerror;
+        public bool IlluminanceError
+        {
+            get { return illuminanceerror; }
+            set
+            {
+                illuminanceerror = value;
+                CanAdd = EndTimeValue > StartTimeValue && !IlluminanceError;
             }
         }
 
@@ -227,33 +239,46 @@ namespace Dynadimmer.Views.MonthItem
             }
         }
 
-
-        private string _endtimestring;
-        public string EndTimeString
+        private System.DateTime endtimevalue;
+        public System.DateTime EndTimeValue
         {
-            get { return _endtimestring; }
+            get { return endtimevalue; }
             set
             {
-                string oldvalue = _endtimestring;
-                string[] splited = value.Split(':');
-                if (splited.Length == 2 && splited[0] != string.Empty && splited[1] != string.Empty)
+                if (LampTimes.Count != 0 && LampTimes.Last().Date >= LampTime.GetRightTime(value))
                 {
-                    if (EndTime == null)
-                        EndTime = new LampTime(value, 100);
-                    else
-                        EndTime.UpdateTime(value);
-                    if (LampTimes.Count > 0 && EndTime.date <= LampTimes.Last().date)
-                    {
-                        EndTime.UpdateTime(oldvalue);
-                        return;
-                    }
-                    UpdateView();
+                    return;
                 }
-                _endtimestring = value;
-                NotifyPropertyChanged("EndTimeString");
+                endtimevalue = LampTime.GetRightTime(value);
+                EndTime = new LampTime(value, 100);
+                CanAdd = EndTimeValue > StartTimeValue && !IlluminanceError;
+                UpdateView();
+                NotifyPropertyChanged("EndTimeValue");
             }
         }
 
+        private System.DateTime starttimevalue;
+        public System.DateTime StartTimeValue
+        {
+            get { return starttimevalue; }
+            set
+            {
+                starttimevalue = LampTime.GetRightTime(value);
+                CanAdd = EndTimeValue > StartTimeValue && !IlluminanceError;
+                NotifyPropertyChanged("StartTimeValue");
+            }
+        }
+
+        private bool canadd;
+        public bool CanAdd
+        {
+            get { return canadd; }
+            set
+            {
+                canadd = value;
+                NotifyPropertyChanged("CanAdd");
+            }
+        }
 
         #endregion
 
@@ -278,7 +303,8 @@ namespace Dynadimmer.Views.MonthItem
             LampTimes = new ObservableCollection<LampTime>();
             FromFile = false;
             ItemVisablility = Visibility.Collapsed;
-            EndTimeString = "08:00";
+            EndTime = new LampTime(8, 0, 100);
+            StartTimeValue = System.DateTime.Parse("15:00");
         }
 
         internal void Init(Month month, Canvas gragh)
@@ -337,17 +363,17 @@ namespace Dynadimmer.Views.MonthItem
                 if (i + 2 > data.Count - 1)
                 {
                     if (time == ENDVALUE)
-                         EndTimeString = string.Format("{0}:{1}", 7.ToString("D2"), 0.ToString("D2"));
-                        //EndTimeString = string.Format("{0}:{1}", 7, 0);
+                        EndTimeValue = System.DateTime.Parse(string.Format("{0}:{1}", 7.ToString("D2"), 0.ToString("D2")));
+                    //EndTimeString = string.Format("{0}:{1}", 7, 0);
                     else
-                        EndTimeString = string.Format("{0:D2}:{1:D2}", time / 60, time % 60);
+                        EndTimeValue = System.DateTime.Parse(string.Format(string.Format("{0:D2}:{1:D2}", time / 60, time % 60)));
                     break;
                 }
                 int pre = data[i + 2];
                 LampTime lt = new LampTime(time, pre);
-                if (lt.date.Hour == LampTime.STARTHOUR)
+                if (lt.Date.Hour == LampTime.STARTHOUR)
                 {
-                    if (lt.date.Minute >= LampTime.STARTMINUTE)
+                    if (lt.Date.Minute >= LampTime.STARTMINUTE)
                     {
                         AfterStart.Add(lt);
                     }
@@ -356,7 +382,7 @@ namespace Dynadimmer.Views.MonthItem
                         BeforeStart.Add(lt);
                     }
                 }
-                else if (lt.date.Hour > LampTime.STARTHOUR)
+                else if (lt.Date.Hour > LampTime.STARTHOUR)
                 {
                     AfterStart.Add(lt);
                 }
@@ -373,11 +399,11 @@ namespace Dynadimmer.Views.MonthItem
         private void UpadteList()
         {
             LampTimes.Clear();
-            foreach (var item in AfterStart.OrderBy(x => x.date))
+            foreach (var item in AfterStart.OrderBy(x => x.Date))
             {
                 LampTimes.Add(item);
             }
-            foreach (var item in BeforeStart.OrderBy(x => x.date))
+            foreach (var item in BeforeStart.OrderBy(x => x.Date))
             {
                 LampTimes.Add(item);
             }
@@ -388,6 +414,7 @@ namespace Dynadimmer.Views.MonthItem
 
         internal void UpdateView()
         {
+            List<UIElement> Elements = new List<UIElement>();
             if (GraghCanvas == null)
                 return;
             GraghCanvas.Children.Clear();
@@ -397,13 +424,34 @@ namespace Dynadimmer.Views.MonthItem
             if (width <= 0 || height <= 0)
                 return;
 
+            if (OptionOne(width, height, out Elements))
+            {
+                foreach (var item in Elements)
+                {
+                    GraghCanvas.Children.Add(item);
+                }
+                return;
+            }
+            if (OptionTwo(width, height, out Elements))
+            {
+                foreach (var item in Elements)
+                {
+                    GraghCanvas.Children.Add(item);
+                }
+                return;
+            }
+        }
+        
+        private bool OptionOne(double width, double height, out List<UIElement> el)
+        {
+            el = new List<UIElement>();
             double graphwidth = width - 40;
 
             double currentLeft = 20;
 
-            double firstandlaststep = graphwidth / (LampTimes.Count + 2);
+            double firstandlaststep = 40;
             double oneminutewidth = 0;
-
+            graphwidth = graphwidth - (firstandlaststep * 2);
 
             TextBlock starttextBlock = new TextBlock();
             starttextBlock.Text = "On";
@@ -423,31 +471,26 @@ namespace Dynadimmer.Views.MonthItem
             Canvas.SetLeft(startbar, currentLeft);
 
 
-            GraghCanvas.Children.Add(startbar);
-            GraghCanvas.Children.Add(starttextBlock);
-            GraghCanvas.Children.Add(endtextBlock);
+            el.Add(startbar);
+            el.Add(starttextBlock);
+            el.Add(endtextBlock);
+
             if (LampTimes.Count == 0)
             {
-                startbar.Width = firstandlaststep * 2;
-                return;
+                startbar.Width = graphwidth + (firstandlaststep * 2);
+                return true;
             }
-            oneminutewidth = (graphwidth - (firstandlaststep * 2)) / CalcTimeSpan(LampTimes.First(), EndTime);
+            oneminutewidth = (graphwidth) / LampTime.CalcTotalHoursSpan(LampTimes.First(), EndTime);
 
             currentLeft += startbar.Width;
             for (int i = 0; i < LampTimes.Count; i++)
             {
-                double step;
-                if (LampTimes.Last() == LampTimes[i])
-                    step = CalcTimeSpan(LampTimes[i], EndTime) * oneminutewidth;
-                else
-                    step = CalcTimeSpan(LampTimes[i], LampTimes[i + 1]) * oneminutewidth;
+                double step = LampTime.CalcTotalHoursSpan(LampTimes[i], LampTimes.Last() == LampTimes[i] ? EndTime : LampTimes[i + 1]) * oneminutewidth;
                 if (step < 40)
-                {
-                    firstandlaststep -= (40 - step);
-                    step = 40;
-                }
+                    return false;
+
                 TextBlock textBlock = new TextBlock();
-                textBlock.Text = LampTimes[i].TimeString;
+                textBlock.Text = LampTimes[i].Date.ToString("HH:mm");
                 Canvas.SetLeft(textBlock, currentLeft - 10);
                 Canvas.SetBottom(textBlock, 0);
 
@@ -458,34 +501,116 @@ namespace Dynadimmer.Views.MonthItem
                 Canvas.SetBottom(bar1, 20);
                 Canvas.SetLeft(bar1, currentLeft);
 
-                GraghCanvas.Children.Add(bar1);
-                GraghCanvas.Children.Add(textBlock);
+                el.Add(bar1);
+                el.Add(textBlock);
+
                 currentLeft += bar1.Width;
             }
 
             TextBlock lasttextBlock = new TextBlock();
-            lasttextBlock.Text = EndTime.TimeString;
+            lasttextBlock.Text = EndTime.Date.ToString("HH:mm");
             Canvas.SetLeft(lasttextBlock, currentLeft - 10);
             Canvas.SetBottom(lasttextBlock, 0);
 
             BarView endbar = new BarView();
             endbar.Height = height - 40;
-            endbar.Width = firstandlaststep > 0 ? firstandlaststep : 0;
+            endbar.Width = firstandlaststep;
             endbar.Precentage = EndTime.Precentage;
             Canvas.SetBottom(endbar, 20);
             Canvas.SetLeft(endbar, currentLeft);
 
-            GraghCanvas.Children.Add(endbar);
-            GraghCanvas.Children.Add(lasttextBlock);
+            el.Add(endbar);
+            el.Add(lasttextBlock);
+
+            return true;
         }
 
-        private double CalcTimeSpan(LampTime one, LampTime two)
+        private bool OptionTwo(double width, double height, out List<UIElement> el)
         {
-            TimeSpan span = two.date - one.date;
-            return (two.date - one.date).TotalMinutes;
-            /* if (two.Hour < one.Hour)
-                 return (((24 + two.Hour) - one.Hour) * 60) + (two.Minute - one.Minute);
-             return ((two.Hour - one.Hour) * 60) + (two.Minute - one.Minute);*/
+            el = new List<UIElement>();
+            double graphwidth = width - 40;
+
+            double currentLeft = 20;
+
+            double firstandlaststep = 40;
+            double helfhourwidth = 0;
+            graphwidth = graphwidth - (firstandlaststep * 2);
+
+            TextBlock starttextBlock = new TextBlock();
+            starttextBlock.Text = "On";
+            Canvas.SetBottom(starttextBlock, 0);
+            Canvas.SetLeft(starttextBlock, currentLeft - 10);
+
+            TextBlock endtextBlock = new TextBlock();
+            endtextBlock.Text = "Off";
+            Canvas.SetBottom(endtextBlock, 0);
+            Canvas.SetLeft(endtextBlock, width - 30);
+
+            BarView startbar = new BarView();
+            startbar.Height = height - 40;
+            startbar.Width = firstandlaststep;
+            startbar.Precentage = 100;
+            Canvas.SetBottom(startbar, 20);
+            Canvas.SetLeft(startbar, currentLeft);
+
+            el.Add(startbar);
+            el.Add(starttextBlock);
+            el.Add(endtextBlock);
+
+            if (LampTimes.Count == 0)
+            {
+                startbar.Width = graphwidth + (firstandlaststep * 2);
+                return true;
+            }
+
+            int uppers = LampTimes.Where(x => x.Date.Minute != 0 && x.Date.Minute != 30).Count();
+            helfhourwidth = graphwidth / (RoundUp(((EndTime.Date - LampTimes.First().Date).TotalHours) * 2, 0) + uppers);
+
+            currentLeft += startbar.Width;
+            for (int i = 0; i < LampTimes.Count; i++)
+            {
+                double halfs = RoundUp((((LampTimes.Last() == LampTimes[i] ? EndTime.Date : LampTimes[i + 1].Date) - LampTimes[i].Date).TotalHours) * 2, 0);
+                double step = (halfs * helfhourwidth);
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = LampTimes[i].Date.ToString("HH:mm");
+                Canvas.SetLeft(textBlock, currentLeft - 10);
+                Canvas.SetBottom(textBlock, 0);
+
+                BarView bar1 = new BarView();
+                bar1.Height = height - 40;
+                bar1.Width = step;
+                bar1.Precentage = LampTimes[i].Precentage;
+                Canvas.SetBottom(bar1, 20);
+                Canvas.SetLeft(bar1, currentLeft);
+
+                el.Add(bar1);
+                el.Add(textBlock);
+
+                currentLeft += bar1.Width;
+            }
+
+            TextBlock lasttextBlock = new TextBlock();
+            lasttextBlock.Text = EndTime.Date.ToString("HH:mm");
+            Canvas.SetLeft(lasttextBlock, currentLeft - 10);
+            Canvas.SetBottom(lasttextBlock, 0);
+
+            BarView endbar = new BarView();
+            endbar.Height = height - 40;
+            endbar.Width = firstandlaststep;
+            endbar.Precentage = EndTime.Precentage;
+            Canvas.SetBottom(endbar, 20);
+            Canvas.SetLeft(endbar, currentLeft);
+
+            el.Add(endbar);
+            el.Add(lasttextBlock);
+
+            return true;
+        }
+
+        private double RoundUp(double input, int places)
+        {
+            double multiplier = Math.Pow(10, Convert.ToDouble(places));
+            return Math.Ceiling(input * multiplier) / multiplier;
         }
 
         private void Add_CommandSent(object sender, EventArgs e)
@@ -494,19 +619,19 @@ namespace Dynadimmer.Views.MonthItem
 
             if (LampTimes.Count >= 10)
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Max items: 10", "", System.Windows.MessageBoxButton.OK);
+                Xceed.Wpf.Toolkit.MessageBox.Show("Max items: 10", "Add time error", System.Windows.MessageBoxButton.OK);
                 return;
             }
-            if (sender == null)
+            System.DateTime tempdate = LampTime.GetRightTime(StartTimeValue);
+            if (tempdate >= EndTime.Date)
             {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Please select a time", "", System.Windows.MessageBoxButton.OK);
+                Xceed.Wpf.Toolkit.MessageBox.Show("End Time must be after selected time", "Add time error", System.Windows.MessageBoxButton.OK);
                 return;
             }
-            LampTime lt = new LampTime((string)sender, Illuminance);
-            LampTime temp = LampTimes.Where(x => x.TimeString == lt.TimeString).FirstOrDefault();
+            LampTime temp = LampTimes.Where(x => x.Date == tempdate).FirstOrDefault();
             if (temp != null)
             {
-                if (temp.Precentage == lt.Precentage)
+                if (temp.Precentage == Illuminance)
                 {
                     Xceed.Wpf.Toolkit.MessageBox.Show("Time Alredy Exsists.", "", System.Windows.MessageBoxButton.OK);
                     return;
@@ -522,9 +647,10 @@ namespace Dynadimmer.Views.MonthItem
                     AfterStart.Remove(temp);
             }
 
-            if (lt.date.Hour == LampTime.STARTHOUR)
+            LampTime lt = new LampTime(tempdate, Illuminance);
+            if (lt.Date.Hour == LampTime.STARTHOUR)
             {
-                if (lt.date.Minute >= LampTime.STARTMINUTE)
+                if (lt.Date.Minute >= LampTime.STARTMINUTE)
                 {
                     AfterStart.Add(lt);
                 }
@@ -533,7 +659,7 @@ namespace Dynadimmer.Views.MonthItem
                     BeforeStart.Add(lt);
                 }
             }
-            else if (lt.date.Hour > LampTime.STARTHOUR)
+            else if (lt.Date.Hour > LampTime.STARTHOUR)
             {
                 AfterStart.Add(lt);
             }
@@ -569,9 +695,9 @@ namespace Dynadimmer.Views.MonthItem
             BeforeStart.Clear();
             foreach (var lt in ((NewSchedularSelectionModel)Perent).CopiedList)
             {
-                if (lt.date.Hour == LampTime.STARTHOUR)
+                if (lt.Date.Hour == LampTime.STARTHOUR)
                 {
-                    if (lt.date.Minute >= LampTime.STARTMINUTE)
+                    if (lt.Date.Minute >= LampTime.STARTMINUTE)
                     {
                         AfterStart.Add(lt);
                     }
@@ -580,7 +706,7 @@ namespace Dynadimmer.Views.MonthItem
                         BeforeStart.Add(lt);
                     }
                 }
-                else if (lt.date.Hour > LampTime.STARTHOUR)
+                else if (lt.Date.Hour > LampTime.STARTHOUR)
                 {
                     AfterStart.Add(lt);
                 }
@@ -598,13 +724,13 @@ namespace Dynadimmer.Views.MonthItem
             data.AddRange(MessageConstData);
             foreach (var item in LampTimes)
             {
-                int x = item.date.Hour * 60 + item.date.Minute;
+                int x = item.Date.Hour * 60 + item.Date.Minute;
                 byte[] bytes = BitConverter.GetBytes(x).ToList().GetRange(0, 2).ToArray();
                 data.Add(bytes[1]);
                 data.Add(bytes[0]);
                 data.Add((byte)item.Precentage);
             }
-            int endint = EndTime.date.Hour * 60 + EndTime.date.Minute;
+            int endint = EndTime.Date.Hour * 60 + EndTime.Date.Minute;
             byte[] endbytes = BitConverter.GetBytes(endint).ToList().GetRange(0, 2).ToArray();
             data.Add(endbytes[1]);
             data.Add(endbytes[0]);
@@ -644,15 +770,15 @@ namespace Dynadimmer.Views.MonthItem
             {
                 if (node.Name == "EndTime")
                 {
-                    EndTimeString = node.Attributes["Time"].Value;
+                    EndTimeValue = System.DateTime.Parse(node.Attributes["Time"].Value);
                     break;
                 }
-                string time = node.Attributes["Time"].Value;
+                System.DateTime time = System.DateTime.Parse(node.Attributes["Time"].Value);
                 int pre = int.Parse(node.Attributes["Precentage"].Value);
                 LampTime lt = new LampTime(time, pre);
-                if (lt.date.Hour == LampTime.STARTHOUR)
+                if (lt.Date.Hour == LampTime.STARTHOUR)
                 {
-                    if (lt.date.Minute >= LampTime.STARTMINUTE)
+                    if (lt.Date.Minute >= LampTime.STARTMINUTE)
                     {
                         AfterStart.Add(lt);
                     }
@@ -661,7 +787,7 @@ namespace Dynadimmer.Views.MonthItem
                         BeforeStart.Add(lt);
                     }
                 }
-                else if (lt.date.Hour > LampTime.STARTHOUR)
+                else if (lt.Date.Hour > LampTime.STARTHOUR)
                 {
                     AfterStart.Add(lt);
                 }

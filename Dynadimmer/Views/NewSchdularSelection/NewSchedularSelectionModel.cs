@@ -22,8 +22,13 @@ namespace Dynadimmer.Views.NewSchdularSelection
     {
         public const int UploadHeader = 12;
         public const int DownloadHeader = 11;
+        public const int ResetHeader = 14;
+
+        public string ResetTitle = "Reset Programs";
 
         MainContainerView Container;
+
+        public MyCommand ResetAll { get; set; }
 
         public List<LampTime> CopiedList { get; private set; }
 
@@ -65,9 +70,18 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         public NewSchedularSelectionModel()
         {
+            ResetAll = new MyCommand();
+            ResetAll.CommandSent += ResetAll_CommandSent;
             MonthsList = (Month[])Enum.GetValues(typeof(Month));
             SelectedMonth = Month.January;
             WinVisibility = Visibility.Collapsed;
+        }
+
+        private void ResetAll_CommandSent(object sender, EventArgs e)
+        {
+            byte[] data = new byte[] { (byte)SelectedLamp.Index };
+            Title = "Reset " + SelectedLamp.Name;
+            CreateAndSendMessage(SendMessageType.Download, ResetHeader, data);
         }
 
         public void SetContainer(MainContainerView container)
@@ -75,8 +89,29 @@ namespace Dynadimmer.Views.NewSchdularSelection
             Container = container;
         }
 
+
+
         public override void DidntGotAnswer()
         {
+
+        }
+
+
+        public string GotGaneralAnswer(IncomeMessage message)
+        {
+            byte[] data = message.OnlyData;
+            if (data[0] == NewSchedularSelectionModel.DownloadHeader)
+            {
+                LampView templamp = Container.FindLamp(data[1]);
+                MonthView tempmonth = templamp.FindMonth((Month)data[2]);
+                return "Changes in " + tempmonth.Model.Title + " saved.";
+            }
+            else if (data[0] == NewSchedularSelectionModel.ResetHeader)
+            {
+                LampView templamp = Container.FindLamp(data[1]);
+                return "Reset All programs in " + templamp.Model.Name + " succsed.";
+            }
+            return "";
         }
 
         public override string GotAnswer(IncomeMessage messase)
@@ -87,17 +122,6 @@ namespace Dynadimmer.Views.NewSchdularSelection
             tempmonth.Model.SetData(data.ToList());
             return tempmonth.Model.Title;
 
-        }
-
-        public void GotDownloadAnswer(IncomeMessage messase)
-        {
-            byte[] data = messase.DecimalData;
-            if (data[5] == 0)
-            {
-                LampView templamp = Container.FindLamp(data[3]);
-                MonthView tempmonth = templamp.FindMonth((Month)data[4]);
-                tempmonth.Model.ItemUpdated = false;
-            }
         }
 
         public override void SendDownLoad(object sender)
@@ -125,14 +149,6 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 Title = tempmonth.Model.Title;
                 CreateAndSendMessage(SendMessageType.Upload, UploadHeader, tempmonth.Model.GetUploadData());
             }
-        }
-
-        internal void SetDownloadData(byte v)
-        {
-        }
-
-        internal void SetDownloadData()
-        {
         }
 
         protected override void OnGotData(Information.UnitInfo info)
@@ -197,11 +213,11 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 {
                     writer.WriteStartElement("Time");
                     writer.WriteAttributeString("Precentage", time.Precentage.ToString());
-                    writer.WriteAttributeString("Time", time.TimeString);
+                    writer.WriteAttributeString("Time", time.Date.ToString("HH:mm"));
                     writer.WriteEndElement();
                 }
                 writer.WriteStartElement("EndTime");
-                writer.WriteAttributeString("Time", item.EndTime.TimeString);
+                writer.WriteAttributeString("Time", item.EndTime.Date.ToString("HH:mm"));
                 writer.WriteEndElement();
                 writer.WriteEndElement();
             }

@@ -10,8 +10,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer"
         x:Class="Dynadimmer.MainWindow" Closing="Window_Closing"
-        mc:Ignorable="d" Height="700" Width="1000" WindowStartupLocation="CenterScreen" WindowState="{Binding WindowState}"
-        Title="{Binding AppTitle}" MinHeight="700" MinWidth="1000">
+        mc:Ignorable="d" Height="700" Width="1200" WindowStartupLocation="CenterScreen" WindowState="{Binding WindowState}"
+        Title="{Binding AppTitle}" MinHeight="700" MinWidth="1100">
     <Window.Resources>
         <handlers:LogHandler x:Key="Logger" ></handlers:LogHandler>
         <handlers:WindowHandler x:Key="Viewer"></handlers:WindowHandler>

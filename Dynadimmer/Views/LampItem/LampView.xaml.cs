@@ -45,6 +45,11 @@ namespace Dynadimmer.Views.LampItem
 
         public LampModel Model { get; private set; }
 
+        public void SetModel(LampModel model)
+        {
+            Model = model;
+        }
+
         public LampView()
         {
             Model = new LampModel();

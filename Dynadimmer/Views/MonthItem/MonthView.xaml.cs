@@ -57,5 +57,10 @@ namespace Dynadimmer.Views.MonthItem
         {
             Model.Init(LampMonth, container);
         }
+
+        private void Button_Error(object sender, ValidationErrorEventArgs e)
+        {
+            Model.IlluminanceError = true;
+        }
     }
 }

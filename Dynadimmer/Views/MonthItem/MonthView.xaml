@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.MonthItem"
              xmlns:tools="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:valid="clr-namespace:Dynadimmer.Models.Converters" 
-             Loaded="UserControl_Loaded" Visibility="{Binding ItemVisablility,Mode=TwoWay}"
+             xmlns:valid="clr-namespace:Dynadimmer.Models.Converters"  Loaded="UserControl_Loaded" Visibility="{Binding ItemVisablility,Mode=TwoWay}"
              mc:Ignorable="d" Background="White"  d:DesignWidth="1280">
+    <!-- Visibility="{Binding ItemVisablility,Mode=TwoWay}"-->
     <UserControl.Resources>
         <ControlTemplate x:Key="TextBoxErrorTemplate">
             <StackPanel>
@@ -43,13 +43,13 @@
                     <ColumnDefinition MaxWidth="150" Width="{Binding ButtonsColumnWidth}"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Margin="5" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">End Time:</TextBlock>
-                <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center" Text="{Binding EndTimeString,UpdateSourceTrigger=PropertyChanged}" TimeInterval="00:30" ShowButtonSpinner="True"/>
+                <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center" Value="{Binding EndTimeValue}" TimeInterval="00:30" ShowButtonSpinner="True"/>
                 <TextBlock Margin="5" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Select Time:</TextBlock>
-                <tools:TimePicker Margin="5" Grid.Row="1" Grid.Column="1" TextAlignment="Center"  Name="TimePicker" Value="15:00" TimeInterval="00:30" ShowButtonSpinner="True"/>
+                <tools:TimePicker Margin="5" Grid.Row="1" Grid.Column="1" TextAlignment="Center" Value="{Binding StartTimeValue}"  Name="TimePicker" TimeInterval="00:30" ShowButtonSpinner="True"/>
                 <TextBlock Margin="5" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center">Illuminance:</TextBlock>
                 <WrapPanel VerticalAlignment="Center" Margin="2" Grid.Row="2" Grid.Column="1">
-                    <TextBox x:Name="Box"  Width="50" TextAlignment="Center">
-                        <Binding Path="Illuminance" UpdateSourceTrigger="PropertyChanged">
+                    <TextBox x:Name="Box"  Width="50" TextAlignment="Center" Validation.Error="Button_Error">
+                        <Binding Path="Illuminance" UpdateSourceTrigger="PropertyChanged" NotifyOnValidationError="True" >
                             <Binding.ValidationRules>
                                 <valid:DoubleRangeRule Min="0" Max="100"/>
                             </Binding.ValidationRules>
@@ -57,7 +57,7 @@
                     </TextBox>
                     <TextBlock Margin="5" VerticalAlignment="Center"><Run Text="%"/></TextBlock>
                 </WrapPanel>
-                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" CommandParameter="{Binding Text,ElementName=TimePicker}"></Button>
+                <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" IsEnabled="{Binding CanAdd}"></Button>
                 <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
                 <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
                     <ListBox.ItemTemplate>
@@ -67,13 +67,13 @@
                                     <ColumnDefinition Width="60" ></ColumnDefinition>
                                     <ColumnDefinition ></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock HorizontalAlignment="Center" Grid.Column="0" Text="{Binding TimeString}"/>
+                                <TextBlock HorizontalAlignment="Center" Grid.Column="0" Text="{Binding Date, StringFormat={}{0:HH:mm}}"/>
                                 <TextBlock  HorizontalAlignment="Center" Grid.Column="1"  Text="{Binding Precentage, StringFormat={}{0}%}" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Canvas Grid.Row="0" Grid.Column="3" Grid.RowSpan="7" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
+                <Canvas MinWidth="520" Grid.Row="0" Grid.Column="3" Grid.RowSpan="7" Name="container" Background="White" SizeChanged="container_SizeChanged"/>
                 <Button Grid.Row="0" Grid.Column="4" Content="Upload" Margin="10,5"  Command="{Binding Upload}"></Button>
                 <Button Grid.Row="1" Grid.Column="4" Content="Download" Margin="10,5" Command="{Binding Download}"></Button>
                 <Button Grid.Row="2" Grid.Column="4" Content="Copy" Margin="10,5"  Command="{Binding Copy}" ></Button>

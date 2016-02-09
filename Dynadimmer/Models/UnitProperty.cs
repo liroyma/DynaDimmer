@@ -102,13 +102,13 @@ namespace Dynadimmer.Models
 
         public void CreateAndSendMessage(SendMessageType type, byte header, params byte[] data)
         {
-            connection.Write(new OutMessage(string.Format("Sent {0} {1}.", type.ToString(), Title), viewer.GetUnitID(), header, data));
+            connection.Write(new OutMessage(string.Format("Sent {0} {1}.", type== SendMessageType.Other?"":type.ToString(), Title), viewer.GetUnitID(), header, data));
         }
     }
 
     public enum SendMessageType
     {
-        Download, Upload
+        Download, Upload,Other
     }
 
 

@@ -9,8 +9,11 @@ namespace Dynadimmer.Models.Messages
 {
     public class OutMessage : UnitMessage
     {
+        public byte Header { get; set; }
+
         public OutMessage(string info, byte[] unitid, byte header, params byte[] data) : base(info)
         {
+            Header = header;
             MessageColor = Brushes.Blue;
             DataAscii = Createmessage(true, unitid, header, data);
             DecimalData = Createmessage(false, unitid, header, data);

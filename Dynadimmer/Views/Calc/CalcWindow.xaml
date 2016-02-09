@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer.Views.Calc"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Closing="Window_Closing"
         Title="CalcWindow" Height="300" MinWidth="880" Width="880">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -12,81 +12,116 @@
             <ColumnDefinition Width="100"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition Height="50"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition MinHeight="50" Height="50"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Background="LightBlue" Grid.Row="0">
-            <WrapPanel HorizontalAlignment="Center">
-                <TextBlock VerticalAlignment="Center" Margin="0,15,15,15" Grid.Row="0" Grid.Column="0" Text="Annual operating Hours:"></TextBlock>
-                <ComboBox HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ComboBox>
-                <TextBlock VerticalAlignment="Center" Margin="50,15,15,15" Grid.Row="0" Grid.Column="2" Text="KWh (NIS):"></TextBlock>
-                <ComboBox HorizontalContentAlignment="Center" VerticalAlignment="Center" Width="80" Margin="0,15,0,15" Grid.Row="0" Grid.Column="3" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ComboBox>
-            </WrapPanel>
+        <Grid AllowDrop="True" Drop="Grid_Drop" Background="LightBlue" Grid.Row="0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding FilesList}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Padding="5" Margin="5" Background="White" Text="{Binding}"></TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
         </Grid>
         <Grid Background="LightBlue" Grid.Row="0" Grid.Column="1">
-            <Button Margin="10" VerticalAlignment="Center" Width="80" Command="{Binding CalcCommand}" Content="Calc"></Button>
+            <Button Margin="10" Command="{Binding ClearCommand}" Content="Clear"></Button>
+            <!--<Button Margin="10,15,10,15" Command="{Binding ClearCommand}" Content="Clear"></Button>-->
         </Grid>
-        <Grid Grid.ColumnSpan="2" Background="#efefef" Grid.Row="1" Grid.Column="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="1" Text="{Binding CalcedPrice,StringFormat=Price: {0}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"></TextBlock>
-            <TextBlock Grid.Column="0" Text="{Binding CalcedHour,StringFormat=Hours: {0}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"></TextBlock>
-        </Grid>
-        <DataGrid Grid.ColumnSpan="5" Grid.Row="3" ItemsSource="{Binding LampCaclList}"  SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="False">
+        <GridSplitter HorizontalAlignment="Stretch" Grid.ColumnSpan="2"  Grid.Row="1"></GridSplitter>
+        <DataGrid Grid.ColumnSpan="2" Grid.Row="2" ItemsSource="{Binding LampCaclList}"  SelectionMode="Single" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Source" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center" ToolTip="{Binding FilePath}" Text="{Binding Source}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="File ID" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding FileID}" TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Luminaire" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding LampName}" TextAlignment="Center" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding LampName}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Luminaire Power (W)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding LampPower}" TextAlignment="Center" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding LampPower}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Annual Consumption (KWh)" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual operating Hours" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding YearlyUse}" TextAlignment="Center" />
+                            <ComboBox HorizontalContentAlignment="Center" VerticalAlignment="Center" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour,UpdateSourceTrigger=PropertyChanged}"></ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Price (NIS)" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox  VerticalAlignment="Center" HorizontalContentAlignment="Center" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice,UpdateSourceTrigger=PropertyChanged}"></ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="Annual Consumption (KWh)" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock VerticalAlignment="Center" Text="{Binding YearlyUse}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Annual Cost (NIS)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding YearlyCost}" TextAlignment="Center" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding YearlyCost}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Annual Energy Saving (KWh)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding YearlySavings}" TextAlignment="Center" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding YearlySavings}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Annual Savings Cost (NIS)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding YearlyCostSavings}" TextAlignment="Center" />
+                            <TextBlock  VerticalAlignment="Center" Text="{Binding YearlyCostSavings}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn Width="1*" Header="Annual Saving (%)" IsReadOnly="True">
+                <DataGridTemplateColumn Header="Annual Saving (%)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding YearlySavingsPreeent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding YearlySavingsPreeent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{Binding ItemBackground}"/>
+                </Style>
+            </DataGrid.RowStyle>
         </DataGrid>
     </Grid>
 </Window>

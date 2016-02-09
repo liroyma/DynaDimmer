@@ -142,14 +142,7 @@ namespace Dynadimmer.Models.Messages
 
            
         }
-
-        private void HandleInnerMassege(IncomeMessage item)
-        {
-            item.Info += "inner error";
-            item.MessageColor = Brushes.White;
-            item.MessageBackground = Brushes.Red;
-        }
-
+        
         private string GetTitle(byte[] data)
         {
             switch (data[2])
@@ -167,6 +160,8 @@ namespace Dynadimmer.Models.Messages
                     return UnitSummerWinnterClock.Title;
                 case UnitIDModel.Header:
                     return UnitID.Title;
+                case NewSchedularSelectionModel.ResetHeader:
+                    return NewSchedularSelection.ResetTitle;
                 default:
                     return "Unknown header";
             }
@@ -179,11 +174,25 @@ namespace Dynadimmer.Models.Messages
             switch (mess.DecimalData[5])
             {
                 case 0:
-                    if (mess.DecimalData[2] == NewSchedularSelectionModel.DownloadHeader)
+                    str = NewSchedularSelection.GotGaneralAnswer(mess);
+                    switch (mess.DecimalData[2])
                     {
-                        NewSchedularSelection.GotDownloadAnswer(mess);
-                        color = Brushes.Green;
-                        str = "Changes in " + title + " saved.";
+                        case InformationModel.Header:
+                            break;
+                        case UnitIDModel.Header:
+                            break;
+                        case ConfigModel.Header:
+                            break;
+                        case UnitDateTimeModel.Header:
+                            break;
+                        case NewSchedularSelectionModel.UploadHeader:
+                        case NewSchedularSelectionModel.DownloadHeader:
+                        case NewSchedularSelectionModel.ResetHeader:
+                            str = NewSchedularSelection.GotGaneralAnswer(mess);
+                            color = Brushes.Green;
+                            break;
+                        case UnitSummerWinnterClockModel.Header:
+                            break;
                     }
                     break;
                 case 1:
@@ -193,7 +202,7 @@ namespace Dynadimmer.Models.Messages
                     str += ", CRC problem.";
                     break;
                 case 3:
-                    str += ", Lamp don't exist.";
+                    str += ", Luminaire don't exist.";
                     break;
                 case 4:
                     str += ", Program message to short (less then 5 bytes).";
@@ -217,17 +226,68 @@ namespace Dynadimmer.Models.Messages
                     str += ", Unit ID is wrong.";
                     break;
                 case 11:
-                    str += ", Broadcast is not active.";
+                    str += ", Unable to update UnitID to Broadcast value.";
                     break;
                 case 12:
-                    str += ", Broadcast is not active.";
+                    str += ", Unable to update UnitID withput pushing the button.";
                     break;
                 case 14:
                     str += ", Broadcast is not active.";
+                    break;
+                case 15:
+                    str += ", Dim times are not in the right order.";
                     break;
             }
             mess.Info = str;
             mess.MessageColor = color;
         }
+
+        private void HandleInnerMassege(IncomeMessage item)
+        {
+            item.Info += "inner error.";
+            item.MessageColor = Brushes.White;
+            item.MessageBackground = Brushes.Red;
+            switch(item.OnlyData[0])
+            {
+                case 1:
+                    item.Info += "\nUnable to read unit id from the memory.";
+                    break;
+                case 2:
+                    item.Info += "\nUnable to read unit configuration from the memory.";
+                    break;
+                case 3:
+                    item.Info += "\nUnable to read programs from the memory.";
+                    break;
+                case 4:
+                    item.Info += "\nUnable to read summer winter dates from the memory.";
+                    break;
+                case 5:
+                    item.Info += "\nUnable to read summer winter update from the memory.";
+                    return;
+                case 6:
+                    item.Info += "\nUnable to save summer winter dates to the memory.";
+                    break;
+            }
+            switch (item.OnlyData[1])
+            {
+                case 1:
+                    item.Info += "\nClock isn't initilazed.";
+                    break;
+                case 17:
+                    item.Info += "\nSummer winter dates are not update.";
+                    break;
+                case 33:
+                case 49:
+                case 65:
+                case 81:
+                    item.Info += "\nSummer winter clock updated not in time.";
+                    break;
+                case 97:
+                    item.Info += "\nCurrnt year is 2000.";
+                    break;
+            }
+
+        }
+
     }
 }

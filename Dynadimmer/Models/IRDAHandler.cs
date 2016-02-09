@@ -168,7 +168,8 @@ namespace Dynadimmer.Models
 
         public void Write(OutMessage outMessage)
         {
-            Viewer.WindowEnable = false;
+            if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header)
+                Viewer.WindowEnable = false;
             FillAnswerTimer.Start();
             Log.AddMessage(outMessage);
             Log.AddMessage(new NotificationMessage(outMessage.Info, Brushes.Blue));
@@ -279,7 +280,7 @@ namespace Dynadimmer.Models
             {
                 IsConnected = false;
                 string x = wclErrors.wclGetErrorMessage(_wclIrDADiscovery.Discovery());
-                if(x != String.Empty) Log.AddMessage(new ConnectionMessage("USB is not connected", Brushes.Red));
+                if (x != String.Empty) Log.AddMessage(new ConnectionMessage("USB is not connected", Brushes.Red));
                 // Log.AddMessage(new ConnectionMessage(x,Brushes.Red));
             }
         }

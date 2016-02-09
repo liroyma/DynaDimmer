@@ -17,11 +17,12 @@ namespace Dynadimmer.Views.DateTime
         public const int Header = 1;
 
         DispatcherTimer _timer = new DispatcherTimer();
+        DispatcherTimer _sendtimer = new DispatcherTimer();
         System.DateTime _date;
 
         #region Properties
-        private string unittime;
-        public string UnitTime
+        private System.DateTime unittime;
+        public System.DateTime UnitTime
         {
             get { return unittime; }
             set
@@ -46,7 +47,7 @@ namespace Dynadimmer.Views.DateTime
         public UnitDateTimeModel()
         {
             Title = "Unit Time";
-            SetTimer();
+            SetTimers();
             _timer.Start();
             IsLoaded = true;
         }
@@ -58,7 +59,7 @@ namespace Dynadimmer.Views.DateTime
             DATA.Add((byte)_date.Day);
             DATA.Add((byte)_date.Month);
             int zz = int.Parse(_date.ToString("yy"));
-            if(zz == 0)
+            if (zz == 0)
             {
                 MessageBox.Show("Year can be equal to 0");
                 return;
@@ -68,12 +69,12 @@ namespace Dynadimmer.Views.DateTime
             DATA.Add((byte)_date.Hour);
             DATA.Add((byte)_date.Minute);
             DATA.Add((byte)_date.Second);
-            CreateAndSendMessage(SendMessageType.Download,Header, DATA.ToArray());
+            CreateAndSendMessage(SendMessageType.Download, Header, DATA.ToArray());
         }
 
         public override void SendUpload(object sender)
         {
-            CreateAndSendMessage(SendMessageType.Upload,Header);
+            CreateAndSendMessage(SendMessageType.Upload, Header);
         }
 
         public override string GotAnswer(IncomeMessage messase)
@@ -81,8 +82,7 @@ namespace Dynadimmer.Views.DateTime
             byte[] data = messase.DecimalData;
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[3], data[4], data[5], data[6], data[7], data[8]);
             System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
-            System.DateTime date = System.DateTime.Parse(dateString,cultureinfo);
-            UnitTime = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
+            UnitTime = System.DateTime.Parse(dateString, cultureinfo);
             base.SetView();
             OnGotData(new UnitInfo() { UnitClock = UnitTime });
             return Title;
@@ -105,14 +105,24 @@ namespace Dynadimmer.Views.DateTime
         {
             UnitTime = info.UnitClock;
             IsLoaded = true;
+
             base.OnGotData(info);
         }
 
-        #region Timer
-        private void SetTimer()
+
+
+        #region Timers
+        private void SetTimers()
         {
             _timer.Interval = TimeSpan.FromSeconds(1);
             _timer.Tick += _timer_Tick;
+            _sendtimer.Interval = TimeSpan.FromSeconds(30);
+            _sendtimer.Tick += _sendtimer_Tick;
+        }
+
+        private void _sendtimer_Tick(object sender, EventArgs e)
+        {
+            CreateAndSendMessage(SendMessageType.Upload, Header);
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -121,12 +131,19 @@ namespace Dynadimmer.Views.DateTime
             ComputerTime = _date.DayOfWeek + " - " + _date.ToString("dd/MM/yy HH:mm:ss");
         }
 
-        internal void UpdateData(string unitClock)
+        internal void UpdateData(System.DateTime unitClock)
         {
             UnitTime = unitClock;
             IsLoaded = true;
         }
 
+        public void SendingClock(bool tosend)
+        {
+            if (tosend)
+                _sendtimer.Start();
+            else
+                _sendtimer.Stop();
+        }
         #endregion
 
     }

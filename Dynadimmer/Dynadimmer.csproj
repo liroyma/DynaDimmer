@@ -33,7 +33,7 @@
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>38</ApplicationRevision>
+    <ApplicationRevision>44</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -177,6 +177,7 @@
     <Compile Include="Models\Messages\OutMessage.cs" />
     <Compile Include="Models\MyUIHandler.cs" />
     <Compile Include="Models\Actions\SaveAction.cs" />
+    <Compile Include="Models\ReadFromFileModel.cs" />
     <Compile Include="Models\UnitProperty.cs" />
     <Compile Include="Models\WindowHandler.cs" />
     <Compile Include="Views\Calc\CalcModel.cs" />

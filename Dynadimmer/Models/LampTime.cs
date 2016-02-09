@@ -13,48 +13,48 @@ namespace Dynadimmer.Views.Schedulers
         public const int STARTMINUTE = 00;
 
         public int Precentage { get; set; }
-
-        private string timestring;
-        public string TimeString
+        public System.DateTime Date { get; private set; }
+        
+        public static System.DateTime GetRightTime(System.DateTime time)
         {
-            get { return timestring; }
-            private set
-            {
-                timestring = value;
-                date = System.DateTime.Parse(TimeString);
-                if (date.Hour < STARTHOUR || date.Hour > 23)
-                    date = date.AddDays(1);
-            }
+            System.DateTime dd = System.DateTime.Today.AddHours(time.Hour).AddMinutes(time.Minute);
+
+            return (dd.Hour < STARTHOUR || dd.Hour > 23) ? dd.AddDays(1) : dd;
         }
 
-        public System.DateTime date { get; private set; }
+        public static double CalcTotalHoursSpan(LampTime one, LampTime two)
+        {
+            return (two.Date - one.Date).TotalHours;
+        }
 
         public LampTime(int hour, int minute, int precentage)
         {
-            TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
+            Date = GetRightTime(System.DateTime.Parse(string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"))));
             Precentage = precentage;
         }
 
         public LampTime(int time, int precentage)
         {
             if (time == 1440)
-                TimeString = "00:00";
+                Date = GetRightTime(System.DateTime.Parse("00:00"));
+                //TimeString = "00:00";
             else
             {
                 int hour = time / 60;
                 int minute = time % 60;
-                TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
+                Date = GetRightTime(System.DateTime.Parse(string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"))));
+                //TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
             }
             Precentage = precentage;
         }
-
-        public LampTime(string timestring, int precentage)
+        
+        public LampTime(System.DateTime time, int precentage)
         {
-            TimeString = timestring;
+            Date = GetRightTime(time);
             Precentage = precentage;
         }
 
-        internal void UpdateTime(string timestring)
+      /*  internal void UpdateTime(string timestring)
         {
             if (timestring == "24:0")
                 TimeString = "07:00";
@@ -72,6 +72,6 @@ namespace Dynadimmer.Views.Schedulers
                 int minute = time % 60;
                 TimeString = string.Format("{0}:{1}", hour.ToString("D2"), minute.ToString("D2"));
             }
-        }
+        }*/
     }
 }

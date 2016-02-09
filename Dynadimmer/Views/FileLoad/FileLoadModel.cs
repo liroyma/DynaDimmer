@@ -200,7 +200,7 @@ namespace Dynadimmer.Views.FileLoad
                 {
                     writer.WriteStartElement("Time");
                     writer.WriteAttributeString("Precentage", time.Precentage.ToString());
-                    writer.WriteAttributeString("Time", time.TimeString);
+                    writer.WriteAttributeString("Time", time.Date.ToString("HH:mm"));
                     writer.WriteEndElement();
                 }
                 writer.WriteEndElement();

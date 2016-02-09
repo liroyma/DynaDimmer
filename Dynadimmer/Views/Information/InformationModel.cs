@@ -37,6 +37,18 @@ namespace Dynadimmer.Views.Information
             }
         }
 
+        private string datastring;
+        public string DataString
+        {
+            get { return datastring; }
+            set
+            {
+                datastring = value;
+                NotifyPropertyChanged("DataString");
+            }
+        }
+
+
         private Visibility nodatavisibility;
         public Visibility NoDataVisibility
         {
@@ -68,8 +80,7 @@ namespace Dynadimmer.Views.Information
             Info.HardwareVersion = data[7];
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[8], data[9], data[10], data[11], data[12], data[13]);
             System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
-            System.DateTime date = System.DateTime.Parse(dateString, cultureinfo);
-            Info.UnitClock = date.DayOfWeek + " - " + date.ToString("dd/MM/yy HH:mm:ss");
+             Info.UnitClock = System.DateTime.Parse(dateString, cultureinfo); ;
             Info.LampsCount = data[14];
             Info.Lamp1Power = BitConverter.ToUInt16(new byte[] { data[16], data[15] }, 0);
             Info.Lamp2Power = BitConverter.ToUInt16(new byte[] { data[18], data[17] }, 0);
@@ -101,7 +112,7 @@ namespace Dynadimmer.Views.Information
         {
             if (info.UnitID != int.MaxValue)
                 Info.UnitID = info.UnitID;
-            if (info.UnitClock != string.Empty)
+            if (info.UnitClock != System.DateTime.MinValue)
                 Info.UnitClock = info.UnitClock;
             if (info.LampsCount != int.MaxValue)
                 Info.LampsCount = info.LampsCount;
@@ -154,8 +165,8 @@ namespace Dynadimmer.Views.Information
             }
         }
 
-        private string unitclock = string.Empty;
-        public string UnitClock
+        private System.DateTime unitclock = System.DateTime.MinValue;
+        public System.DateTime UnitClock
         {
             get { return unitclock; }
             set

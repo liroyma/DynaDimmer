@@ -50,7 +50,8 @@
                 </WrapPanel>
                 <WrapPanel VerticalAlignment="Center" Grid.ColumnSpan="4" Grid.Row="3" Grid.Column="0">
                     <TextBlock FontWeight="Bold" Padding="0,0,10,0" Text="Clock:"></TextBlock>
-                    <TextBlock  VerticalAlignment="Center" Text="{Binding Info.UnitClock}"></TextBlock>
+                    <!---->
+                    <TextBlock  VerticalAlignment="Center" Text="{Binding Info.UnitClock,StringFormat={}{0:dddd - dd/MM/yy HH:mm}}"></TextBlock>
                 </WrapPanel>
                 <Button Grid.Column="4" Grid.Row="2" Grid.RowSpan="2"  Content="Upload" Height="30" HorizontalAlignment="Right" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
             </Grid>
