@@ -11,14 +11,14 @@
     <Setting Name="HoursList" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastHour" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="LastHour" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="PricesList" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastPrice" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="LastPrice" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="FilesPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

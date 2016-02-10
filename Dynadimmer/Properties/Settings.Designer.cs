@@ -61,10 +61,10 @@ namespace Dynadimmer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastHour {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double LastHour {
             get {
-                return ((string)(this["LastHour"]));
+                return ((double)(this["LastHour"]));
             }
             set {
                 this["LastHour"] = value;
@@ -85,10 +85,10 @@ namespace Dynadimmer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string LastPrice {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double LastPrice {
             get {
-                return ((string)(this["LastPrice"]));
+                return ((double)(this["LastPrice"]));
             }
             set {
                 this["LastPrice"] = value;
