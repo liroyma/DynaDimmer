@@ -183,8 +183,8 @@ namespace Dynadimmer.Views.Calc
             }
         }
 
-        private string selectedhour;
-        public string SelectedHour
+        private double selectedhour;
+        public double SelectedHour
         {
             get { return selectedhour; }
             set
@@ -208,8 +208,8 @@ namespace Dynadimmer.Views.Calc
             }
         }
 
-        private string selectedprice;
-        public string SelectedPrice
+        private double selectedprice;
+        public double SelectedPrice
         {
             get { return selectedprice; }
             set
@@ -272,8 +272,8 @@ namespace Dynadimmer.Views.Calc
         {
             if (init)
                 return;
-            YearlyUse = LampPower * double.Parse(SelectedHour) / 1000.0;
-            YearlyCost = YearlyUse * double.Parse(SelectedPrice);
+            YearlyUse = LampPower * SelectedHour / 1000.0;
+            YearlyCost = YearlyUse * SelectedPrice;
             YearlySavings = 0;
             foreach (var item in Months)
             {
@@ -289,7 +289,7 @@ namespace Dynadimmer.Views.Calc
                 }
                 YearlySavings += daycalc * item.MonthDays;
             }
-            YearlyCostSavings = YearlySavings * double.Parse(SelectedPrice); 
+            YearlyCostSavings = YearlySavings * SelectedPrice; 
             YearlySavingsPreeent = (YearlyCost == 0) ? 0 : (YearlyCostSavings / YearlyCost * 100);
         }
 
