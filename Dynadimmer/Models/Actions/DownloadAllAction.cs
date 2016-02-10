@@ -10,7 +10,7 @@ namespace Dynadimmer.Models.Actions
 {
     class DownloadAllAction : Action
     {
-        public DownloadAllAction(List<LampModel> lampmodle,byte lampcount, params UnitProperty[] controls):base()
+        public DownloadAllAction(List<LampModel> lampmodle, byte[] lampconfig, params UnitProperty[] controls):base()
         {
             foreach (var item in lampmodle)
             {
@@ -34,7 +34,7 @@ namespace Dynadimmer.Models.Actions
                     else
                     {
                         Upload.Add(control);
-                        Extra.Add(lampcount);
+                        Extra.Add(lampconfig);
                     }
                 }
             }

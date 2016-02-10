@@ -245,7 +245,7 @@ namespace Dynadimmer.Views.MonthItem
             get { return endtimevalue; }
             set
             {
-                if (LampTimes.Count != 0 && LampTimes.Last().Date >= LampTime.GetRightTime(value))
+                if ((LampTimes.Count != 0 && LampTimes.Last().Date >= LampTime.GetRightTime(value)) || (value.Hour==15 && value.Minute==00) )
                 {
                     return;
                 }
@@ -277,6 +277,18 @@ namespace Dynadimmer.Views.MonthItem
             {
                 canadd = value;
                 NotifyPropertyChanged("CanAdd");
+            }
+        }
+
+
+        private bool detailsxpended;
+        public bool DetailsExpended
+        {
+            get { return detailsxpended; }
+            set
+            {
+                detailsxpended = value;
+                NotifyPropertyChanged("DetailsExpended");
             }
         }
 
@@ -747,6 +759,7 @@ namespace Dynadimmer.Views.MonthItem
         private void Close_CommandSent(object sender, EventArgs e)
         {
             ItemVisablility = Visibility.Collapsed;
+            DetailsExpended = false;
         }
 
         private void Upload_CommandSent(object sender, EventArgs e)

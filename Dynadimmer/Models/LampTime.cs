@@ -19,7 +19,7 @@ namespace Dynadimmer.Views.Schedulers
         {
             System.DateTime dd = System.DateTime.Today.AddHours(time.Hour).AddMinutes(time.Minute);
 
-            return (dd.Hour <= STARTHOUR || dd.Hour > 23) ? dd.AddDays(1) : dd;
+            return (dd.Hour < STARTHOUR || dd.Hour > 23) ? dd.AddDays(1) : dd;
         }
 
         public static double CalcTotalHoursSpan(LampTime one, LampTime two)

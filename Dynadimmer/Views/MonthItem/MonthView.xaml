@@ -7,7 +7,6 @@
              xmlns:tools="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:valid="clr-namespace:Dynadimmer.Models.Converters"  Loaded="UserControl_Loaded" Visibility="{Binding ItemVisablility,Mode=TwoWay}"
              mc:Ignorable="d" Background="White"  d:DesignWidth="1280">
-    <!-- Visibility="{Binding ItemVisablility,Mode=TwoWay}"-->
     <UserControl.Resources>
         <ControlTemplate x:Key="TextBoxErrorTemplate">
             <StackPanel>
@@ -20,16 +19,24 @@
         </ControlTemplate>
     </UserControl.Resources>
     <Border Padding="5" Margin="2" BorderThickness="3" Background="#F0F0F0">
-        <Expander Background="LightBlue" HorizontalAlignment="Stretch" IsExpanded="True" >
+        <Expander Padding="1"  Background="LightBlue" HorizontalAlignment="Center" IsExpanded="{Binding DetailsExpended}" >
+            <Expander.Style>
+                <Style  TargetType="Expander">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter Property="Width" Value="280"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Expander.Style>
             <Expander.Header>
-                <Grid HorizontalAlignment="Stretch" Background="LightBlue" Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Title}" TextAlignment="Right" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
-                    <TextBlock Grid.Column="1" Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
-                </Grid>
+                <StackPanel Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                    <WrapPanel Name="panel" HorizontalAlignment="Center">
+                        <TextBlock Grid.Column="0" Text="{Binding Title}" TextAlignment="Right" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
+                        <TextBlock Grid.Column="1" Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
+                    </WrapPanel>
+                </StackPanel>
             </Expander.Header>
             <Grid Background="#efefef">
                 <Grid.RowDefinitions>

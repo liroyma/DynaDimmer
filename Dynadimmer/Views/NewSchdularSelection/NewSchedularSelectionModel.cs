@@ -89,13 +89,10 @@ namespace Dynadimmer.Views.NewSchdularSelection
             Container = container;
         }
 
-
-
         public override void DidntGotAnswer()
         {
 
         }
-
 
         public string GotGaneralAnswer(IncomeMessage message)
         {
@@ -104,6 +101,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
             {
                 LampView templamp = Container.FindLamp(data[1]);
                 MonthView tempmonth = templamp.FindMonth((Month)data[2]);
+                tempmonth.Model.ItemUpdated = false;
                 return "Changes in " + tempmonth.Model.Title + " saved.";
             }
             else if (data[0] == NewSchedularSelectionModel.ResetHeader)
@@ -138,6 +136,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         public override void SendUpload(object sender)
         {
+            
             if (sender is byte[])
                 CreateAndSendMessage(SendMessageType.Upload, UploadHeader, (byte[])sender);
             else if (sender is LampModel)
@@ -147,6 +146,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 LampView templamp = Container.FindLamp(SelectedLamp);
                 MonthView tempmonth = templamp.FindMonth(SelectedMonth);
                 Title = tempmonth.Model.Title;
+                tempmonth.Model.DetailsExpended = true;
                 CreateAndSendMessage(SendMessageType.Upload, UploadHeader, tempmonth.Model.GetUploadData());
             }
         }

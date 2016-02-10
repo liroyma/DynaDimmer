@@ -174,7 +174,6 @@ namespace Dynadimmer.Models.Messages
             switch (mess.DecimalData[5])
             {
                 case 0:
-                    str = NewSchedularSelection.GotGaneralAnswer(mess);
                     switch (mess.DecimalData[2])
                     {
                         case InformationModel.Header:

@@ -8,6 +8,8 @@ using Dynadimmer.Views.MonthItem;
 using Dynadimmer.Views.NewSchdularSelection;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Xml;
 
@@ -17,7 +19,7 @@ namespace Dynadimmer.Views.FileLoad
     {
         public const int DownloadHeader = 11;
 
-        public event EventHandler<byte> ClickDownload;
+        public event EventHandler<byte[]> ClickDownload;
 
 
         public event EventHandler<Visibility> WinVisibilityChanged;
@@ -115,8 +117,12 @@ namespace Dynadimmer.Views.FileLoad
 
         private void DownLoadAll_CommandSent(object sender, EventArgs e)
         {
+            List<byte> data = new List<byte>();
+            data.Add((byte)UnitLampCount);
+            data.AddRange(BitConverter.GetBytes(Container.Model.Lamp1Power).Reverse().ToList().GetRange(2, 2));
+            data.AddRange(BitConverter.GetBytes(Container.Model.Lamp2Power).Reverse().ToList().GetRange(2, 2));
             if (ClickDownload != null)
-                ClickDownload(null, (byte)UnitLampCount);
+                ClickDownload(null, data.ToArray());
         }
         #endregion
 

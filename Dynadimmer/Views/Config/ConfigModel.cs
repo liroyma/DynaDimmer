@@ -166,16 +166,16 @@ namespace Dynadimmer.Views.Config
         public override void SendDownLoad(object sender)
         {
             List<byte> DATA = new List<byte>();
-            if (sender == null)
+            if (sender is byte[])
+            {
+                Notify = false;
+                DATA.AddRange((byte[])sender);
+            }
+            else
             {
                 DATA.Add((byte)UnitLampCount);
                 DATA.AddRange(BitConverter.GetBytes(Lamp1Power).Reverse().ToList().GetRange(2, 2));
                 DATA.AddRange(BitConverter.GetBytes(Lamp2Power).Reverse().ToList().GetRange(2, 2));
-            }
-            else
-            {
-                Notify = false;
-                DATA.Add((byte)sender);
             }
             CreateAndSendMessage(SendMessageType.Download, Header, DATA.ToArray());
         }

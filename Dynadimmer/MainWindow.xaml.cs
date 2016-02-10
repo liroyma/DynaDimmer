@@ -114,7 +114,7 @@ namespace Dynadimmer
         }
 
         #region Models Events
-        private void FileLoad_ClickDownload(object sender, byte e)
+        private void FileLoad_ClickDownload(object sender, byte[] e)
         {
             action = new DownloadAllAction(this.MainContainer.GetLampsModels(), e, configview.Model, newschdularselectionview.Model);
         }
