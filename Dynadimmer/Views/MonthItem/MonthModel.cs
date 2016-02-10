@@ -19,6 +19,7 @@ namespace Dynadimmer.Views.MonthItem
 {
     public class MonthModel : MyUIHandler
     {
+        //comment
         public static UnitProperty Perent { get; set; }
 
         public event EventHandler itemchanged;
