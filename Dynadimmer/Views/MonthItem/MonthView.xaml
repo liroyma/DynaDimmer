@@ -12,7 +12,6 @@
         <ControlTemplate x:Key="TextBoxErrorTemplate">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-
                     <AdornedElementPlaceholder x:Name="Holder"/>
                 </StackPanel>
                 <Label Foreground="Red" Content="{Binding ElementName=Holder, 
@@ -20,12 +19,18 @@
             </StackPanel>
         </ControlTemplate>
     </UserControl.Resources>
-    <Border Padding="5" Margin="5" BorderThickness="3" Background="#F0F0F0">
-        <StackPanel Background="LightBlue" >
-            <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,5">
-                <TextBlock  Text="{Binding Title}" TextAlignment="Center" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
-                <TextBlock Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
-            </WrapPanel>
+    <Border Padding="5" Margin="2" BorderThickness="3" Background="#F0F0F0">
+        <Expander Background="LightBlue" HorizontalAlignment="Stretch" IsExpanded="True" >
+            <Expander.Header>
+                <Grid HorizontalAlignment="Stretch" Background="LightBlue" Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Title}" TextAlignment="Right" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
+                    <TextBlock Grid.Column="1" Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
+                </Grid>
+            </Expander.Header>
             <Grid Background="#efefef">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -80,6 +85,6 @@
                 <Button Grid.Row="3" Grid.Column="4" Content="Paste" Margin="10,5"  Command="{Binding Paste}" IsEnabled="{Binding CanPaste}"></Button>
                 <Button Grid.Row="4" Grid.Column="4" Content="Close" Margin="10,5"  Command="{Binding Close}"></Button>
             </Grid>
-        </StackPanel>
+        </Expander>
     </Border>
 </UserControl>
