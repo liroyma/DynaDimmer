@@ -33,7 +33,7 @@
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>44</ApplicationRevision>
+    <ApplicationRevision>45</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -219,7 +219,7 @@
       <DependentUpon>NewSchdularSelectionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewSchdularSelection\NewSchedularSelectionModel.cs" />
-    <Compile Include="Views\Schedulers\BarView.xaml.cs">
+    <Compile Include="Views\MonthItem\Graph\BarView.xaml.cs">
       <DependentUpon>BarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\LampTime.cs" />
@@ -287,7 +287,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Schedulers\BarView.xaml">
+    <Page Include="Views\MonthItem\Graph\BarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

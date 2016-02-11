@@ -245,7 +245,7 @@ namespace Dynadimmer.Views.MonthItem
             get { return endtimevalue; }
             set
             {
-                if ((LampTimes.Count != 0 && LampTimes.Last().Date >= LampTime.GetRightTime(value)) || (value.Hour==15 && value.Minute==00) )
+                if ((LampTimes.Count != 0 && LampTimes.Last().Date >= LampTime.GetRightTime(value)) || (value.Hour == 15 && value.Minute == 00))
                 {
                     return;
                 }
@@ -419,6 +419,7 @@ namespace Dynadimmer.Views.MonthItem
             {
                 LampTimes.Add(item);
             }
+
             ItemVisablility = Visibility.Visible;
             ItemUpdated = true;
             UpdateView();
@@ -435,106 +436,11 @@ namespace Dynadimmer.Views.MonthItem
             double height = GraghCanvas.ActualHeight;
             if (width <= 0 || height <= 0)
                 return;
-
-            if (OptionOne(width, height, out Elements))
+            OptionTwo(width, height, out Elements);
+            foreach (var item in Elements)
             {
-                foreach (var item in Elements)
-                {
-                    GraghCanvas.Children.Add(item);
-                }
-                return;
+                GraghCanvas.Children.Add(item);
             }
-            if (OptionTwo(width, height, out Elements))
-            {
-                foreach (var item in Elements)
-                {
-                    GraghCanvas.Children.Add(item);
-                }
-                return;
-            }
-        }
-        
-        private bool OptionOne(double width, double height, out List<UIElement> el)
-        {
-            el = new List<UIElement>();
-            double graphwidth = width - 40;
-
-            double currentLeft = 20;
-
-            double firstandlaststep = 40;
-            double oneminutewidth = 0;
-            graphwidth = graphwidth - (firstandlaststep * 2);
-
-            TextBlock starttextBlock = new TextBlock();
-            starttextBlock.Text = "On";
-            Canvas.SetBottom(starttextBlock, 0);
-            Canvas.SetLeft(starttextBlock, currentLeft - 10);
-
-            TextBlock endtextBlock = new TextBlock();
-            endtextBlock.Text = "Off";
-            Canvas.SetBottom(endtextBlock, 0);
-            Canvas.SetLeft(endtextBlock, width - 30);
-
-            BarView startbar = new BarView();
-            startbar.Height = height - 40;
-            startbar.Width = firstandlaststep;
-            startbar.Precentage = 100;
-            Canvas.SetBottom(startbar, 20);
-            Canvas.SetLeft(startbar, currentLeft);
-
-
-            el.Add(startbar);
-            el.Add(starttextBlock);
-            el.Add(endtextBlock);
-
-            if (LampTimes.Count == 0)
-            {
-                startbar.Width = graphwidth + (firstandlaststep * 2);
-                return true;
-            }
-            oneminutewidth = (graphwidth) / LampTime.CalcTotalHoursSpan(LampTimes.First(), EndTime);
-
-            currentLeft += startbar.Width;
-            for (int i = 0; i < LampTimes.Count; i++)
-            {
-                double step = LampTime.CalcTotalHoursSpan(LampTimes[i], LampTimes.Last() == LampTimes[i] ? EndTime : LampTimes[i + 1]) * oneminutewidth;
-                if (step < 40)
-                    return false;
-
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = LampTimes[i].Date.ToString("HH:mm");
-                Canvas.SetLeft(textBlock, currentLeft - 10);
-                Canvas.SetBottom(textBlock, 0);
-
-                BarView bar1 = new BarView();
-                bar1.Height = height - 40;
-                bar1.Width = step;
-                bar1.Precentage = LampTimes[i].Precentage;
-                Canvas.SetBottom(bar1, 20);
-                Canvas.SetLeft(bar1, currentLeft);
-
-                el.Add(bar1);
-                el.Add(textBlock);
-
-                currentLeft += bar1.Width;
-            }
-
-            TextBlock lasttextBlock = new TextBlock();
-            lasttextBlock.Text = EndTime.Date.ToString("HH:mm");
-            Canvas.SetLeft(lasttextBlock, currentLeft - 10);
-            Canvas.SetBottom(lasttextBlock, 0);
-
-            BarView endbar = new BarView();
-            endbar.Height = height - 40;
-            endbar.Width = firstandlaststep;
-            endbar.Precentage = EndTime.Precentage;
-            Canvas.SetBottom(endbar, 20);
-            Canvas.SetLeft(endbar, currentLeft);
-
-            el.Add(endbar);
-            el.Add(lasttextBlock);
-
-            return true;
         }
 
         private bool OptionTwo(double width, double height, out List<UIElement> el)
@@ -545,8 +451,7 @@ namespace Dynadimmer.Views.MonthItem
             double currentLeft = 20;
 
             double firstandlaststep = 40;
-            double helfhourwidth = 0;
-            graphwidth = graphwidth - (firstandlaststep * 2);
+            double oneminutewidth = 0;
 
             TextBlock starttextBlock = new TextBlock();
             starttextBlock.Text = "On";
@@ -571,50 +476,61 @@ namespace Dynadimmer.Views.MonthItem
 
             if (LampTimes.Count == 0)
             {
-                startbar.Width = graphwidth + (firstandlaststep * 2);
-                return true;
+                startbar.Width = graphwidth;
+                return;
             }
-
-            int uppers = LampTimes.Where(x => x.Date.Minute != 0 && x.Date.Minute != 30).Count();
-            helfhourwidth = graphwidth / (RoundUp(((EndTime.Date - LampTimes.First().Date).TotalHours) * 2, 0) + uppers);
-
-            currentLeft += startbar.Width;
-            for (int i = 0; i < LampTimes.Count; i++)
-            {
-                double halfs = RoundUp((((LampTimes.Last() == LampTimes[i] ? EndTime.Date : LampTimes[i + 1].Date) - LampTimes[i].Date).TotalHours) * 2, 0);
-                double step = (halfs * helfhourwidth);
-                TextBlock textBlock = new TextBlock();
-                textBlock.Text = LampTimes[i].Date.ToString("HH:mm");
-                Canvas.SetLeft(textBlock, currentLeft - 10);
-                Canvas.SetBottom(textBlock, 0);
-
-                BarView bar1 = new BarView();
-                bar1.Height = height - 40;
-                bar1.Width = step;
-                bar1.Precentage = LampTimes[i].Precentage;
-                Canvas.SetBottom(bar1, 20);
-                Canvas.SetLeft(bar1, currentLeft);
-
-                el.Add(bar1);
-                el.Add(textBlock);
-
-                currentLeft += bar1.Width;
-            }
-
-            TextBlock lasttextBlock = new TextBlock();
-            lasttextBlock.Text = EndTime.Date.ToString("HH:mm");
-            Canvas.SetLeft(lasttextBlock, currentLeft - 10);
-            Canvas.SetBottom(lasttextBlock, 0);
 
             BarView endbar = new BarView();
             endbar.Height = height - 40;
             endbar.Width = firstandlaststep;
             endbar.Precentage = EndTime.Precentage;
             Canvas.SetBottom(endbar, 20);
-            Canvas.SetLeft(endbar, currentLeft);
+            Canvas.SetLeft(endbar, graphwidth - 20);
+
+
+            TextBlock lasttextBlock = new TextBlock();
+            lasttextBlock.Text = EndTime.Date.ToString("HH:mm");
+            Canvas.SetLeft(lasttextBlock, Canvas.GetLeft(endbar) - 10);
+            Canvas.SetBottom(lasttextBlock, 0);
 
             el.Add(endbar);
             el.Add(lasttextBlock);
+            currentLeft += startbar.Width;
+            graphwidth -= (firstandlaststep * 2);
+            oneminutewidth = graphwidth / LampTime.CalcTotalHoursSpan(LampTimes.First(), EndTime);
+            List<BarView> dynamibars = new List<BarView>();
+            for (int i = 0; i < LampTimes.Count; i++)
+            {
+                BarView bar = new BarView();
+                bar.SetTimes(LampTimes[i].Date, LampTimes[i] == LampTimes.Last() ? EndTime.Date : LampTimes[i + 1].Date, LampTimes[i].Precentage);
+                bar.SetSize(height - 40, oneminutewidth);
+                dynamibars.Add(bar);
+                Canvas.SetBottom(bar, 20);
+                el.Add(bar);
+            }
+
+            graphwidth -= (40 * dynamibars.Where(x => x.isDefultWidth == false).Count());
+
+            oneminutewidth = graphwidth / LampTime.CalcTotalHoursSpan(LampTimes.First(), EndTime);
+
+            foreach (var item in dynamibars.Where(x => x.isDefultWidth == true))
+            {
+                item.SetSize(height - 40, oneminutewidth);
+            }
+
+            foreach (var item in dynamibars)
+            {
+                Canvas.SetLeft(item, currentLeft);
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = item.StartTime.ToString("HH:mm");
+                Canvas.SetLeft(textBlock, Canvas.GetLeft(item) - 10);
+                Canvas.SetBottom(textBlock, 0);
+                el.Add(textBlock);
+                currentLeft += item.Width;
+            }
+
+            dynamibars.Last().Width = Canvas.GetLeft(endbar) - Canvas.GetLeft(dynamibars.Last());
+
 
             return true;
         }

@@ -21,6 +21,14 @@ namespace Dynadimmer.Views.Schedulers.Inner
     /// </summary>
     public partial class BarView : UserControl, INotifyPropertyChanged
     {
+        public System.DateTime StartTime { get; private set; }
+        public System.DateTime EndTime { get; private set; }
+        public TimeSpan TotlaSpan { get; private set; }
+        public double ItemActualWidth { get; private set; }
+        public double Left { get; private set; }
+        public bool isDefultWidth { get; private set; }
+
+
         private int _precentage;
         public int Precentage
         {
@@ -41,7 +49,7 @@ namespace Dynadimmer.Views.Schedulers.Inner
                 NotifyPropertyChanged("Precentage");
             }
         }
-
+        
         private Thickness _precentageposition;
         public Thickness PrecentagePosition
         {
@@ -75,6 +83,8 @@ namespace Dynadimmer.Views.Schedulers.Inner
             }
         }
 
+
+
         public BarView()
         {
             InitializeComponent();
@@ -96,6 +106,27 @@ namespace Dynadimmer.Views.Schedulers.Inner
         private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             BarHeight = this.Height * Precentage / 100;
+        }
+
+        public void SetTimes(System.DateTime start, System.DateTime end,int precent )
+        {
+            StartTime = start;
+            EndTime = end;
+            TotlaSpan = end - start;
+            Precentage = precent;
+        }
+
+        public void SetSize(double heigth, double oneminwidth)
+        {
+            this.Height = heigth;
+            isDefultWidth = true;
+            ItemActualWidth = oneminwidth * TotlaSpan.TotalHours;
+            this.Width = ItemActualWidth;
+            if (ItemActualWidth<40)
+            {
+                this.Width = 40;
+                isDefultWidth = false;
+            }
         }
 
     }
