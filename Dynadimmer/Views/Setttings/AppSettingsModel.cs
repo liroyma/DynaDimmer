@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace Dynadimmer.Views.Setttings
 {
-    class AppSettingsModel : MyUIHandler
+    public class AppSettingsModel : MyUIHandler
     {
         #region Price
         private ObservableCollection<string> _pricelist = new ObservableCollection<string>();
@@ -139,6 +140,7 @@ namespace Dynadimmer.Views.Setttings
         public MyCommand Save { get; set; }
         public MyCommand Close { get; set; }
         public MyCommand Browse { get; set; }
+        public MyCommand LogIn { get; set; }
 
         private void Close_CommandSent(object sender, EventArgs e)
         {
@@ -198,7 +200,7 @@ namespace Dynadimmer.Views.Setttings
                     break;
             }
         }
-        
+
         private void Browse_CommandSent(object sender, EventArgs e)
         {
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
@@ -206,7 +208,24 @@ namespace Dynadimmer.Views.Setttings
             if (result == DialogResult.OK)
                 FilesPath = folderBrowserDialog1.SelectedPath;
         }
+
+        private void LogIn_CommandSent(object sender, EventArgs e)
+        {
+            if (LoginWin.Model.IsLogged)
+            {
+                LoginWin.Model.Logout();
+            }
+            else
+            {
+                LoginWin.Model.ErrorVisibility = Visibility.Hidden;
+                LoginWin.PassTxt.Clear();
+                LoginWin.ShowDialog();
+            }
+            LoginText = LoginWin.Model.IsLogged ? "Logout" : "Login";
+        }
         #endregion
+
+        public Login.LogInWindow LoginWin { get; set; }
 
         private string _filespath;
         public string FilesPath
@@ -219,10 +238,24 @@ namespace Dynadimmer.Views.Setttings
             }
         }
 
+        private string _logintext;
+        public string LoginText
+        {
+            get { return _logintext; }
+            set
+            {
+                _logintext = value;
+                NotifyPropertyChanged("LoginText");
+            }
+        }
+
         public AppSettingsModel()
         {
+            LoginWin = new Login.LogInWindow();
             Save = new MyCommand();
             Save.CommandSent += Save_CommandSent;
+            LogIn = new MyCommand();
+            LogIn.CommandSent += LogIn_CommandSent;
             Browse = new MyCommand();
             Browse.CommandSent += Browse_CommandSent;
             Close = new MyCommand();
@@ -233,14 +266,14 @@ namespace Dynadimmer.Views.Setttings
             Remove.CommandSent += Remove_CommandSent;
             SelectedPrice = "0.0";
             SelectedHour = "0";
+            LoginText = "Login";
             ReadFromSettings();
         }
 
-
         private void ReadFromSettings()
         {
-            FilesPath  = Properties.Settings.Default.FilesPath;
-            if(FilesPath==string.Empty)
+            FilesPath = Properties.Settings.Default.FilesPath;
+            if (FilesPath == string.Empty)
                 FilesPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string hoursstring = Properties.Settings.Default.HoursList;
             if (hoursstring != string.Empty)
@@ -266,13 +299,13 @@ namespace Dynadimmer.Views.Setttings
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             double x;
-            if (value==null || double.TryParse(value.ToString(), out x))
+            if (value == null || double.TryParse(value.ToString(), out x))
                 // return (x >= 0 && x <= 2)
                 return new ValidationResult(true, null);
-                    //: new ValidationResult(false, "Must be number between 0 to 2.");
+            //: new ValidationResult(false, "Must be number between 0 to 2.");
             return new ValidationResult(false, "Must be a decimal number");
         }
-        
+
     }
 
     public class NonEmptyStringIntValidationRule : ValidationRule

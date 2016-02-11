@@ -19,7 +19,7 @@
             <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Unit ID:"></TextBlock>
             <TextBox TextAlignment="Center" Text="{Binding UnitID}" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="0" Grid.Column="1"/>
             <Button Grid.Column="1" Grid.Row="1"  Content="Upload" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
-            <Button Grid.Column="2" Grid.Row="1" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
+            <Button Grid.Column="2" Grid.Row="1" Visibility="{Binding DownloadVisibility}" IsEnabled="{Binding IsLoaded}" Content="Download" Margin="10,5" Width="80" Command="{Binding Download}"></Button>
         </Grid>
     </GroupBox>
 </UserControl>

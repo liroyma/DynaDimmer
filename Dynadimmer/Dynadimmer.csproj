@@ -227,6 +227,10 @@
       <DependentUpon>AppSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Setttings\AppSettingsModel.cs" />
+    <Compile Include="Views\Setttings\Login\LoginModel.cs" />
+    <Compile Include="Views\Setttings\Login\LogInWindow.xaml.cs">
+      <DependentUpon>LogInWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SummerWinnter\UnitSummerWinnterClock.xaml.cs">
       <DependentUpon>UnitSummerWinnterClock.xaml</DependentUpon>
     </Compile>
@@ -292,6 +296,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Setttings\AppSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Setttings\Login\LogInWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

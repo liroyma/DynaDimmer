@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dynadimmer.Models.Messages;
 using System.Xml;
 using Dynadimmer.Views.Information;
+using System.Windows;
 
 namespace Dynadimmer.Views.UnitID
 {
@@ -25,9 +26,21 @@ namespace Dynadimmer.Views.UnitID
             }
         }
 
+        public Visibility downloadvisibility;
+        public Visibility DownloadVisibility
+        {
+            get { return downloadvisibility; }
+            set
+            {
+                downloadvisibility = value;
+                NotifyPropertyChanged("DownloadVisibility");
+            }
+        }
+
         public UnitIDModel()
         {
             Title = "Unit ID";
+            DownloadVisibility = Visibility.Collapsed;
         }
 
         public override void DidntGotAnswer()

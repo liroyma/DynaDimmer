@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Dynadimmer.Models;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,30 +13,30 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Dynadimmer.Views.Setttings
+namespace Dynadimmer.Views.Setttings.Login
 {
     /// <summary>
-    /// Interaction logic for AppSettings.xaml
+    /// Interaction logic for LogInWindow.xaml
     /// </summary>
-    public partial class AppSettings : Window
+    public partial class LogInWindow : Window
     {
-        public AppSettingsModel Model { get; private set; }
-        public AppSettings()
+        public LoginModel Model { get; set; }
+        public LogInWindow()
         {
-            Model = new AppSettingsModel();
+            Model = new LoginModel();
             InitializeComponent();
             this.DataContext = Model;
         }
 
-        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
-        {
-            Model.PriceAddEnable = false;
-        }
-
-        private void win_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
             e.Cancel = true;
+        }
+        
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            Model.Password = ((PasswordBox)sender).Password;
         }
     }
 }

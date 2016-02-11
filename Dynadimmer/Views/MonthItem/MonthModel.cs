@@ -436,16 +436,6 @@ namespace Dynadimmer.Views.MonthItem
             double height = GraghCanvas.ActualHeight;
             if (width <= 0 || height <= 0)
                 return;
-            OptionTwo(width, height, out Elements);
-            foreach (var item in Elements)
-            {
-                GraghCanvas.Children.Add(item);
-            }
-        }
-
-        private bool OptionTwo(double width, double height, out List<UIElement> el)
-        {
-            el = new List<UIElement>();
             double graphwidth = width - 40;
 
             double currentLeft = 20;
@@ -470,9 +460,9 @@ namespace Dynadimmer.Views.MonthItem
             Canvas.SetBottom(startbar, 20);
             Canvas.SetLeft(startbar, currentLeft);
 
-            el.Add(startbar);
-            el.Add(starttextBlock);
-            el.Add(endtextBlock);
+            Elements.Add(startbar);
+            Elements.Add(starttextBlock);
+            Elements.Add(endtextBlock);
 
             if (LampTimes.Count == 0)
             {
@@ -493,8 +483,8 @@ namespace Dynadimmer.Views.MonthItem
             Canvas.SetLeft(lasttextBlock, Canvas.GetLeft(endbar) - 10);
             Canvas.SetBottom(lasttextBlock, 0);
 
-            el.Add(endbar);
-            el.Add(lasttextBlock);
+            Elements.Add(endbar);
+            Elements.Add(lasttextBlock);
             currentLeft += startbar.Width;
             graphwidth -= (firstandlaststep * 2);
             oneminutewidth = graphwidth / LampTime.CalcTotalHoursSpan(LampTimes.First(), EndTime);
@@ -506,7 +496,7 @@ namespace Dynadimmer.Views.MonthItem
                 bar.SetSize(height - 40, oneminutewidth);
                 dynamibars.Add(bar);
                 Canvas.SetBottom(bar, 20);
-                el.Add(bar);
+                Elements.Add(bar);
             }
 
             graphwidth -= (40 * dynamibars.Where(x => x.isDefultWidth == false).Count());
@@ -525,20 +515,16 @@ namespace Dynadimmer.Views.MonthItem
                 textBlock.Text = item.StartTime.ToString("HH:mm");
                 Canvas.SetLeft(textBlock, Canvas.GetLeft(item) - 10);
                 Canvas.SetBottom(textBlock, 0);
-                el.Add(textBlock);
+                Elements.Add(textBlock);
                 currentLeft += item.Width;
             }
 
             dynamibars.Last().Width = Canvas.GetLeft(endbar) - Canvas.GetLeft(dynamibars.Last());
 
-
-            return true;
-        }
-
-        private double RoundUp(double input, int places)
-        {
-            double multiplier = Math.Pow(10, Convert.ToDouble(places));
-            return Math.Ceiling(input * multiplier) / multiplier;
+            foreach (var item in Elements)
+            {
+                GraghCanvas.Children.Add(item);
+            }
         }
 
         private void Add_CommandSent(object sender, EventArgs e)

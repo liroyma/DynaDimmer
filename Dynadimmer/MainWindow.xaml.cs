@@ -23,6 +23,7 @@ namespace Dynadimmer
         WindowHandler viewer;
         AnswerHandler answers;
         Models.Action action;
+        AppSettings settings = new AppSettings();
         bool close = false;
 
         public MainWindow()
@@ -76,10 +77,15 @@ namespace Dynadimmer
             datetimeview.Model.GotData += Model_GotData;
             configview.Model.GotData += Model_GotData;
             summerwinterview.Model.GotData += Model_GotData;
-
+            settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
             viewer.WindowEnable = true;
             if (connection.IsInit)
                 connection.CheckStatus();
+        }
+
+        private void Model_Loggedin(object sender, bool e)
+        {
+            unitidview.Model.DownloadVisibility = e ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void Model_GotData(object sender, Views.Information.UnitInfo info)
@@ -225,7 +231,6 @@ namespace Dynadimmer
 
         private void MenuItem_Settings(object sender, RoutedEventArgs e)
         {
-            AppSettings settings = new AppSettings();
             settings.Owner = this;
             settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             settings.ShowDialog();
