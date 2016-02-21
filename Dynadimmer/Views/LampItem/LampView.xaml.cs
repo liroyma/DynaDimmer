@@ -77,7 +77,9 @@ namespace Dynadimmer.Views.LampItem
             {
                 if (item is MonthView)
                 {
-                    ((MonthView)item).Model.ItemVisablility = Visibility.Collapsed;               }
+                    ((MonthView)item).Model.ItemVisablility = Visibility.Collapsed;
+                    ((MonthView)item).Model.DetailsExpended = false;
+                }
             }
         }
 
@@ -113,6 +115,17 @@ namespace Dynadimmer.Views.LampItem
                 if (item is MonthView)
                 {
                     ((MonthView)item).Model.CanPaste = value;
+                }
+            }
+        }
+
+        internal void ExpendedAll()
+        {
+            foreach (var item in monthcontainer.Children)
+            {
+                if (item is MonthView)
+                {
+                    ((MonthView)item).Model.DetailsExpended = false;
                 }
             }
         }
