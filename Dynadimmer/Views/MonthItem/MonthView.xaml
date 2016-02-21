@@ -31,12 +31,13 @@
                 </Style>
             </Expander.Style>
             <Expander.Header>
-                <StackPanel Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                <DockPanel Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                    <Button Margin="0,0,30,0" Grid.Column="2" Content="x" Width="20" DockPanel.Dock="Right" Command="{Binding Close}"></Button>
                     <WrapPanel Name="panel" HorizontalAlignment="Center">
                         <TextBlock Grid.Column="0" Text="{Binding Title}" TextAlignment="Right" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
                         <TextBlock Grid.Column="1" Visibility="{Binding StarVisibility}" Text="*" FontSize="17"  FontWeight="Bold" Foreground="DarkBlue"></TextBlock>
                     </WrapPanel>
-                </StackPanel>
+                </DockPanel>
             </Expander.Header>
             <Grid Background="#efefef">
                 <Grid.RowDefinitions>

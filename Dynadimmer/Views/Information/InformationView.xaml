@@ -36,7 +36,7 @@
                     <TextBlock  VerticalAlignment="Center" Text="{Binding Info.HardwareVersion}"></TextBlock>
                 </WrapPanel>
                 <Rectangle Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Stretch" Width="1" Margin="5,0" Stroke="Black" />
-                <WrapPanel VerticalAlignment="Center" Grid.Row="0" Grid.Column="2">
+                <WrapPanel VerticalAlignment="Center" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="2">
                     <TextBlock FontWeight="Bold" Padding="0,0,10,0" Text="Number of Luminaires:"></TextBlock>
                     <TextBlock  VerticalAlignment="Center" Text="{Binding Info.LampsCount}"></TextBlock>
                 </WrapPanel>

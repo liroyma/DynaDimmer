@@ -10,7 +10,7 @@
             <WrapPanel Margin="10,0,0,0">
                 <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding Name}"></TextBlock>
                 <TextBlock FontWeight="Bold" FontSize="15" Margin="10,0" Text="-"></TextBlock>
-                <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding LampPower,StringFormat=({0})}"></TextBlock>
+                <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding LampPower,StringFormat=(Power {0})}"></TextBlock>
             </WrapPanel>
         </Expander.Header>
         <Grid  Background="White">
