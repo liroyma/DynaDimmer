@@ -31,6 +31,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         public MyCommand ResetAll { get; set; }
 
         public List<LampTime> CopiedList { get; private set; }
+        public LampTime CopiedEndTime { get; private set; }
 
         public Month[] MonthsList { get; set; }
         public Month SelectedMonth { get; set; }
@@ -144,6 +145,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
             else
             {
                 LampView templamp = Container.FindLamp(SelectedLamp);
+                templamp.ExpendedAll();
                 MonthView tempmonth = templamp.FindMonth(SelectedMonth);
                 Title = tempmonth.Model.Title;
                 tempmonth.Model.DetailsExpended = true;
@@ -233,6 +235,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
         public void Copy(MonthModel model)
         {
             CopiedList = model.LampTimes.ToList();
+            CopiedEndTime = model.EndTime;
             foreach (LampView lamp in Container.GetLampsViews())
             {
                 lamp.SetAllPatse(true);

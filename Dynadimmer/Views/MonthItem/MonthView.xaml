@@ -52,7 +52,7 @@
                     <ColumnDefinition Width="80"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition MaxWidth="150" Width="{Binding ButtonsColumnWidth}"></ColumnDefinition>
+                    <ColumnDefinition MaxWidth="100" Width="{Binding ButtonsColumnWidth}"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <TextBlock Margin="5" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">End Time:</TextBlock>
                 <tools:TimePicker Margin="5" Grid.Row="0" Grid.Column="1" TextAlignment="Center" Value="{Binding EndTimeValue}" TimeInterval="00:30" ShowButtonSpinner="True"/>

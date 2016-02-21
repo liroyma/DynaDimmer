@@ -235,6 +235,7 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 _endtime = value;
+                ItemUpdated = true;
                 NotifyPropertyChanged("EndTime");
             }
         }
@@ -531,17 +532,7 @@ namespace Dynadimmer.Views.MonthItem
         {
             SelectedLampTime = null;
 
-            if (LampTimes.Count >= 10)
-            {
-                Xceed.Wpf.Toolkit.MessageBox.Show("Max items: 10", "Add time error", System.Windows.MessageBoxButton.OK);
-                return;
-            }
             System.DateTime tempdate = LampTime.GetRightTime(StartTimeValue);
-            if (tempdate >= EndTime.Date)
-            {
-                Xceed.Wpf.Toolkit.MessageBox.Show("End Time must be after selected time", "Add time error", System.Windows.MessageBoxButton.OK);
-                return;
-            }
             LampTime temp = LampTimes.Where(x => x.Date == tempdate).FirstOrDefault();
             if (temp != null)
             {
@@ -555,11 +546,26 @@ namespace Dynadimmer.Views.MonthItem
                 {
                     return;
                 }
-                if (BeforeStart.Contains(temp))
-                    BeforeStart.Remove(temp);
-                if (AfterStart.Contains(temp))
-                    AfterStart.Remove(temp);
+                if (temp != null)
+                {
+                    if (BeforeStart.Contains(temp))
+                        BeforeStart.Remove(temp);
+                    if (AfterStart.Contains(temp))
+                        AfterStart.Remove(temp);
+                }
             }
+
+            if (BeforeStart.Count  + AfterStart.Count >= 10)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("Max items: 10", "Add time error", System.Windows.MessageBoxButton.OK);
+                return;
+            }
+            if (tempdate >= EndTime.Date)
+            {
+                Xceed.Wpf.Toolkit.MessageBox.Show("End Time must be after selected time", "Add time error", System.Windows.MessageBoxButton.OK);
+                return;
+            }
+
 
             LampTime lt = new LampTime(tempdate, Illuminance);
             if (lt.Date.Hour == LampTime.STARTHOUR)
@@ -607,6 +613,7 @@ namespace Dynadimmer.Views.MonthItem
                 return;
             AfterStart.Clear();
             BeforeStart.Clear();
+            EndTimeValue = ((NewSchedularSelectionModel)Perent).CopiedEndTime.Date;
             foreach (var lt in ((NewSchedularSelectionModel)Perent).CopiedList)
             {
                 if (lt.Date.Hour == LampTime.STARTHOUR)
