@@ -62,5 +62,7 @@ namespace Dynadimmer.Views.MonthItem
         {
             Model.IlluminanceError = true;
         }
+
+
     }
 }

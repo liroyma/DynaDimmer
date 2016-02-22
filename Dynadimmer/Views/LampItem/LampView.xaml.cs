@@ -129,5 +129,10 @@ namespace Dynadimmer.Views.LampItem
                 }
             }
         }
+
+        private void BtnCloseAll_Click(object sender, RoutedEventArgs e)
+        {
+            ResetAll();
+        }
     }
 }
