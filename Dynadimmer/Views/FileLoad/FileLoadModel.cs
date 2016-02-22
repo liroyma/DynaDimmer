@@ -214,27 +214,9 @@ namespace Dynadimmer.Views.FileLoad
                 writer.WriteAttributeString("Time", item.EndTime.Date.ToString("HH:mm"));
                 writer.WriteEndElement();
                 writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-           /* LampModel lamp = (LampModel)extra;
-            writer.WriteStartElement("Lamp");
-            writer.WriteAttributeString("LampName", lamp.Name);
-            writer.WriteAttributeString("LampIndex", lamp.Index.ToString());
-            foreach (var item in lamp.GetMonths())
-            {
-                writer.WriteStartElement("Month");
-                writer.WriteAttributeString("Month", item.MonthString);
-                foreach (var time in item.LampTimes)
-                {
-                    writer.WriteStartElement("Time");
-                    writer.WriteAttributeString("Precentage", time.Precentage.ToString());
-                    writer.WriteAttributeString("Time", time.Date.ToString("HH:mm"));
-                    writer.WriteEndElement();
-                }
-                writer.WriteEndElement();
                 item.ItemUpdated = false;
             }
-            writer.WriteEndElement();*/
+            writer.WriteEndElement();
         }
 
 

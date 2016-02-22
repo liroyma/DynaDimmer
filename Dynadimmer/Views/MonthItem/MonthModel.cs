@@ -237,7 +237,7 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 _endtime = value;
-                ItemUpdated = true;
+                ItemUpdated = addorremove = true;
                 NotifyPropertyChanged("EndTime");
             }
         }
@@ -470,6 +470,10 @@ namespace Dynadimmer.Views.MonthItem
             if (LampTimes.Count == 0)
             {
                 startbar.Width = graphwidth;
+                foreach (var item in Elements)
+                {
+                    GraghCanvas.Children.Add(item);
+                }
                 return;
             }
 
