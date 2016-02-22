@@ -10,7 +10,6 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Calc:CalcView x:Name="CalcView" Grid.Row="0" Visibility="Collapsed"/>
         <ScrollViewer Grid.Row="1"  Padding="10" VerticalScrollBarVisibility="Auto">
             <StackPanel Name="lampContainer">
                 <Grid Background="#efefef" Visibility="{Binding ItemVisable}">
