@@ -368,6 +368,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Close.png" />
     <Content Include="WCL\wcl.dll" />
   </ItemGroup>
   <ItemGroup />

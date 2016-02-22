@@ -7,11 +7,19 @@
              mc:Ignorable="d" d:DesignWidth="600" Visibility="{Binding ItemVisibility}">
     <Expander Padding="2" Foreground="Black" Background="#52B5D1" BorderBrush="Black" IsExpanded="True" Margin="0,5">
         <Expander.Header>
-            <WrapPanel Margin="10,0,0,0">
-                <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding Name}"></TextBlock>
-                <TextBlock FontWeight="Bold" FontSize="15" Margin="10,0" Text="-"></TextBlock>
-                <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding LampPower,StringFormat=(Power {0})}"></TextBlock>
-            </WrapPanel>
+            <DockPanel Margin="0" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Expander}}, Path=ActualWidth}">
+                <Button Margin="0,0,30,0" Name="BtnCloseAll"   Width="20" DockPanel.Dock="Right" Command="{Binding Close}" Click="BtnCloseAll_Click" Background="#52B5D1"  BorderThickness="0" >
+                    <StackPanel >
+                        <Image Source="../../Images/Close.png"    Stretch="UniformToFill"></Image>
+                    </StackPanel>
+                </Button>
+                <WrapPanel Margin="10,0,0,0">
+                  <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding Name}"></TextBlock>
+                  <TextBlock FontWeight="Bold" FontSize="15" Margin="10,0" Text="-"></TextBlock>
+                  <TextBlock FontWeight="Bold" FontSize="15" Text="{Binding LampPower,StringFormat=(Power {0})}"></TextBlock>                  
+                </WrapPanel>
+                
+            </DockPanel>
         </Expander.Header>
         <Grid  Background="White">
             <WrapPanel HorizontalAlignment="Center" Name="monthcontainer">

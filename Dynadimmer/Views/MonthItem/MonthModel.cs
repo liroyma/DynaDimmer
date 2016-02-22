@@ -63,8 +63,7 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 monthstring = value;
-                //Title = string.Format("{0} - {1}", LampName, MonthString);
-                Title = MonthString;
+                Title = string.Format("{0} - {1}", LampName, MonthString);
                 NotifyPropertyChanged("MonthString");
             }
         }
@@ -76,8 +75,7 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 _lampname = value;
-                //   Title = string.Format("{0} - {1}", LampName, MonthString);
-                Title = MonthString;
+                Title = string.Format("{0} - {1}", LampName, MonthString);
                 NotifyPropertyChanged("LampName");
             }
         }
