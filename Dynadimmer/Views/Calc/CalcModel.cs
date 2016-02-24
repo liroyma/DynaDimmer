@@ -8,7 +8,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Globalization;
 
 namespace Dynadimmer.Views.Calc
 {
@@ -176,6 +178,7 @@ namespace Dynadimmer.Views.Calc
             get { return numberoflamps; }
             set
             {
+                  
                 numberoflamps = value;
                 NotifyPropertyChanged("NumberOfLamps");
                 Calc();
@@ -307,10 +310,10 @@ namespace Dynadimmer.Views.Calc
             YearlyCostSavings = YearlySavings * SelectedPrice; 
             YearlySavingsPrecent = (YearlyCost == 0) ? 0 : (YearlyCostSavings / YearlyCost * 100);
 
-            YearlySavings *= NumberOfLamps;
-            YearlyCostSavings *= NumberOfLamps;
+            YearlyUse *= NumberOfLamps;
             YearlyCost *= NumberOfLamps;
-            YearlySavingsPrecent *= NumberOfLamps;
+            YearlyCostSavings *= NumberOfLamps;
+            YearlySavings *= NumberOfLamps;
 
         }
 

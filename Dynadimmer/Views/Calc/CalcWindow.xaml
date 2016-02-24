@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer.Views.Calc"
+        xmlns:valid="clr-namespace:Dynadimmer.Models.Converters"  
         mc:Ignorable="d" Closing="Window_Closing"
         Title="CalcWindow" Height="300" MinWidth="880" Width="880">
     <Grid>
@@ -70,9 +71,13 @@
                 <DataGridTemplateColumn Header="Number Of Lamps">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBox  VerticalAlignment="Center"  TextAlignment="Center"  >
+                            <TextBox  VerticalAlignment="Center"  TextAlignment="Center" >
                                 <TextBox.Text>
-                                    <Binding Path="NumberOfLamps" UpdateSourceTrigger="PropertyChanged" />
+                                    <Binding Path="NumberOfLamps" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True">
+                                        <Binding.ValidationRules>
+                                            <valid:DoubleRangeRule Min="1" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
                                 </TextBox.Text>
                             </TextBox>
                         </DataTemplate>
@@ -123,7 +128,7 @@
                 <DataGridTemplateColumn Header="Annual Saving (%)" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock VerticalAlignment="Center" Text="{Binding YearlySavingsPreeent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding YearlySavingsPrecent,StringFormat= \{0:0.000\}%}" TextAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

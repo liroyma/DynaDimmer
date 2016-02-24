@@ -17,17 +17,17 @@ namespace Dynadimmer.Models.Converters
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
             double parameter = 0;
+            this.Max = this.Max < this.Min ? Double.MaxValue : this.Max;
+            //this.Min = this.Max < this.Min ? Double.MinValue : this.Min;
 
-            try
+            if (!double.TryParse((string)value, out parameter))
             {
-                if (((string)value).Length > 0)
-                {
-                    parameter = Double.Parse((String)value);
-                }
+                return new ValidationResult(false, "Illegal characters.");
             }
-            catch (Exception e)
+            
+            if (parameter > Int32.MaxValue || parameter < Int32.MinValue)
             {
-                return new ValidationResult(false, "Illegal characters or " + e.Message);
+                return new ValidationResult(false, "Please enter value in the range: " + this.Min + " - " + this.Max + ".");
             }
 
             if ((parameter < this.Min) || (parameter > this.Max))
@@ -36,5 +36,6 @@ namespace Dynadimmer.Models.Converters
             }
             return new ValidationResult(true, null);
         }
+
     }
 }

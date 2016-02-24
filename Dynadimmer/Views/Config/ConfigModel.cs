@@ -199,21 +199,4 @@ namespace Dynadimmer.Views.Config
             
         }
     }
-
-
-    public class NonEmptyStringValidationRule : ValidationRule
-    {
-        public int Max { get; set; }
-        public int Min { get; set; }
-
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-        {
-            int x;
-            if (int.TryParse(value.ToString(), out x))
-                return (Min >= 0 && x <= Max)
-                    ? new ValidationResult(true, null)
-                    : new ValidationResult(false, string.Format("Must be number between {0} to {1}.", Min, Max));
-            return new ValidationResult(false, "Must be a number");
-        }
-    }
 }
