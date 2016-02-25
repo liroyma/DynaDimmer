@@ -80,12 +80,12 @@ namespace Dynadimmer.Views.Information
             Info.HardwareVersion = data[7];
             string dateString = String.Format("{0}/{1}/{2} {3}:{4}:{5}", data[8], data[9], data[10], data[11], data[12], data[13]);
             System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
-             Info.UnitClock = System.DateTime.Parse(dateString, cultureinfo); ;
+            Info.UnitClock = System.DateTime.Parse(dateString, cultureinfo); ;
             Info.LampsCount = data[14];
             Info.Lamp1Power = BitConverter.ToUInt16(new byte[] { data[16], data[15] }, 0);
             Info.Lamp2Power = BitConverter.ToUInt16(new byte[] { data[18], data[17] }, 0);
             NoDataVisibility = Visibility.Collapsed;
-             OnGotData(info);
+            OnGotData(info);
             return Title;
         }
 

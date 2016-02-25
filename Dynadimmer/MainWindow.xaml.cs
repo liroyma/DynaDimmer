@@ -37,8 +37,6 @@ namespace Dynadimmer
                 MessageBox.Show(e.InnerException.Message);
             }
             calc = new CalcWindow();
-            //calc.Owner = this;
-            //calc.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             log = (LogHandler)this.FindResource("Logger");
             log.DoneSaving += Log_DoneSaving;
             Models.Action.Log = log;
@@ -96,6 +94,7 @@ namespace Dynadimmer
                 unitidview.Model.UpdateData(info);
                 datetimeview.Model.UpdateData(info);
                 configview.Model.UpdateData(info);
+                viewer.HaveInformation = true;
                 if (viewer.RemoteID != info.UnitID)
                 {
                     viewer.RemoteID = info.UnitID;

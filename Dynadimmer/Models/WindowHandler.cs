@@ -11,6 +11,17 @@ namespace Dynadimmer.Models
     {
         private const string _AppName = "Menorah Programmable Dimmer";
 
+        public bool haveinforamtion;
+        public bool HaveInformation
+        {
+            get { return haveinforamtion; }
+            set
+            {
+                haveinforamtion = value;
+                NotifyPropertyChanged("HaveInformation");
+            }
+        }
+
         private bool isbroadcast;
         public bool IsBroadCast
         {
@@ -262,10 +273,12 @@ namespace Dynadimmer.Models
             }
         }
 
+
         public WindowHandler()
         {
             RemoteID = 0;
             UnitInfoChecked = true;
+            HaveInformation = false;
             WindowState = Properties.Settings.Default.WindowState;
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {

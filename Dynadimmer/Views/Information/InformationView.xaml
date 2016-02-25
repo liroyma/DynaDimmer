@@ -9,6 +9,7 @@
         <Grid>
             <Grid Width="400" Visibility="{Binding NoDataVisibility}" Background="#efefef">
                 <TextBlock  Text="No Data" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="25" FontWeight="ExtraBold"></TextBlock>
+                <Button Content="Upload" Height="30" HorizontalAlignment="Right" Margin="10,5"  Width="80" Command="{Binding Upload}"></Button>
             </Grid>
             <Grid Visibility="{Binding DataVisibility}" Background="#efefef">
                 <Grid.RowDefinitions>

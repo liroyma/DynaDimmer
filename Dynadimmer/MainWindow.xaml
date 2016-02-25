@@ -135,10 +135,10 @@
                 <MenuItem Header="_Views">
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitInfoChecked}" Header="_Unit Information"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding SummerWinterChecked}" Header="_Summer Winter"></MenuItem>
                     <Separator></Separator>
                     <MenuItem Header="_Log Panel" DataContext="{StaticResource Logger}" >
                         <MenuItem IsCheckable="True" IsChecked="{Binding LogChecked}" Header="_Log" Uid="Log"></MenuItem>
