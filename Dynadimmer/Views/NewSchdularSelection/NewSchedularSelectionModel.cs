@@ -81,7 +81,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         private void ResetAll_CommandSent(object sender, EventArgs e)
         {
-            System.Windows.MessageBoxResult result = MessageBox.Show("Are you sure you want to reset all Programs on " + SelectedLamp + "?", "Reset Programs",
+            System.Windows.MessageBoxResult result = MessageBox.Show("Are you sure you want to reset all Programs of " + SelectedLamp + "?", "Reset Programs",
                 button: System.Windows.MessageBoxButton.YesNo,
                 icon: System.Windows.MessageBoxImage.Question,
                 defaultResult: System.Windows.MessageBoxResult.No);
@@ -90,6 +90,11 @@ namespace Dynadimmer.Views.NewSchdularSelection
                 byte[] data = new byte[] { (byte)SelectedLamp.Index };
                 Title = "Reset " + SelectedLamp.Name;
                 CreateAndSendMessage(SendMessageType.Download, ResetHeader, data);
+                foreach (MonthModel item in SelectedLamp.GetMonths())
+                {
+                    item.ItemVisablility = Visibility.Collapsed;
+                }
+   
             }
 
             else return;            
@@ -118,7 +123,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
             else if (data[0] == NewSchedularSelectionModel.ResetHeader)
             {
                 LampView templamp = Container.FindLamp(data[1]);
-                return "Reset All programs in " + templamp.Model.Name + " succsed.";
+                return "Reset All programs in " + templamp.Model.Name + " Succeeded.";
             }
             return "";
         }

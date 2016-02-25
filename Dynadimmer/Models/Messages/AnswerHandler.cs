@@ -264,7 +264,7 @@ namespace Dynadimmer.Models.Messages
                     item.Info += "\nUnable to read summer winter update from the memory.";
                     return;
                 case 6:
-                    item.Info += "\nUnable to save summer winter dates to the memory.";
+                    item.Info += "\nUnable to save data to the memory.";
                     break;
             }
             switch (item.OnlyData[1])
@@ -273,7 +273,7 @@ namespace Dynadimmer.Models.Messages
                     item.Info += "\nClock isn't initilazed.";
                     break;
                 case 17:
-                    item.Info += "\nSummer winter dates are not update.";
+                    item.Info += "\nSummer winter dates are not updated.";
                     break;
                 case 33:
                 case 49:
