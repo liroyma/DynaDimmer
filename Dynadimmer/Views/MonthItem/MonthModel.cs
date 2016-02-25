@@ -39,6 +39,7 @@ namespace Dynadimmer.Views.MonthItem
         public MyCommand Download { get; set; }
         public MyCommand Add { get; set; }
         public MyCommand Remove { get; set; }
+        public MyCommand RemoveAll { get; set; }
         public MyCommand Close { get; set; }
         public MyCommand Copy { get; set; }
         public MyCommand Paste { get; set; }
@@ -126,14 +127,25 @@ namespace Dynadimmer.Views.MonthItem
             }
         }
 
-        private Visibility showremovenutton;
+        private Visibility showremovebutton;
         public Visibility ShowRemoveButton
         {
-            get { return showremovenutton; }
+            get { return showremovebutton; }
             set
             {
-                showremovenutton = value;
+                showremovebutton = value;
                 NotifyPropertyChanged("ShowRemoveButton");
+            }
+        }
+
+        private Visibility showremovenallbutton;
+        public Visibility ShowRemoveAllButton
+        {
+            get { return showremovenallbutton; }
+            set
+            {
+                showremovenallbutton = value;
+                NotifyPropertyChanged("ShowRemoveAllButton");
             }
         }
 
@@ -303,6 +315,8 @@ namespace Dynadimmer.Views.MonthItem
             Close.CommandSent += Close_CommandSent;
             Remove = new MyCommand();
             Remove.CommandSent += Remove_CommandSent;
+            RemoveAll = new MyCommand();
+            RemoveAll.CommandSent += RemoveAll_CommandSent;
             Copy = new MyCommand();
             Copy.CommandSent += Copy_CommandSent;
             Paste = new MyCommand();
@@ -420,9 +434,11 @@ namespace Dynadimmer.Views.MonthItem
             {
                 LampTimes.Add(item);
             }
-
+ 
             ItemVisablility = Visibility.Visible;
             ItemUpdated = true;
+            ShowRemoveAllButton = LampTimes.Count > 1 ? Visibility.Visible : Visibility.Hidden;
+            NotifyPropertyChanged("ShowRemoveAllButton");
             UpdateView();
         }
 
@@ -609,6 +625,25 @@ namespace Dynadimmer.Views.MonthItem
                 addorremove = true;
                 UpadteList();
             }
+        }
+
+        private void RemoveAll_CommandSent(object sender, EventArgs e)
+        {
+            //if (sender is LampTime)
+            //{
+                BeforeStart.Clear();
+                AfterStart.Clear();
+                LampTimes.Clear();
+                //LampTime lt = (LampTime)sender;
+                //if (BeforeStart.Contains(lt))
+                //    BeforeStart.Remove(lt);
+                //if (AfterStart.Contains(lt))
+                //    AfterStart.Remove(lt);
+                //if (itemchanged != null)
+                //    itemchanged(null, null);
+                addorremove = true;
+                UpadteList();
+            //}
         }
 
         private void Paste_CommandSent(object sender, EventArgs e)

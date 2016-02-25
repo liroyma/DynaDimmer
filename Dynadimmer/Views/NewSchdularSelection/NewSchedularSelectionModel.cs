@@ -47,6 +47,7 @@ namespace Dynadimmer.Views.NewSchdularSelection
             }
         }
 
+        
         private ObservableCollection<LampModel> _lamps = new ObservableCollection<LampModel>();
         public ObservableCollection<LampModel> LampsList
         {
@@ -80,9 +81,18 @@ namespace Dynadimmer.Views.NewSchdularSelection
 
         private void ResetAll_CommandSent(object sender, EventArgs e)
         {
-            byte[] data = new byte[] { (byte)SelectedLamp.Index };
-            Title = "Reset " + SelectedLamp.Name;
-            CreateAndSendMessage(SendMessageType.Download, ResetHeader, data);
+            System.Windows.MessageBoxResult result = MessageBox.Show("Are you sure you want to reset all Programs on " + SelectedLamp + "?", "Reset Programs",
+                button: System.Windows.MessageBoxButton.YesNo,
+                icon: System.Windows.MessageBoxImage.Question,
+                defaultResult: System.Windows.MessageBoxResult.No);
+            if (result == MessageBoxResult.Yes)
+            {
+                byte[] data = new byte[] { (byte)SelectedLamp.Index };
+                Title = "Reset " + SelectedLamp.Name;
+                CreateAndSendMessage(SendMessageType.Download, ResetHeader, data);
+            }
+
+            else return;            
         }
 
         public void SetContainer(MainContainerView container)

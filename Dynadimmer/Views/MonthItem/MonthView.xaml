@@ -52,6 +52,8 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+
                     <RowDefinition MinHeight="145" Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -78,7 +80,8 @@
                 </WrapPanel>
                 <Button Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Margin="10,5" Command="{Binding Add}" IsEnabled="{Binding CanAdd}"></Button>
                 <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove" Margin="10,5" Visibility="{Binding ShowRemoveButton}" Command="{Binding Remove}" CommandParameter="{Binding SelectedItem,ElementName=lbTime}"></Button>
-                <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
+                <Button Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Content="Remove All" Margin="10,5" Visibility="{Binding ShowRemoveAllButton}" Command="{Binding RemoveAll}"></Button>
+                <ListBox MaxHeight="165" Grid.RowSpan="2" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="10,2"   Name="lbTime" SelectedItem="{Binding SelectedLampTime}" ItemsSource="{Binding LampTimes}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
