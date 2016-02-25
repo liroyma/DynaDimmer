@@ -8,7 +8,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Globalization;
 
 namespace Dynadimmer.Views.Calc
 {
@@ -159,14 +161,27 @@ namespace Dynadimmer.Views.Calc
             }
         }
 
-        public double yearlysavingspreeent;
-        public double YearlySavingsPreeent
+        public double yearlysavingsprecent;
+        public double YearlySavingsPrecent
         {
-            get { return yearlysavingspreeent; }
+            get { return yearlysavingsprecent; }
             set
             {
-                yearlysavingspreeent = value;
-                NotifyPropertyChanged("YearlySavingsPreeent");
+                yearlysavingsprecent = value;
+                NotifyPropertyChanged("YearlySavingsPrecent");
+            }
+        }
+
+        private int numberoflamps;
+        public int NumberOfLamps
+        {
+            get { return numberoflamps; }
+            set
+            {
+                  
+                numberoflamps = value;
+                NotifyPropertyChanged("NumberOfLamps");
+                Calc();
             }
         }
 
@@ -223,6 +238,7 @@ namespace Dynadimmer.Views.Calc
         }
 
         bool init;
+        
         public LampClaculation(LampModel lamp, string source, string info)
         {
             Source = source;
@@ -263,6 +279,7 @@ namespace Dynadimmer.Views.Calc
             Months = lamp.GetMonths();
             LampName = lamp.Name;
             LampPower = lamp.LampPower;
+            NumberOfLamps = 1;
             init = false;
             Calc();
 
@@ -275,6 +292,7 @@ namespace Dynadimmer.Views.Calc
             YearlyUse = LampPower * SelectedHour / 1000.0;
             YearlyCost = YearlyUse * SelectedPrice;
             YearlySavings = 0;
+
             foreach (var item in Months)
             {
                 double daycalc = 0;
@@ -290,7 +308,13 @@ namespace Dynadimmer.Views.Calc
                 YearlySavings += daycalc * item.MonthDays;
             }
             YearlyCostSavings = YearlySavings * SelectedPrice; 
-            YearlySavingsPreeent = (YearlyCost == 0) ? 0 : (YearlyCostSavings / YearlyCost * 100);
+            YearlySavingsPrecent = (YearlyCost == 0) ? 0 : (YearlyCostSavings / YearlyCost * 100);
+
+            YearlyUse *= NumberOfLamps;
+            YearlyCost *= NumberOfLamps;
+            YearlyCostSavings *= NumberOfLamps;
+            YearlySavings *= NumberOfLamps;
+
         }
 
        

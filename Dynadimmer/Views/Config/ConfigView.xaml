@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.Config"
+             xmlns:convertors="clr-namespace:Dynadimmer.Models.Converters"
              mc:Ignorable="d" Background="#efefef">
     <GroupBox Header="Unit Configuration" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>
@@ -21,9 +22,9 @@
             <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Luminaire 1 Power:"></TextBlock>
             <TextBox Visibility="{Binding Lamp1Visibility}" Grid.Row="1" Validation.Error="TextBox_Error" Uid="lamp1" Grid.Column="1" Margin="2,5" HorizontalContentAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
-                    <Binding Path="Lamp1Power" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                    <Binding Path="Lamp1Power" FallbackValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                         <Binding.ValidationRules>
-                            <local:NonEmptyStringValidationRule  ValidatesOnTargetUpdated="True" Max="2000"  />
+                            <convertors:DoubleRangeRule ValidatesOnTargetUpdated="True" Min="0" Max="2000"/>
                         </Binding.ValidationRules>
                     </Binding>
                 </TextBox.Text>
@@ -31,20 +32,20 @@
             <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" Text="Luminaire 2 Power:"></TextBlock>
             <TextBox Visibility="{Binding Lamp2Visibility}" Validation.Error="TextBox_Error" Uid="lamp2"  Grid.Row="1" Grid.Column="3" Margin="2,5" HorizontalContentAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
-                    <Binding Path="Lamp2Power" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                    <Binding Path="Lamp2Power" FallbackValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                         <Binding.ValidationRules>
-                            <local:NonEmptyStringValidationRule Max="2000" ValidatesOnTargetUpdated="True"  />
+                            <convertors:DoubleRangeRule ValidatesOnTargetUpdated="True" Max="2000" Min="0"/>
                         </Binding.ValidationRules>
                     </Binding>
                 </TextBox.Text>
             </TextBox>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" Text="Number Of Luminaires:"></TextBlock>
-            <TextBox Margin="2,5" HorizontalContentAlignment="Center" Width="50" Grid.Row="0" Grid.Column="2" Validation.Error="TextBox_Error" Uid="count" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
+            <TextBox Margin="2,5"  HorizontalContentAlignment="Center" Width="50" Grid.Row="0" Grid.Column="2" Validation.Error="TextBox_Error" Uid="count" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                 <TextBox.Text>
-                    <Binding Path="UnitLampCount" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                    <Binding Path="UnitLampCount" FallbackValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                         <Binding.ValidationRules>
-                            <local:NonEmptyStringValidationRule  ValidatesOnTargetUpdated="True" Min="0" Max="2" />
+                            <convertors:DoubleRangeRule ValidatesOnTargetUpdated="True" Max="2" Min="0"/>
                         </Binding.ValidationRules>
                     </Binding>
                 </TextBox.Text>

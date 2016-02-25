@@ -52,5 +52,7 @@ namespace Dynadimmer.Views.Calc
             e.Cancel = true;
             this.Visibility = Visibility.Hidden;
         }
+
+      
     }
 }
