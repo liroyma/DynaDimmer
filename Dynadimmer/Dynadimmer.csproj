@@ -16,7 +16,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>C:\Users\liroy\Desktop\Menorah Project Web\dynadimmer\</PublishUrl>
+    <PublishUrl>ftp://192.168.11.71/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -26,14 +26,14 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://menorah.liroym.com/dynadimmer/</InstallUrl>
+    <InstallUrl>http://192.168.11.71:3002/</InstallUrl>
     <TargetCulture>en</TargetCulture>
     <ProductName>Programmable Dimmer</ProductName>
     <PublisherName>Menorah</PublisherName>
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>47</ApplicationRevision>
+    <ApplicationRevision>55</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -89,7 +89,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>1D98EF74317C086946D05D8DC1A0161C9A18A02D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>FE43F041F11B20C42BCA169F770EFF9AB38E4D59</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -102,6 +102,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ReachFramework" />
@@ -126,7 +130,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="wcl, Version=6.14.7.0, Culture=neutral, PublicKeyToken=c33610a096b7e41b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\wcl.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\45\wcl.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="Xceed.Wpf.AvalonDock, Version=2.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
@@ -324,6 +328,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="Dynadimmer_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -362,7 +367,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Close.png" />
-    <Content Include="WCL\wcl.dll" />
+    <Content Include="msvcp110.dll" />
+    <Content Include="msvcr110.dll" />
+    <Content Include="vccorlib110.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
