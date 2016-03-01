@@ -77,7 +77,7 @@ namespace Dynadimmer.Models
         public abstract void SendUpload(object sender);
         public abstract void UpdateData(UnitInfo info);
 
-        public abstract string GotAnswer(IncomeMessage messase);
+        public abstract string GotAnswer(IncomeMessage message);
 
         public void SetView()
         {

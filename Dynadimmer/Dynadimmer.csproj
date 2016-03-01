@@ -224,6 +224,10 @@
       <DependentUpon>BarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\LampTime.cs" />
+    <Compile Include="Views\OnlineSaving\OnlineSavingModel.cs" />
+    <Compile Include="Views\OnlineSaving\OnlineSavingView.xaml.cs">
+      <DependentUpon>OnlineSavingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Setttings\AppSettings.xaml.cs">
       <DependentUpon>AppSettings.xaml</DependentUpon>
     </Compile>
@@ -289,6 +293,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MonthItem\Graph\BarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OnlineSaving\OnlineSavingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -367,9 +375,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Close.png" />
-    <Content Include="msvcp110.dll" />
-    <Content Include="msvcr110.dll" />
-    <Content Include="vccorlib110.dll" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

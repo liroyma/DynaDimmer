@@ -15,6 +15,7 @@ namespace Dynadimmer.Views.Information
     {
         public const int Header = 199;
 
+
         private UnitInfo info;
         public UnitInfo Info
         {
@@ -72,9 +73,9 @@ namespace Dynadimmer.Views.Information
         {
         }
 
-        public override string GotAnswer(IncomeMessage messase)
+        public override string GotAnswer(IncomeMessage message)
         {
-            byte[] data = messase.DecimalData;
+            byte[] data = message.DecimalData;
             Info.UnitID = BitConverter.ToUInt32(new byte[] { data[5], data[4], data[3], data[2], }, 0);
             Info.SoftwareVersion = data[6];
             Info.HardwareVersion = data[7];
@@ -249,5 +250,7 @@ namespace Dynadimmer.Views.Information
                 NotifyPropertyChanged("SoftwareVersion");
             }
         }
+
+
     }
 }

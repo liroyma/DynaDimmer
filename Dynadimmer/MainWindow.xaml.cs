@@ -55,7 +55,7 @@ namespace Dynadimmer
             connection.Answered += Connection_Answered;
             UnitProperty.SetConnection(connection, viewer);
             MonthModel.Perent = newschdularselectionview.Model;
-            answers = new AnswerHandler(log, infoview.Model, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model);
+            answers = new AnswerHandler(log, infoview.Model, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model, onlinesavingview.Model);
             answers.allAnswersProssed += Answers_allAnswersProssed;
             this.DataContext = viewer;
             fileloadview.Model.SetContainer(this.MainContainer);
@@ -66,6 +66,7 @@ namespace Dynadimmer
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
             infoview.Visibility = viewer.UnitInfoVisibility;
+            onlinesavingview.Visibility = viewer.OnlineSavingVisibility;
 
             fileloadview.Model.ClickDownload += FileLoad_ClickDownload;
             fileloadview.Model.WinVisibilityChanged += FileLoad_WinVisibilityChanged;
@@ -75,6 +76,7 @@ namespace Dynadimmer
             datetimeview.Model.GotData += Model_GotData;
             configview.Model.GotData += Model_GotData;
             summerwinterview.Model.GotData += Model_GotData;
+            onlinesavingview.Model.GotData += Model_GotData;
             settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
             viewer.WindowEnable = true;
             if (connection.IsInit)
@@ -94,6 +96,7 @@ namespace Dynadimmer
                 unitidview.Model.UpdateData(info);
                 datetimeview.Model.UpdateData(info);
                 configview.Model.UpdateData(info);
+                onlinesavingview.Model.UpdateData(info);
                 viewer.HaveInformation = true;
                 if (viewer.RemoteID != info.UnitID)
                 {
@@ -109,11 +112,18 @@ namespace Dynadimmer
             else if (sender.GetType() == datetimeview.Model.GetType())
             {
                 infoview.Model.UpdateData(info);
+                onlinesavingview.Model.UpdateData(info);
             }
             else if (sender.GetType() == configview.Model.GetType())
             {
                 infoview.Model.UpdateData(info);
+                onlinesavingview.Model.UpdateData(info);
                 newschdularselectionview.Model.UpdateData(info);
+            }
+            else if (sender.GetType() == onlinesavingview.Model.GetType())
+            {
+                infoview.Model.UpdateData(info);
+                datetimeview.Model.UpdateData(info);
             }
 
         }
@@ -134,6 +144,7 @@ namespace Dynadimmer
                 summerwinterview.Visibility = viewer.SummerWinterVisibility;
                 configview.Visibility = viewer.ConfigVisibility;
                 infoview.Visibility = viewer.UnitInfoVisibility;
+                onlinesavingview.Visibility = viewer.OnlineSavingVisibility;
                 newschdularselectionview.Visibility = Visibility.Collapsed;
                 configview.IsEnabled = connection.IsConnected;
                 MainContainer.IsEnabled = connection.IsConnected;
@@ -141,6 +152,7 @@ namespace Dynadimmer
                 datetimeview.IsEnabled = connection.IsConnected;
                 unitidview.IsEnabled = connection.IsConnected;
                 newschdularselectionview.IsEnabled = connection.IsConnected;
+                onlinesavingview.IsEnabled = connection.IsConnected;
                 MainContainer.Model.FromFile = false;
                 infoview.Model.Info = new Views.Information.UnitInfo();
                 infoview.Model.NoDataVisibility = Visibility.Visible;
@@ -151,7 +163,7 @@ namespace Dynadimmer
             }
             else
             {
-                infoview.Visibility = datetimeview.Visibility = newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = Visibility.Collapsed;
+                infoview.Visibility = datetimeview.Visibility = newschdularselectionview.Visibility = datetimeview.Visibility = summerwinterview.Visibility = configview.Visibility = onlinesavingview.Visibility = Visibility.Collapsed;
                 MainContainer.IsEnabled = true;
                 MainContainer.Model.FromFile = true;
             }
@@ -168,6 +180,7 @@ namespace Dynadimmer
         private void Connection_Connected(object sender, bool e)
         {
             datetimeview.Model.SendingClock(false);
+            onlinesavingview.Model.SetTimerState(false);
             if (!MainContainer.Model.FromFile)
             {
                 configview.IsEnabled = e;
@@ -177,7 +190,9 @@ namespace Dynadimmer
                 unitidview.IsEnabled = e;
                 infoview.IsEnabled = e;
                 newschdularselectionview.IsEnabled = e;
+                onlinesavingview.IsEnabled = e;
                 datetimeview.Model.SendingClock(e);
+                onlinesavingview.Model.SetTimerState(e && viewer.OnlineSavingChecked);
             }
             viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.IsConnected;
             fileloadview.Model.DownLoadEnable = e;
@@ -213,9 +228,16 @@ namespace Dynadimmer
             configview.Visibility = viewer.ConfigVisibility;
             unitidview.Visibility = viewer.UnitIDVisibility;
             infoview.Visibility = viewer.UnitInfoVisibility;
+            onlinesavingview.Visibility = viewer.OnlineSavingVisibility;
             if (viewer.SummerWinterChecked)
                 summerwinterview.Model.SendUpload(null);
             datetimeview.Model.SendingClock(viewer.UnitClockChecked || viewer.UnitInfoChecked);
+            onlinesavingview.Model.SetTimerState(viewer.OnlineSavingChecked);
+            if (viewer.OnlineSavingChecked)
+            {
+                action = new StartAction(onlinesavingview.Model);
+            }
+
         }
 
         private void MenuItem_Save(object sender, RoutedEventArgs e)

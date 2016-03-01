@@ -130,6 +130,7 @@ namespace Dynadimmer.Models
                     ConfigChecked = false;
                     UnitClockChecked = false;
                     UnitIDChecked = false;
+                    OnlineSavingChecked = false;
                 }
                 NotifyPropertyChanged("UnitInfoChecked");
             }
@@ -149,6 +150,7 @@ namespace Dynadimmer.Models
                     ConfigChecked = false;
                     UnitClockChecked = false;
                     UnitInfoChecked = false;
+                    OnlineSavingChecked = false;
                 }
                 NotifyPropertyChanged("UnitIDChecked");
             }
@@ -174,6 +176,7 @@ namespace Dynadimmer.Models
                     ConfigChecked = false;
                     UnitIDChecked = false;
                     UnitInfoChecked = false;
+                    OnlineSavingChecked = false;
                 }
                 NotifyPropertyChanged("UnitClockChecked");
             }
@@ -193,6 +196,7 @@ namespace Dynadimmer.Models
                     ConfigChecked = false;
                     UnitIDChecked = false;
                     UnitInfoChecked = false;
+                    OnlineSavingChecked = false;
                 }
                 NotifyPropertyChanged("SummerWinterChecked");
             }
@@ -212,8 +216,41 @@ namespace Dynadimmer.Models
                     SummerWinterChecked = false;
                     UnitIDChecked = false;
                     UnitInfoChecked = false;
+                    OnlineSavingChecked = false;
                 }
                 NotifyPropertyChanged("ConfigChecked");
+            }
+        }
+
+        private bool _OnlineSavingChecked;
+        public bool OnlineSavingChecked
+        {
+            get { return _OnlineSavingChecked; }
+            set
+            {
+                _OnlineSavingChecked = value;
+                OnlineSavingVisibility = value ? Visibility.Visible : Visibility.Collapsed;
+                if (value)
+                {
+                    UnitClockChecked = false;
+                    ConfigChecked = false;
+                    SummerWinterChecked = false;
+                    UnitIDChecked = false;
+                    UnitInfoChecked = false;          
+                }
+                NotifyPropertyChanged("OnlineSavingChecked");
+            }
+        }
+
+
+        private Visibility _OnlineSavingVisibility;
+        public Visibility OnlineSavingVisibility
+        {
+            get { return _OnlineSavingVisibility; }
+            set
+            {
+                _OnlineSavingVisibility = value;
+                NotifyPropertyChanged("OnlineSavingVisibility");
             }
         }
 

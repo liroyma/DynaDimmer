@@ -3,6 +3,7 @@ using Dynadimmer.Views.DateTime;
 using Dynadimmer.Views.FileLoad;
 using Dynadimmer.Views.Information;
 using Dynadimmer.Views.NewSchdularSelection;
+using Dynadimmer.Views.OnlineSaving;
 using Dynadimmer.Views.SummerWinnter;
 using Dynadimmer.Views.UnitID;
 using System;
@@ -26,6 +27,7 @@ namespace Dynadimmer.Models.Messages
         private UnitSummerWinnterClockModel UnitSummerWinnterClock;
         private UnitIDModel UnitID;
         private InformationModel UnitInfo;
+        private OnlineSavingModel OnlineSaving;
         private LogHandler Log;
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
@@ -52,6 +54,9 @@ namespace Dynadimmer.Models.Messages
                     UnitSummerWinnterClock = (UnitSummerWinnterClockModel)prop;
                 else if (prop is UnitIDModel)
                     UnitID = (UnitIDModel)prop;
+                else if (prop is OnlineSavingModel)
+                    OnlineSaving = (OnlineSavingModel)prop;
+                
             }
         }
 
@@ -114,6 +119,9 @@ namespace Dynadimmer.Models.Messages
                     case UnitDateTimeModel.Header:
                         item.Info += UnitDateTime.GotAnswer(item);
                         break;
+                    case OnlineSavingModel.Header:
+                        item.Info += OnlineSaving.GotAnswer(item);
+                        break;
                     case NewSchedularSelectionModel.UploadHeader:
                     case NewSchedularSelectionModel.DownloadHeader:
                         item.Info += NewSchedularSelection.GotAnswer(item);
@@ -160,6 +168,8 @@ namespace Dynadimmer.Models.Messages
                     return UnitSummerWinnterClock.Title;
                 case UnitIDModel.Header:
                     return UnitID.Title;
+                case OnlineSavingModel.Header:
+                    return OnlineSaving.Title;
                 case NewSchedularSelectionModel.ResetHeader:
                     return NewSchedularSelection.ResetTitle;
                 default:
@@ -191,6 +201,8 @@ namespace Dynadimmer.Models.Messages
                             color = Brushes.Green;
                             break;
                         case UnitSummerWinnterClockModel.Header:
+                            break;
+                        case OnlineSavingModel.Header:
                             break;
                     }
                     break;

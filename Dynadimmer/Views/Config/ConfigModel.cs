@@ -139,15 +139,16 @@ namespace Dynadimmer.Views.Config
         {
         }
 
-        public override string GotAnswer(IncomeMessage messase)
+        public override string GotAnswer(IncomeMessage message)
         {
-            byte[] data = messase.DecimalData;
-            UnitLampCount = messase.DecimalData[2];
+            byte[] data = message.DecimalData;
+            UnitLampCount = message.DecimalData[2];
             Lamp1Power = BitConverter.ToUInt16(new byte[] { data[4], data[3] }, 0);
             Lamp2Power = BitConverter.ToUInt16(new byte[] { data[6], data[5] }, 0);
             if (Notify)
                 OnGotData(new Information.UnitInfo() { LampsCount = UnitLampCount, Lamp1Power = Lamp1Power, Lamp2Power = Lamp2Power });
             Notify = true;
+            
             base.SetView();
             IsValid = true;
             return Title;
