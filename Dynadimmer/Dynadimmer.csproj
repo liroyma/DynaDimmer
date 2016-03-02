@@ -27,6 +27,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://192.168.11.71:3002/</InstallUrl>
+    <UpdateUrl>http://localhost/</UpdateUrl>
     <TargetCulture>en</TargetCulture>
     <ProductName>Programmable Dimmer</ProductName>
     <PublisherName>Menorah</PublisherName>

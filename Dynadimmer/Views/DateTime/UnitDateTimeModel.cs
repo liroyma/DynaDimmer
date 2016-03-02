@@ -84,7 +84,7 @@ namespace Dynadimmer.Views.DateTime
             System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("he-IL");
             UnitTime = System.DateTime.Parse(dateString, cultureinfo);
             base.SetView();
-            OnGotData(new UnitInfo() { UnitClock = UnitTime });
+            OnGotData(new UnitInfo() { UnitClock = UnitTime});
             return Title;
         }
 

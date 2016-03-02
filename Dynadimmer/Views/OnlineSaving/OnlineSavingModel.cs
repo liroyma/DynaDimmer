@@ -92,7 +92,7 @@ namespace Dynadimmer.Views.OnlineSaving
             get { return unitLampCount; }
             set
             {
-                unitLampCount = value;
+                unitLampCount = value >= 0 && value <=2 ? value : unitLampCount;
                 NotifyPropertyChanged("UnitLampCount");
             }
         }
