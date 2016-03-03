@@ -17,6 +17,7 @@
         <handlers:LogHandler x:Key="Logger" ></handlers:LogHandler>
         <handlers:WindowHandler x:Key="Viewer"></handlers:WindowHandler>
         <handlers:IRDAHandler x:Key="Connection"></handlers:IRDAHandler>
+        <handlers:TCPHandler x:Key="TcpConnection"></handlers:TCPHandler>
         <Style TargetType="Button" x:Key="ConnectButton" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="FontWeight" Value="Bold"/>

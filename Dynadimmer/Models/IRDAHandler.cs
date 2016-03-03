@@ -168,7 +168,7 @@ namespace Dynadimmer.Models
 
         public void Write(OutMessage outMessage)
         {
-            if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header)
+            if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.Header)
                 Viewer.WindowEnable = false;
             FillAnswerTimer.Start();
             Log.AddMessage(outMessage);

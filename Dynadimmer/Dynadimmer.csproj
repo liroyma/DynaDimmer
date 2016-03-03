@@ -27,14 +27,13 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://192.168.11.71:3002/</InstallUrl>
-    <UpdateUrl>http://localhost/</UpdateUrl>
     <TargetCulture>en</TargetCulture>
     <ProductName>Programmable Dimmer</ProductName>
     <PublisherName>Menorah</PublisherName>
     <SuiteName>menorah-dimmer</SuiteName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.htm</WebPage>
-    <ApplicationRevision>55</ApplicationRevision>
+    <ApplicationRevision>58</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>true</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -183,6 +182,7 @@
     <Compile Include="Models\MyUIHandler.cs" />
     <Compile Include="Models\Actions\SaveAction.cs" />
     <Compile Include="Models\ReadFromFileModel.cs" />
+    <Compile Include="Models\TCPHandler.cs" />
     <Compile Include="Models\UnitProperty.cs" />
     <Compile Include="Models\WindowHandler.cs" />
     <Compile Include="Views\Calc\CalcModel.cs" />
@@ -377,7 +377,6 @@
   <ItemGroup>
     <Resource Include="Images\Close.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
