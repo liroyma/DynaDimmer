@@ -19,7 +19,7 @@ namespace Dynadimmer
     {
         CalcWindow calc;
         IRDAHandler connection;
-        TCPHandler TcpConnection;
+        //TCPHandler TcpConnection;
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
@@ -43,12 +43,12 @@ namespace Dynadimmer
             Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
             connection = (IRDAHandler)this.FindResource("Connection");
-           // TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
+            //TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
 
             try
             {
                 connection.InitWCL();
-             //   TcpConnection.initTCP();
+                //TcpConnection.initTCP();
             }
             catch (Exception ex)
             {

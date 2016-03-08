@@ -20,7 +20,7 @@ namespace Dynadimmer.Models
         {
             TcpClient tcp = new TcpClient();
             tcp.Client.Connect("192.168.11.71", 3002);
-            
+            tcp.Client.Close();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Dynadimmer.Views.OnlineSaving
     public class OnlineSavingModel : UnitProperty
     {
         public const int Header = 15;
-        public const int Timer_Interval = 10;
+        public const int Timer_Interval = 3;
         DispatcherTimer _timer = new DispatcherTimer();
 
         #region Properties
