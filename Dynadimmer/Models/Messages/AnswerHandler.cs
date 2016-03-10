@@ -120,6 +120,8 @@ namespace Dynadimmer.Models.Messages
                         item.Info += UnitDateTime.GotAnswer(item);
                         break;
                     case OnlineSavingModel.Header:
+                    case OnlineSavingModel.DaliHeader:
+                    case OnlineSavingModel.V1_10_Header:
                         item.Info += OnlineSaving.GotAnswer(item);
                         break;
                     case NewSchedularSelectionModel.UploadHeader:
@@ -169,6 +171,8 @@ namespace Dynadimmer.Models.Messages
                 case UnitIDModel.Header:
                     return UnitID.Title;
                 case OnlineSavingModel.Header:
+                case OnlineSavingModel.DaliHeader:
+                case OnlineSavingModel.V1_10_Header:
                     return OnlineSaving.Title;
                 case NewSchedularSelectionModel.ResetHeader:
                     return NewSchedularSelection.ResetTitle;
@@ -203,6 +207,8 @@ namespace Dynadimmer.Models.Messages
                         case UnitSummerWinnterClockModel.Header:
                             break;
                         case OnlineSavingModel.Header:
+                        case OnlineSavingModel.V1_10_Header:
+                        case OnlineSavingModel.DaliHeader:
                             break;
                     }
                     break;

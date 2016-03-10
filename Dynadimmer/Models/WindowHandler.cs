@@ -236,12 +236,75 @@ namespace Dynadimmer.Models
                     ConfigChecked = false;
                     SummerWinterChecked = false;
                     UnitIDChecked = false;
-                    UnitInfoChecked = false;          
+                    UnitInfoChecked = false;       
                 }
+                else
+                {
+                    PWMChecked = DaliChecked = V1_10Checked = false;
+                }
+
                 NotifyPropertyChanged("OnlineSavingChecked");
             }
         }
 
+        private bool _PWMChecked;
+        public bool PWMChecked
+        {
+            get { return _PWMChecked; }
+            set
+            {
+                _PWMChecked = value;
+                OnlineSavingVisibility = value ? Visibility.Visible : OnlineSavingVisibility;
+                if (value)
+                {
+                    OnlineSavingChecked = true;
+
+                    V1_10Checked = false;
+                    DaliChecked = false;
+                }
+
+                NotifyPropertyChanged("PWMChecked");
+            }
+        }
+
+        private bool _V1_10Checked;
+        public bool V1_10Checked
+        {
+            get { return _V1_10Checked; }
+            set
+            {
+                _V1_10Checked = value;
+                OnlineSavingVisibility = value ? Visibility.Visible : OnlineSavingVisibility;
+                if (value)
+                {
+                    OnlineSavingChecked = true;
+
+                    PWMChecked = false;
+                    DaliChecked = false;
+                }
+
+                NotifyPropertyChanged("V1_10Checked");
+            }
+        }
+        private bool _DaliChecked;
+        public bool DaliChecked
+        {
+            get { return _DaliChecked; }
+            set
+            {
+                _DaliChecked = value;
+                OnlineSavingVisibility = value ? Visibility.Visible : OnlineSavingVisibility;
+                if (value)
+                {
+                    OnlineSavingChecked = true;
+
+                    PWMChecked = false;
+                    V1_10Checked = false;
+                }
+
+                NotifyPropertyChanged("DaliChecked");
+            }
+        }
 
         private Visibility _OnlineSavingVisibility;
         public Visibility OnlineSavingVisibility

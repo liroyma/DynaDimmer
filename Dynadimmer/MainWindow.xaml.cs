@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Dynadimmer
 {
@@ -19,13 +20,15 @@ namespace Dynadimmer
     {
         CalcWindow calc;
         IRDAHandler connection;
-        //TCPHandler TcpConnection;
+        TCPHandler TcpConnection;
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
         Models.Action action;
         AppSettings settings = new AppSettings();
         bool close = false;
+
+        public  int onlineHeader; 
 
         public MainWindow()
         {
@@ -43,12 +46,12 @@ namespace Dynadimmer
             Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
             connection = (IRDAHandler)this.FindResource("Connection");
-            //TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
+           // TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
 
             try
             {
                 connection.InitWCL();
-                //TcpConnection.initTCP();
+              //  TcpConnection.initTCP();
             }
             catch (Exception ex)
             {
@@ -227,6 +230,7 @@ namespace Dynadimmer
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
+            
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
@@ -239,6 +243,20 @@ namespace Dynadimmer
             onlinesavingview.Model.SetTimerState(viewer.OnlineSavingChecked);
             if (viewer.OnlineSavingChecked)
             {
+                MenuItem m = (MenuItem)sender;
+
+                switch (m.Name)
+                {
+                    case "pwm":
+                        onlinesavingview.Model.TempHeader = 15;
+                        break;
+                    case "v1_10":
+                        onlinesavingview.Model.TempHeader = 16;
+                        break;
+                    case "dali":
+                        onlinesavingview.Model.TempHeader = 17;
+                        break;
+                }                  
                 action = new StartAction(onlinesavingview.Model);
             }
 

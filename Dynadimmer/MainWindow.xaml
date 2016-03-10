@@ -137,7 +137,13 @@
                 <MenuItem Header="_Views">
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsChecked="{Binding UnitInfoChecked}" Header="_Unit Information"></MenuItem>
                     <Separator></Separator>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding OnlineSavingChecked}" Header="_Online Saving"></MenuItem>
+
+                    <MenuItem Header="_Online Saving">
+                        <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding PWMChecked}" Header="_PWM" Name="pwm"></MenuItem>
+                        <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding V1_10Checked}" Header="_(1 ÷ 10)V" Name="v1_10"></MenuItem>
+                        <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding DaliChecked}" Header="_Dali" Name="dali"></MenuItem>
+                    </MenuItem>
+                    
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>

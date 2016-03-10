@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,17 +11,38 @@ namespace Dynadimmer.Models
 {
     class TCPHandler : MyUIHandler
     {
+        private IPAddress ip;
+        private TcpClient tcpclient;
+
         public TCPHandler()
         {
-            TcpClient tcp = new TcpClient();
-            tcp.Client.Connect("192.168.11.71", 3002);
+            try
+            {
+                this.ip = IPAddress.Parse("192.168.4.1");
+                tcpclient = new TcpClient();
+                tcpclient.Client.Connect(ip, 23);
+            }
+
+            catch
+            {
+                
+            }
+          
         }
 
         public void initTCP()
         {
-            TcpClient tcp = new TcpClient();
-            tcp.Client.Connect("192.168.11.71", 3002);
-            tcp.Client.Close();
+         
+            //TcpListener tcplistener = new TcpListener(ip, 25);
+            //tcplistener.Start();
+            Stream stm = tcpclient.GetStream();
+            string str = "Time: " + DateTime.Now + " ";
+            
+            ASCIIEncoding asen = new ASCIIEncoding();
+            byte[] ba = asen.GetBytes(str);
+            stm.Write(ba, 0, ba.Length);
+            stm.Close();
+            tcpclient.Client.Close();
         }
     }
 }

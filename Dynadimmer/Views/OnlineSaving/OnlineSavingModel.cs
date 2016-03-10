@@ -9,16 +9,31 @@ using Dynadimmer.Views.Information;
 using System.Xml;
 using System.Windows.Threading;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Dynadimmer.Views.OnlineSaving
 {
     public class OnlineSavingModel : UnitProperty
     {
         public const int Header = 15;
+        public const int V1_10_Header = 16;
+        public const int DaliHeader = 17;
         public const int Timer_Interval = 3;
         DispatcherTimer _timer = new DispatcherTimer();
 
         #region Properties
+
+
+        private int tempHeader;
+        public int TempHeader
+        {
+            get { return tempHeader; }
+            set
+            {
+                tempHeader = value;
+                NotifyPropertyChanged("TempHeader");
+            }
+        }
 
         private System.DateTime unittime;
         public System.DateTime UnitTime
@@ -160,8 +175,8 @@ namespace Dynadimmer.Views.OnlineSaving
         }
 
         public override void SendUpload(object sender)
-        {
-            CreateAndSendMessage(SendMessageType.Upload, Header);
+        {  
+            CreateAndSendMessage(SendMessageType.Upload, (byte)TempHeader);
         }
 
         public override void UpdateData(Information.UnitInfo info)
