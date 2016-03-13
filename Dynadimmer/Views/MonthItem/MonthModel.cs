@@ -156,7 +156,7 @@ namespace Dynadimmer.Views.MonthItem
             set
             {
                 selectedlamptime = value;
-                ShowRemoveButton = value != null ? Visibility.Visible : Visibility.Collapsed;
+                ShowRemoveButton = value != null ? Visibility.Visible : Visibility.Hidden;
                 NotifyPropertyChanged("SelectedLampTime");
             }
         }

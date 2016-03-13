@@ -35,6 +35,8 @@ namespace Dynadimmer.Views.OnlineSaving
             }
         }
 
+
+
         private System.DateTime unittime;
         public System.DateTime UnitTime
         {
@@ -112,6 +114,17 @@ namespace Dynadimmer.Views.OnlineSaving
             }
         }
 
+        private Visibility lamp1visibility;
+        public Visibility Lamp1Visibility
+        {
+            get { return lamp1visibility; }
+            set
+            {
+                lamp1visibility = value;
+                NotifyPropertyChanged("Lamp1Visibility");
+            }
+        }
+
         private Visibility lamp2visibility;
         public Visibility Lamp2Visibility
         {
@@ -183,13 +196,16 @@ namespace Dynadimmer.Views.OnlineSaving
         {
             UnitTime = info.UnitClock > UnitTime ? info.UnitClock : UnitTime;
             UnitLampCount = info.LampsCount;
+            Lamp1Visibility = UnitLampCount == 1 || UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
             Lamp2Visibility = UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
+            
         }
 
         protected override void OnGotData(UnitInfo info)
         {
             UnitTime = info.UnitClock;
             UnitLampCount = info.LampsCount;
+            Lamp1Visibility = UnitLampCount == 1 || UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
             Lamp2Visibility = UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
             IsLoaded = true;
             base.OnGotData(info);

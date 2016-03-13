@@ -20,7 +20,7 @@ namespace Dynadimmer
     {
         CalcWindow calc;
         IRDAHandler connection;
-        TCPHandler TcpConnection;
+       // TCPHandler TcpConnection;
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
@@ -28,7 +28,6 @@ namespace Dynadimmer
         AppSettings settings = new AppSettings();
         bool close = false;
 
-        public  int onlineHeader; 
 
         public MainWindow()
         {
@@ -46,7 +45,7 @@ namespace Dynadimmer
             Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
             connection = (IRDAHandler)this.FindResource("Connection");
-           // TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
+         //   TcpConnection = (TCPHandler)this.FindResource("TcpConnection");
 
             try
             {
@@ -86,6 +85,7 @@ namespace Dynadimmer
             onlinesavingview.Model.GotData += Model_GotData;
             settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
             viewer.WindowEnable = true;
+            viewer.OnlineSavingViewEnabled = infoview.Model.Info.LampsCount == 1 || infoview.Model.Info.LampsCount == 2;
             if (connection.IsInit)
                 connection.CheckStatus();
         }
@@ -104,6 +104,7 @@ namespace Dynadimmer
                 datetimeview.Model.UpdateData(info);
                 configview.Model.UpdateData(info);
                 onlinesavingview.Model.UpdateData(info);
+                viewer.OnlineSavingViewEnabled = infoview.Model.Info.LampsCount == 1 || infoview.Model.Info.LampsCount == 2;
                 viewer.HaveInformation = true;
                 if (viewer.RemoteID != info.UnitID)
                 {
@@ -126,6 +127,7 @@ namespace Dynadimmer
                 infoview.Model.UpdateData(info);
                 onlinesavingview.Model.UpdateData(info);
                 newschdularselectionview.Model.UpdateData(info);
+                viewer.OnlineSavingViewEnabled = infoview.Model.Info.LampsCount == 1 || infoview.Model.Info.LampsCount == 2;
             }
             else if (sender.GetType() == onlinesavingview.Model.GetType())
             {
@@ -245,16 +247,16 @@ namespace Dynadimmer
             {
                 MenuItem m = (MenuItem)sender;
 
-                switch (m.Name)
+                switch (m.Header.ToString())
                 {
-                    case "pwm":
-                        onlinesavingview.Model.TempHeader = 15;
+                    case "_PWM":
+                        onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.Header;
                         break;
-                    case "v1_10":
-                        onlinesavingview.Model.TempHeader = 16;
+                    case "_(1 ÷ 10)V":
+                        onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.V1_10_Header;
                         break;
-                    case "dali":
-                        onlinesavingview.Model.TempHeader = 17;
+                    case "_Dali":
+                        onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.DaliHeader;  
                         break;
                 }                  
                 action = new StartAction(onlinesavingview.Model);

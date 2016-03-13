@@ -22,6 +22,17 @@ namespace Dynadimmer.Models
             }
         }
 
+        private bool onlineSavingViewEnabled;
+        public bool OnlineSavingViewEnabled
+        {
+            get { return onlineSavingViewEnabled; }
+            set
+            {
+                onlineSavingViewEnabled = value;
+                NotifyPropertyChanged("OnlineSavingViewEnabled");
+            }
+        }
+
         private bool isbroadcast;
         public bool IsBroadCast
         {
@@ -253,8 +264,7 @@ namespace Dynadimmer.Models
             get { return _PWMChecked; }
             set
             {
-                _PWMChecked = value;
-                OnlineSavingVisibility = value ? Visibility.Visible : OnlineSavingVisibility;
+                
                 if (value)
                 {
                     OnlineSavingChecked = true;
@@ -262,7 +272,8 @@ namespace Dynadimmer.Models
                     V1_10Checked = false;
                     DaliChecked = false;
                 }
-
+                _PWMChecked = value;
+                OnlineSavingVisibility = value ? Visibility.Visible : OnlineSavingVisibility;
                 NotifyPropertyChanged("PWMChecked");
             }
         }

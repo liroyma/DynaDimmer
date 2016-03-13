@@ -14,6 +14,7 @@ namespace Dynadimmer.Models
         private IPAddress ip;
         private TcpClient tcpclient;
 
+
         public TCPHandler()
         {
             try
@@ -36,7 +37,7 @@ namespace Dynadimmer.Models
             //TcpListener tcplistener = new TcpListener(ip, 25);
             //tcplistener.Start();
             Stream stm = tcpclient.GetStream();
-            string str = "Time: " + DateTime.Now + " ";
+            string str = "Init Started At: " + DateTime.Now + " ";
             
             ASCIIEncoding asen = new ASCIIEncoding();
             byte[] ba = asen.GetBytes(str);

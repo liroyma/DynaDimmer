@@ -23,9 +23,9 @@
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Text="Luminare 1" FontWeight="Bold"  FontSize="15"></TextBlock>
-                <TextBlock FontWeight="Bold" VerticalAlignment="Center"  Text="Current/Planned" Grid.Row="1"></TextBlock>
-                    <TextBlock  Grid.Row="2" >
+                <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="0" Text="Luminare 1" FontWeight="Bold"></TextBlock>
+                <TextBlock Visibility="{Binding Lamp1Visibility}" FontWeight="Bold" VerticalAlignment="Center"  Text="Current/Planned" Grid.Row="1"></TextBlock>
+                <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="2" >
                         <TextBlock Text="{Binding Luminare1Current}"></TextBlock>
                         <TextBlock Text="% / "></TextBlock>
                         <TextBlock Text="{Binding Luminare1Planned}"></TextBlock>
@@ -33,7 +33,7 @@
                     </TextBlock>
                 
                 <Rectangle Visibility="{Binding Lamp2Visibility}" Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Stretch" Width="1" Margin="5,0" Stroke="Black" />
-                <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="0" Grid.Column="2" Text="Luminare 2" FontWeight="Bold"  FontSize="15"></TextBlock>
+                <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="0" Grid.Column="2" Text="Luminare 2" FontWeight="Bold"></TextBlock>
                 <TextBlock Visibility="{Binding Lamp2Visibility}" FontWeight="Bold" VerticalAlignment="Center"   Text="Current/Planned" Grid.Row="1" Grid.Column="2"></TextBlock>
                 <TextBlock Visibility="{Binding Lamp2Visibility}"  VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" >
                         <TextBlock Text="{Binding Luminare2Current}"></TextBlock>

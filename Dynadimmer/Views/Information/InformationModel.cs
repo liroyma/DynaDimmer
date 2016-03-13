@@ -120,7 +120,7 @@ namespace Dynadimmer.Views.Information
             if (info.Lamp1Power != int.MaxValue)
                 Info.Lamp1Power = info.Lamp1Power;
             if (info.Lamp2Power != int.MaxValue)
-                Info.Lamp2Power = info.Lamp2Power;
+                Info.Lamp2Power = info.Lamp2Power;        
         }
 
         protected override void OnGotData(UnitInfo info)
