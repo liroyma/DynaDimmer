@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Xml;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Views.MonthItem
 {
@@ -750,5 +751,6 @@ namespace Dynadimmer.Views.MonthItem
             IsLoaded = true;
             ItemUpdated = false;
         }
+
     }
 }

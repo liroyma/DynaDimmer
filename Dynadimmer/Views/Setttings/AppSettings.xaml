@@ -91,6 +91,7 @@
             </Grid>
         </GroupBox>
         <Separator Margin="0,5" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="2"></Separator>
+        
         <Button Grid.Row="3" Grid.Column="2" Margin="10,5" Width="80" Content="Save" Command="{Binding Save}"></Button>
         <Button Grid.Row="3" Grid.Column="3" Margin="10,5" Width="80" Content="Close" Command="{Binding Close}" CommandParameter="{Binding ElementName=win}"></Button>
     </Grid>

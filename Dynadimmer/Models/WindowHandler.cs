@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Models
 {
@@ -124,6 +125,30 @@ namespace Dynadimmer.Models
             {
                 windowenable = value;
                 NotifyPropertyChanged("WindowEnable");
+            }
+        }
+
+        private bool irdaEnabled;
+        public bool IrdaEnabled
+        {
+            get { return irdaEnabled; }
+            set
+            {
+                irdaEnabled = value;
+                TcpEnabled = !value;
+                NotifyPropertyChanged("IrdaEnabled");
+            }
+        }
+
+        private bool tcpEnabled;
+        public bool TcpEnabled
+        {
+            get { return tcpEnabled; }
+            set
+            {
+                tcpEnabled = value;
+                irdaEnabled = !value;
+                NotifyPropertyChanged("TcpEnabled");
             }
         }
 

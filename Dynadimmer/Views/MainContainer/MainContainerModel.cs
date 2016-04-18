@@ -1,5 +1,7 @@
 ﻿using Dynadimmer.Models;
 using System.Windows;
+using Dynadimmer.Models.Messages;
+using System;
 
 namespace Dynadimmer.Views.MainContainer
 {
@@ -89,5 +91,7 @@ namespace Dynadimmer.Views.MainContainer
         {
             FromFile = false;
         }
+
+
     }
 }

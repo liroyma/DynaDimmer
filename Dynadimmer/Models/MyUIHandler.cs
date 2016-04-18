@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dynadimmer.Models.Messages;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace Dynadimmer.Models
     {
         #region Event Handler
         public event PropertyChangedEventHandler PropertyChanged;
-
         public void NotifyPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)

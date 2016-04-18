@@ -10,9 +10,9 @@ using wcl;
 
 namespace Dynadimmer.Models
 {
-    public class IRDAHandler : MyUIHandler
+    public class IRDAHandler : ConnectionHandler
     {
-        public bool IsInit { get; private set; }
+        public override bool IsInit { get;  set; }
 
         public IRDAHandler()
         {
@@ -23,7 +23,7 @@ namespace Dynadimmer.Models
 
         }
 
-        public void InitWCL()
+        public override void Init()
         {
             try
             {
@@ -53,10 +53,10 @@ namespace Dynadimmer.Models
         }
 
         #region Handlers
-        LogHandler Log;
-        WindowHandler Viewer;
+        //LogHandler Log;
+        //WindowHandler Viewer;
 
-        public void SetHandlers(LogHandler log, WindowHandler win)
+        public override void SetHandlers(LogHandler log, WindowHandler win)
         {
             Log = log;
             Viewer = win;
@@ -72,51 +72,49 @@ namespace Dynadimmer.Models
         List<wclIrDADevice> Devices;
 
         List<byte> answer = new List<byte>();
-        // DispatcherTimer ConnectionTimer = new DispatcherTimer();
         DispatcherTimer FillAnswerTimer = new DispatcherTimer();
         #endregion
 
         #region Commands
-        public MyCommand Connect { get; set; }
+       // public MyCommand Connect { get; set; }
         #endregion
 
         #region Events
-        public event EventHandler<bool> Connected;
-        public event EventHandler<List<GaneralMessage>> Answered;
+        public override event EventHandler<bool> Connected;
+        public override event EventHandler<List<GaneralMessage>> Answered;
         #endregion
 
         #region UI Propeerties
-        private string connectionbuttentext;
-        public string ConnectionButtenText
+       // private string connectionbuttontext;
+        public  string ConnectionButtonText
         {
-            get { return connectionbuttentext; }
+            get { return connectionbuttontext; }
             set
             {
-                connectionbuttentext = value;
-                NotifyPropertyChanged("ConnectionButtenText");
+                connectionbuttontext = value;
+                NotifyPropertyChanged("ConnectionButtonText");
             }
         }
 
-        private Color connectionbuttencolor;
-        public Color ConnectionButtenColor
+    //    private Color connectionbuttoncolor;
+        public  Color ConnectionButtonColor
         {
-            get { return connectionbuttencolor; }
+            get { return connectionbuttoncolor; }
             set
             {
-                connectionbuttencolor = value;
-                NotifyPropertyChanged("ConnectionButtenColor");
+                connectionbuttoncolor = value;
+                NotifyPropertyChanged("ConnectionButtonColor");
             }
         }
 
-        private bool isconnected;
-        public bool IsConnected
+        public  bool IsConnected
         {
-            get { return isconnected; }
+            get { return isConnected; }
             set
             {
-                isconnected = value;
-                ConnectionButtenColor = isconnected ? Colors.LightCoral : Colors.LightGreen;
-                ConnectionButtenText = isconnected ? "Disconnect" : "Connect";
+                isConnected = value;
+                ConnectionButtonColor = IsConnected ? Colors.LightCoral : Colors.LightGreen;
+                ConnectionButtonText = IsConnected ? "Disconnect" : "Connect";
                 if (Connected != null)
                     Connected(null, value);
                 NotifyPropertyChanged("IsConnected");
@@ -124,7 +122,7 @@ namespace Dynadimmer.Models
         }
         #endregion
 
-        #region Send and Recieved
+        #region Send and Recieve
 
         private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
         {
@@ -166,7 +164,7 @@ namespace Dynadimmer.Models
             Answered(null, mm);
         }
 
-        public void Write(OutMessage outMessage)
+        public override void Write(OutMessage outMessage)
         {
             if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.DaliHeader && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.V1_10_Header)
                 Viewer.WindowEnable = false;
@@ -268,7 +266,7 @@ namespace Dynadimmer.Models
                 CheckStatus();
         }
 
-        public void CheckStatus()
+        public override void CheckStatus()
         {
             if (_wclClient == null)
                 return;
@@ -285,7 +283,7 @@ namespace Dynadimmer.Models
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             if (_wclClient != null)
                 _wclClient.Dispose();

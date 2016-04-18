@@ -9,6 +9,7 @@ using Dynadimmer.Views.MonthItem;
 using System.Xml;
 using System.Windows.Controls;
 using Dynadimmer.Views.NewSchdularSelection;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Views.LampItem
 {
@@ -110,5 +111,7 @@ namespace Dynadimmer.Views.LampItem
         {
             return months;
         }
+
+
     }
 }

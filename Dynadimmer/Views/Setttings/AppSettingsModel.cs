@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Views.Setttings
 {
@@ -292,6 +293,7 @@ namespace Dynadimmer.Views.Setttings
                 }
             }
         }
+
     }
 
     public class NonEmptyStringDoubleValidationRule : ValidationRule

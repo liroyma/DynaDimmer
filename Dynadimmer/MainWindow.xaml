@@ -16,9 +16,9 @@
     <Window.Resources>
         <handlers:LogHandler x:Key="Logger" ></handlers:LogHandler>
         <handlers:WindowHandler x:Key="Viewer"></handlers:WindowHandler>
-        <handlers:IRDAHandler x:Key="Connection"></handlers:IRDAHandler>
-        <!--<handlers:TCPHandler x:Key="TcpConnection"></handlers:TCPHandler>-->
-        <Style TargetType="Button" x:Key="ConnectButton" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+        <handlers:IRDAHandler x:Key="IrDAConnection"></handlers:IRDAHandler>
+        <handlers:TCPHandler x:Key="TcpConnection"></handlers:TCPHandler>
+        <Style  TargetType="Button" x:Key="ConnectButton" BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Template">
@@ -143,7 +143,7 @@
                         <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding V1_10Checked}" Header="_(1 ÷ 10)V"></MenuItem>
                         <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding DaliChecked}" Header="_Dali"></MenuItem>
                     </MenuItem>
-                    
+
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitIDChecked}" Header="_Unit ID"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding ConfigChecked}" Header="_Unit Configuration"></MenuItem>
                     <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding UnitClockChecked}" Header="_Unit Clock"></MenuItem>
@@ -155,6 +155,13 @@
                         <MenuItem Header="_Clear Log" IsEnabled="{Binding Reset}" Command="{Binding ClearLog}"></MenuItem>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="_Connection Type" >
+                    <RadioButton  Content="_TCP/IP" Name="ipRadioButton" IsChecked="True" />
+                    <RadioButton  Content="_IrDA" Name="irdaRadioButton"  />
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding TcpEnabled}" Header="_TCP/IP"></MenuItem>
+                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding IrdaEnabled}" Header="_IrDA"></MenuItem>
+                </MenuItem>
+
             </Menu>
             <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -178,17 +185,18 @@
                     <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" Grid.Column="1" />
                     <OnlineSaving:OnlineSavingView x:Name="onlinesavingview" Grid.Column="2"/>
                     <Information:InformationView x:Name="infoview" Grid.Column="2"/>
-                    
+
                     <FileLoad:FileLoadView x:Name="fileloadview" Grid.Column="0" />
                 </Grid>
-                <Button DataContext="{StaticResource Connection}" Grid.Row="0" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtenText}" ToolTip="{Binding ConnectionButtenText}" Height="40" Width="95">
+                <Button  Name="ConnectBtn" Style="{StaticResource ConnectButton}"  Grid.Row="0" Grid.Column="1"  BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtonText}" ToolTip="{Binding ConnectionButtonText}" Height="40" Width="94" Margin="28,0,28,13" VerticalAlignment="Bottom">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
-                            <GradientStop Color="{Binding ConnectionButtenColor}" Offset="0"/>
+                            <GradientStop Color="{Binding ConnectionButtonColor}" Offset="0"/>
                             <GradientStop Color="White" Offset="2"/>
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
+                
                 <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95" Click="ExitButton_Click">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
@@ -197,9 +205,10 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
+                
             </Grid>
             <MainContainer:MainContainerView DockPanel.Dock="Bottom" x:Name="MainContainer" Background="White" />
         </DockPanel>
     </DockPanel>
-    
+
 </Window>

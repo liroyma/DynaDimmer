@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Views.Setttings.Login
 {
@@ -93,5 +94,6 @@ namespace Dynadimmer.Views.Setttings.Login
             if (Loggedin != null)
                 Loggedin(null, false);
         }
+
     }
 }

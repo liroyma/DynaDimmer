@@ -31,7 +31,7 @@ namespace Dynadimmer.Models.Messages
         private LogHandler Log;
         private readonly BackgroundWorker worker = new BackgroundWorker();
 
-        public event EventHandler allAnswersProssed;
+        public event EventHandler allAnswersProcessed;
 
         public AnswerHandler(LogHandler log, params UnitProperty[] properties)
         {
@@ -63,7 +63,7 @@ namespace Dynadimmer.Models.Messages
         #region BackgroundWorker
         private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            allAnswersProssed(null, null);
+            allAnswersProcessed(null, null);
         }
 
         private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e)

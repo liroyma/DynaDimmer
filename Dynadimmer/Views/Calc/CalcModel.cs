@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Globalization;
+using Dynadimmer.Models.Messages;
 
 namespace Dynadimmer.Views.Calc
 {
@@ -102,6 +103,7 @@ namespace Dynadimmer.Views.Calc
             }
             LampClaculation.colorindex++;
         }
+
 
     }
 
@@ -317,7 +319,6 @@ namespace Dynadimmer.Views.Calc
 
         }
 
-       
 
     }
 }
