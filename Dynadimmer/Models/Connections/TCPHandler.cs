@@ -134,9 +134,17 @@ namespace Dynadimmer.Models
         private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
         {
             byte[] data = new byte[500];
+            int answerLength = 0;
+            try
+            {
+                answerLength = stream.Read(data, 0, data.Length);
 
-
-            int answerLength = stream.Read(data, 0, data.Length);
+            }
+            catch
+            {
+                Console.WriteLine("Error......");
+                return;
+            }
             for (int i = 0; i < answerLength; i++)
             {
                 answer.Add(data[i]);
