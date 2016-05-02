@@ -23,5 +23,8 @@
     <Setting Name="FilesPath" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ConType" Type="Dynadimmer.Models.CinnectionType" Scope="User">
+      <Value Profile="(Default)">IRDA</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

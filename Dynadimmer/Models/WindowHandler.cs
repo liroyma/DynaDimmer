@@ -127,31 +127,7 @@ namespace Dynadimmer.Models
                 NotifyPropertyChanged("WindowEnable");
             }
         }
-
-        private bool irdaEnabled;
-        public bool IrdaEnabled
-        {
-            get { return irdaEnabled; }
-            set
-            {
-                irdaEnabled = value;
-                TcpEnabled = !value;
-                NotifyPropertyChanged("IrdaEnabled");
-            }
-        }
-
-        private bool tcpEnabled;
-        public bool TcpEnabled
-        {
-            get { return tcpEnabled; }
-            set
-            {
-                tcpEnabled = value;
-                irdaEnabled = !value;
-                NotifyPropertyChanged("TcpEnabled");
-            }
-        }
-
+        
         private bool _UnitInfoChecked;
         public bool UnitInfoChecked
         {
@@ -322,6 +298,7 @@ namespace Dynadimmer.Models
                 NotifyPropertyChanged("V1_10Checked");
             }
         }
+
         private bool _DaliChecked;
         public bool DaliChecked
         {

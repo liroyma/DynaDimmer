@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using wcl;
@@ -12,15 +13,13 @@ namespace Dynadimmer.Models
 {
     public class IRDAHandler : ConnectionHandler
     {
-        public override bool IsInit { get;  set; }
-
         public IRDAHandler()
         {
             Connect = new MyCommand();
             Connect.CommandSent += Connect_CommandSent;
             FillAnswerTimer.Tick += FillAnswerTimer_Elapsed;
             FillAnswerTimer.Interval = TimeSpan.FromMilliseconds(1200);
-
+            ConnectionButtonVisibility = Visibility.Collapsed;
         }
 
         public override void Init()
@@ -52,19 +51,6 @@ namespace Dynadimmer.Models
             }
         }
 
-        #region Handlers
-        //LogHandler Log;
-        //WindowHandler Viewer;
-
-        public override void SetHandlers(LogHandler log, WindowHandler win)
-        {
-            Log = log;
-            Viewer = win;
-            IsConnected = false;
-        }
-
-        #endregion
-
         #region Private Properties
         wclAPI _wclAPI;
         wclClient _wclClient;
@@ -73,53 +59,6 @@ namespace Dynadimmer.Models
 
         List<byte> answer = new List<byte>();
         DispatcherTimer FillAnswerTimer = new DispatcherTimer();
-        #endregion
-
-        #region Commands
-       // public MyCommand Connect { get; set; }
-        #endregion
-
-        #region Events
-        public override event EventHandler<bool> Connected;
-        public override event EventHandler<List<GaneralMessage>> Answered;
-        #endregion
-
-        #region UI Propeerties
-       // private string connectionbuttontext;
-        public  string ConnectionButtonText
-        {
-            get { return connectionbuttontext; }
-            set
-            {
-                connectionbuttontext = value;
-                NotifyPropertyChanged("ConnectionButtonText");
-            }
-        }
-
-    //    private Color connectionbuttoncolor;
-        public  Color ConnectionButtonColor
-        {
-            get { return connectionbuttoncolor; }
-            set
-            {
-                connectionbuttoncolor = value;
-                NotifyPropertyChanged("ConnectionButtonColor");
-            }
-        }
-
-        public  bool IsConnected
-        {
-            get { return isConnected; }
-            set
-            {
-                isConnected = value;
-                ConnectionButtonColor = IsConnected ? Colors.LightCoral : Colors.LightGreen;
-                ConnectionButtonText = IsConnected ? "Disconnect" : "Connect";
-                if (Connected != null)
-                    Connected(null, value);
-                NotifyPropertyChanged("IsConnected");
-            }
-        }
         #endregion
 
         #region Send and Recieve
@@ -161,7 +100,7 @@ namespace Dynadimmer.Models
                 mm.Add(new JunkMessage(answer));
                 answer.Clear();
             }
-            Answered(null, mm);
+            OnAnswered(mm);
         }
 
         public override void Write(OutMessage outMessage)
@@ -187,7 +126,7 @@ namespace Dynadimmer.Models
             else
             {
                 IsConnected = true;
-                Log.AddMessage(new ConnectionMessage("Connected."));
+                Log.AddMessage(new ConnectionMessage("Connected IRDA."));
             }
         }
 
@@ -263,11 +202,20 @@ namespace Dynadimmer.Models
         private void Connect_CommandSent(object sender, EventArgs e)
         {
             if (IsInit)
-                CheckStatus();
+                CheckStatus(false);
         }
 
-        public override void CheckStatus()
+        public override void CheckStatus(bool todisconnect)
         {
+            if (todisconnect)
+            {
+                _wclClient.Disconnect();
+
+                ConnectionButtonVisibility = Visibility.Collapsed;
+                return;
+            }
+
+            ConnectionButtonVisibility = Visibility.Visible;
             if (_wclClient == null)
                 return;
             if (_wclClient.State == wclClientState.csConnecting || _wclClient.State == wclClientState.csConnected)
@@ -278,7 +226,8 @@ namespace Dynadimmer.Models
             {
                 IsConnected = false;
                 string x = wclErrors.wclGetErrorMessage(_wclIrDADiscovery.Discovery());
-                if (x != String.Empty) Log.AddMessage(new ConnectionMessage("USB is not connected", Brushes.Red));
+                if (x != String.Empty)
+                    Log.AddMessage(new ConnectionMessage("USB is not connected", Brushes.Red));
                 // Log.AddMessage(new ConnectionMessage(x,Brushes.Red));
             }
         }

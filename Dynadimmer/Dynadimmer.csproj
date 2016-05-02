@@ -89,7 +89,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>FE43F041F11B20C42BCA169F770EFF9AB38E4D59</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>CA5B18F14D05972CF8FD941E47AFFBC79552D8EE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -104,8 +104,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile>Dynadimmer_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ReachFramework" />
@@ -166,7 +165,6 @@
     <Compile Include="Models\Actions\Action.cs" />
     <Compile Include="Models\Actions\DownloadAllAction.cs" />
     <Compile Include="Models\Actions\StartAction.cs" />
-    <Compile Include="Models\Connections\ConnectionHand.cs" />
     <Compile Include="Models\Converters\AllConverters.cs" />
     <Compile Include="Models\CRCManager.cs" />
     <Compile Include="Models\Connections\IRDAHandler.cs" />
@@ -339,7 +337,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="Dynadimmer_TemporaryKey.pfx" />
+    <None Include="Dynadimmer_1_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -380,9 +378,9 @@
     <Resource Include="Images\Close.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="msvcp110.dll" />
-    <Content Include="msvcr110.dll" />
-    <Content Include="vccorlib110.dll" />
+    <Content Include="wcl\msvcp110.dll" />
+    <Content Include="wcl\msvcr110.dll" />
+    <Content Include="wcl\vccorlib110.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

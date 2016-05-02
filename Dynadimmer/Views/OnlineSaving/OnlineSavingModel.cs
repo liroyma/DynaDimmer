@@ -19,11 +19,10 @@ namespace Dynadimmer.Views.OnlineSaving
         public const int V1_10_Header = 16;
         public const int DaliHeader = 17;
         public const int Timer_Interval = 3;
-        DispatcherTimer _timer = new DispatcherTimer();
+        DispatcherTimer _timer;
 
         #region Properties
-
-
+        
         private int tempHeader;
         public int TempHeader
         {
@@ -34,9 +33,7 @@ namespace Dynadimmer.Views.OnlineSaving
                 NotifyPropertyChanged("TempHeader");
             }
         }
-
-
-
+        
         private System.DateTime unittime;
         public System.DateTime UnitTime
         {
@@ -143,13 +140,12 @@ namespace Dynadimmer.Views.OnlineSaving
         {
             Title = "Unit Online Saving";
             SetTimer();
-            _timer.Start();
             IsLoaded = true; 
         }
 
         public override void DidntGotAnswer()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override string GotAnswer(IncomeMessage message)
@@ -179,12 +175,12 @@ namespace Dynadimmer.Views.OnlineSaving
 
         public override void SaveData(XmlWriter writer, object extra)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void SendDownLoad(object sender)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override void SendUpload(object sender)
@@ -197,7 +193,7 @@ namespace Dynadimmer.Views.OnlineSaving
             UnitTime = info.UnitClock > UnitTime ? info.UnitClock : UnitTime;
             UnitLampCount = info.LampsCount;
             Lamp1Visibility = UnitLampCount == 1 || UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
-            Lamp2Visibility = UnitLampCount == 2 ? Visibility.Visible : Visibility.Collapsed;
+            Lamp2Visibility = UnitLampCount == 2 ? Visibility.Visible : Visibility.Hidden;
             
         }
 
@@ -219,14 +215,14 @@ namespace Dynadimmer.Views.OnlineSaving
 
         private void SetTimer()
         {
+            _timer = new DispatcherTimer();
             _timer.Interval = TimeSpan.FromSeconds(Timer_Interval);
             _timer.Tick += _timer_Tick;
-           
+
         }
 
         public void SetTimerState(bool timerState)
         {
-            
             if (timerState)
                 _timer.Start();
             else

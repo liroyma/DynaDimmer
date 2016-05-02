@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Dynadimmer.Models.Messages;
+using System.Windows.Data;
 
 namespace Dynadimmer.Views.Setttings
 {
@@ -147,6 +148,8 @@ namespace Dynadimmer.Views.Setttings
         {
             if (sender is Window)
             {
+                if (startcontype != Properties.Settings.Default.ConType && TypeChanged != null)
+                    TypeChanged(null, Properties.Settings.Default.ConType);
                 ((Window)sender).Close();
             }
         }
@@ -155,8 +158,10 @@ namespace Dynadimmer.Views.Setttings
         {
             Properties.Settings.Default.HoursList = String.Join(";", HoursList.ToArray());
             Properties.Settings.Default.PricesList = String.Join(";", PriceList.ToArray());
+            Properties.Settings.Default.ConType = ConType;
             Properties.Settings.Default.FilesPath = FilesPath;
             Properties.Settings.Default.Save();
+
         }
 
         private void Remove_CommandSent(object sender, EventArgs e)
@@ -228,6 +233,8 @@ namespace Dynadimmer.Views.Setttings
 
         public Login.LogInWindow LoginWin { get; set; }
 
+        public event EventHandler<CinnectionType> TypeChanged;
+
         private string _filespath;
         public string FilesPath
         {
@@ -250,6 +257,28 @@ namespace Dynadimmer.Views.Setttings
             }
         }
 
+        CinnectionType startcontype;
+
+        private CinnectionType _contype;
+        public CinnectionType ConType
+        {
+            get { return _contype; }
+            set
+            {
+                if (onstart)
+                {
+                    if(once)
+                        _contype = value;
+                    once = false;
+                }
+                else
+                    _contype = value;
+                NotifyPropertyChanged("ConType");
+            }
+        }
+
+        bool onstart = false;
+        bool once = false;
         public AppSettingsModel()
         {
             LoginWin = new Login.LogInWindow();
@@ -271,8 +300,12 @@ namespace Dynadimmer.Views.Setttings
             ReadFromSettings();
         }
 
-        private void ReadFromSettings()
+        public void ReadFromSettings()
         {
+            onstart = true;
+            once = true;
+            ConType = Properties.Settings.Default.ConType;
+            startcontype = Properties.Settings.Default.ConType;
             FilesPath = Properties.Settings.Default.FilesPath;
             if (FilesPath == string.Empty)
                 FilesPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -292,6 +325,7 @@ namespace Dynadimmer.Views.Setttings
                     PriceList.Add(item);
                 }
             }
+            onstart = false;
         }
 
     }
@@ -340,6 +374,34 @@ namespace Dynadimmer.Views.Setttings
             return value;
         }
 
+        #endregion
+    }
+
+    public class EnumBooleanConverter : IValueConverter
+    {
+        #region IValueConverter Members
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string parameterString = parameter as string;
+            if (parameterString == null)
+                return DependencyProperty.UnsetValue;
+
+            if (Enum.IsDefined(value.GetType(), value) == false)
+                return DependencyProperty.UnsetValue;
+
+            object parameterValue = Enum.Parse(value.GetType(), parameterString);
+
+            return parameterValue.Equals(value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string parameterString = parameter as string;
+            if (parameterString == null)
+                return DependencyProperty.UnsetValue;
+
+            return Enum.Parse(targetType, parameterString);
+        }
         #endregion
     }
 }

@@ -14,18 +14,21 @@ namespace Dynadimmer.Models
 {
     public abstract class UnitProperty : INotifyPropertyChanged
     {
-        private static ConnectionHandler connection;
+        public static ConnectionHandler connection { get; private set; }
         private static WindowHandler viewer;
 
-        public static void SetConnection(ConnectionHandler con, WindowHandler vi)
+        public static void SetConnection(ConnectionHandler con)
         {
             if (con is IRDAHandler)
                 connection = (IRDAHandler)con;
             else
                 connection = (TCPHandler)con;
-            viewer = vi; 
         }
 
+        public static void SetViewer(WindowHandler vi)
+        {
+            viewer = vi;
+        }
 
         public MyCommand Download { get; set; }
         public MyCommand Upload { get; set; }

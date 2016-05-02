@@ -43,7 +43,7 @@ namespace Dynadimmer.Models.Messages
             return fulldata.ToArray();
 
         }
-        static bool once = false;
+        //static bool once = false;
         private byte[] Message(bool isAscii, byte[] unitid, byte Header, params byte[] data)
         {
             List<byte> list = new List<byte>();

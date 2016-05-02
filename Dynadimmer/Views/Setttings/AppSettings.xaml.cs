@@ -38,5 +38,6 @@ namespace Dynadimmer.Views.Setttings
             this.Visibility = Visibility.Collapsed;
             e.Cancel = true;
         }
+        
     }
 }

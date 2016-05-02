@@ -4,49 +4,48 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.OnlineSaving"
-             mc:Ignorable="d" 
-             Background="#efefef">
+             mc:Ignorable="d" Background="#efefef">
     <GroupBox Header="Online Saving" Margin="10" Padding="10,10,10,5" BorderBrush="Black" >
         <Grid>
-
-            <Grid  Background="#efefef">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="20"></RowDefinition>
-                    <RowDefinition Height="20"></RowDefinition>
-                    <RowDefinition Height="20"></RowDefinition>
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="0" Text="Luminare 1" FontWeight="Bold"></TextBlock>
-                <TextBlock Visibility="{Binding Lamp1Visibility}" FontWeight="Bold" VerticalAlignment="Center"  Text="Current/Planned" Grid.Row="1"></TextBlock>
-                <TextBlock Visibility="{Binding Lamp1Visibility}" Grid.Row="2" >
-                        <TextBlock Text="{Binding Luminare1Current}"></TextBlock>
-                        <TextBlock Text="% / "></TextBlock>
-                        <TextBlock Text="{Binding Luminare1Planned}"></TextBlock>
-                        <TextBlock Text="%"></TextBlock>
-                    </TextBlock>
-                
-                <Rectangle Visibility="{Binding Lamp2Visibility}" Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Stretch" Width="1" Margin="5,0" Stroke="Black" />
-                <TextBlock Visibility="{Binding Lamp2Visibility}" Grid.Row="0" Grid.Column="2" Text="Luminare 2" FontWeight="Bold"></TextBlock>
-                <TextBlock Visibility="{Binding Lamp2Visibility}" FontWeight="Bold" VerticalAlignment="Center"   Text="Current/Planned" Grid.Row="1" Grid.Column="2"></TextBlock>
-                <TextBlock Visibility="{Binding Lamp2Visibility}"  VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" >
-                        <TextBlock Text="{Binding Luminare2Current}"></TextBlock>
-                        <TextBlock Text="% / "></TextBlock>
-                        <TextBlock Text="{Binding Luminare2Planned}"></TextBlock>
-                        <TextBlock Text="%"></TextBlock>
-                </TextBlock>
-                
-                <WrapPanel VerticalAlignment="Center"   Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp1Visibility}" Grid.Row="0" Text="Luminare 1" FontWeight="Bold"></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp1Visibility}" FontWeight="Bold" VerticalAlignment="Center"  Text="Current/Planned" Grid.Row="1"></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp1Visibility}" Grid.Row="2">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0}% / {1}%">
+                        <Binding Path="Luminare1Current" />
+                        <Binding Path="Luminare1Planned" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+            <Rectangle Grid.Column="1" Grid.RowSpan="3" VerticalAlignment="Stretch" Width="1" Margin="5,0" Stroke="Black" />
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp2Visibility}" Grid.Row="0" Grid.Column="2" Text="Luminare 2" FontWeight="Bold"></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp2Visibility}" FontWeight="Bold" VerticalAlignment="Center"   Text="Current/Planned" Grid.Row="1" Grid.Column="2"></TextBlock>
+            <TextBlock HorizontalAlignment="Center" Visibility="{Binding Lamp2Visibility}"  VerticalAlignment="Center" Grid.Row="2" Grid.Column="2" >
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0}% / {1}%">
+                        <Binding Path="Luminare2Current" />
+                        <Binding Path="Luminare2Planned" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+            <Border HorizontalAlignment="Center" Margin="0,3,0,0" BorderBrush="Black" Padding="10,2" BorderThickness="1" VerticalAlignment="Center"   Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4">
+                <WrapPanel>
                     <TextBlock FontWeight="Bold"  Text="Clock:" Margin="0,0,5,0" ></TextBlock>
                     <TextBlock   Text="{Binding UnitTime,StringFormat={}{0:dddd - dd/MM/yy HH:mm}}"></TextBlock>
                 </WrapPanel>
-            </Grid>
+            </Border>
         </Grid>
     </GroupBox>
 </UserControl>

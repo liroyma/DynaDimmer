@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Dynadimmer
 {
@@ -19,7 +20,8 @@ namespace Dynadimmer
     public partial class MainWindow : Window
     {
         CalcWindow calc;
-        ConnectionHandler connection;
+        TCPHandler tcpconnection;
+        IRDAHandler irdaconnection;
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
@@ -43,23 +45,18 @@ namespace Dynadimmer
             log.DoneSaving += Log_DoneSaving;
             Models.Action.Log = log;
             viewer = (WindowHandler)this.FindResource("Viewer");
+            UnitProperty.SetViewer(viewer);
+            ConnectionHandler.SetHandlers(log, viewer);
 
-            SetConnectionType();
+            irdaconnection = (IRDAHandler)this.FindResource("IrDAConnection");
+            irdaconnection.Init();
+            irdaconnection.Connected += Connection_Connected;
+            irdaconnection.Answered += Connection_Answered;
 
-
-            try
-            {
-                connection.Init();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            connection.SetHandlers(log, viewer);
-            connection.Connected += Connection_Connected;
-            connection.Answered += Connection_Answered;
-            UnitProperty.SetConnection(connection, viewer);
+            tcpconnection = (TCPHandler)this.FindResource("TcpConnection");
+            tcpconnection.Init();
+            tcpconnection.Connected += Connection_Connected;
+            tcpconnection.Answered += Connection_Answered;
 
             MonthModel.Perent = newschdularselectionview.Model;
             answers = new AnswerHandler(log, infoview.Model, unitidview.Model, newschdularselectionview.Model, datetimeview.Model, summerwinterview.Model, configview.Model, onlinesavingview.Model);
@@ -86,12 +83,43 @@ namespace Dynadimmer
             configview.Model.GotData += Model_GotData;
             summerwinterview.Model.GotData += Model_GotData;
             onlinesavingview.Model.GotData += Model_GotData;
+
             settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
+            settings.Model.TypeChanged += Model_TypeChanged;
+
             viewer.WindowEnable = true;
-            if (connection.IsInit)
-                connection.CheckStatus();
+            switch(Properties.Settings.Default.ConType)
+            {
+                case CinnectionType.IRDA:
+                    UnitProperty.SetConnection(irdaconnection);
+                    break;
+                case CinnectionType.TCP:
+                    UnitProperty.SetConnection(tcpconnection);
+                    break;
+            }
+            Model_TypeChanged(null, Properties.Settings.Default.ConType);
         }
 
+        private void Model_TypeChanged(object sender, CinnectionType e)
+        {
+            if (UnitProperty.connection.IsConnected)
+            {
+                UnitProperty.connection.CheckStatus(true);
+                log.AddMessage(new ConnectionMessage("Connection type changed to: " + e, Brushes.Black));
+            }
+            switch (e)
+            {
+                case CinnectionType.IRDA:
+                    UnitProperty.SetConnection(irdaconnection);
+                    break;
+                case CinnectionType.TCP:
+                    UnitProperty.SetConnection(tcpconnection);
+                    break;
+            }
+
+            if (UnitProperty.connection.IsInit)
+                UnitProperty.connection.CheckStatus(false);
+        }
 
         private void Model_Loggedin(object sender, bool e)
         {
@@ -158,17 +186,17 @@ namespace Dynadimmer
                 infoview.Visibility = viewer.UnitInfoVisibility;
                 onlinesavingview.Visibility = viewer.OnlineSavingVisibility;
                 newschdularselectionview.Visibility = Visibility.Collapsed;
-                configview.IsEnabled = connection.isConnected;
-                MainContainer.IsEnabled = connection.isConnected;
-                summerwinterview.IsEnabled = connection.isConnected;
-                datetimeview.IsEnabled = connection.isConnected;
-                unitidview.IsEnabled = connection.isConnected;
-                newschdularselectionview.IsEnabled = connection.isConnected;
-                onlinesavingview.IsEnabled = connection.isConnected;
+                configview.IsEnabled = UnitProperty.connection.isConnected;
+                MainContainer.IsEnabled = UnitProperty.connection.isConnected;
+                summerwinterview.IsEnabled = UnitProperty.connection.isConnected;
+                datetimeview.IsEnabled = UnitProperty.connection.isConnected;
+                unitidview.IsEnabled = UnitProperty.connection.isConnected;
+                newschdularselectionview.IsEnabled = UnitProperty.connection.isConnected;
+                onlinesavingview.IsEnabled = UnitProperty.connection.isConnected;
                 MainContainer.Model.FromFile = false;
                 infoview.Model.Info = new Views.Information.UnitInfo();
                 infoview.Model.NoDataVisibility = Visibility.Visible;
-                if (connection.isConnected)
+                if (UnitProperty.connection.isConnected)
                 {
                     action = new StartAction(infoview.Model);
                 }
@@ -179,7 +207,7 @@ namespace Dynadimmer
                 MainContainer.IsEnabled = true;
                 MainContainer.Model.FromFile = true;
             }
-            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.isConnected;
+            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile;//&& connection.isConnected;
         }
         #endregion
 
@@ -189,32 +217,8 @@ namespace Dynadimmer
             answers.Handle(e);
         }
 
-        private void SetConnectionType()
-        {
-            if (irdaRadioButton.IsChecked == true)
-            {
-                viewer.IrdaEnabled = true;
-                viewer.TcpEnabled = false;
-                connection = (IRDAHandler)this.FindResource("IrDAConnection");
-            }
-
-            else
-            {
-                viewer.TcpEnabled = true;
-                viewer.IrdaEnabled = false;
-                connection = (TCPHandler)this.FindResource("TcpConnection");
-            }
-
-
-            ConnectBtn.DataContext = connection;
-       //     ConnectBtn.Content = connection.connectionbuttontext;
-            
-        }
-
         private void Connection_Connected(object sender, bool e)
         {
-            SetConnectionType();
-
             datetimeview.Model.SendingClock(false);
             onlinesavingview.Model.SetTimerState(false);
             if (!MainContainer.Model.FromFile)
@@ -230,10 +234,10 @@ namespace Dynadimmer
                 datetimeview.Model.SendingClock(e);
                 onlinesavingview.Model.SetTimerState(e && viewer.OnlineSavingChecked);
             }
-            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && connection.isConnected;
+            viewer.IsConnectedAndNotFromFile = !MainContainer.Model.FromFile && UnitProperty.connection.isConnected;
             fileloadview.Model.DownLoadEnable = e;
             if (fileloadview.Model.WinVisibility != Visibility.Visible && e)
-                action = new StartAction(infoview.Model);  
+                action = new StartAction(infoview.Model);
         }
 
         #endregion
@@ -243,8 +247,10 @@ namespace Dynadimmer
         {
             close = true;
             e.Cancel = true;
-            if (connection != null)
-                connection.Dispose();
+            if (irdaconnection != null)
+                irdaconnection.Dispose();
+            if (tcpconnection != null)
+                tcpconnection.Dispose();
             if (log != null)
                 log.Save();
             else
@@ -259,7 +265,7 @@ namespace Dynadimmer
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            
+
             datetimeview.Visibility = viewer.UnitTimeVisibility;
             summerwinterview.Visibility = viewer.SummerWinterVisibility;
             configview.Visibility = viewer.ConfigVisibility;
@@ -283,9 +289,9 @@ namespace Dynadimmer
                         onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.V1_10_Header;
                         break;
                     case "_Dali":
-                        onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.DaliHeader;  
+                        onlinesavingview.Model.TempHeader = Views.OnlineSaving.OnlineSavingModel.DaliHeader;
                         break;
-                }                  
+                }
                 action = new StartAction(onlinesavingview.Model);
             }
 
@@ -305,6 +311,7 @@ namespace Dynadimmer
         {
             settings.Owner = this;
             settings.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            settings.Model.ReadFromSettings();
             settings.ShowDialog();
         }
 
@@ -334,7 +341,7 @@ namespace Dynadimmer
             if (action != null)
             {
                 action.Next();
-                if (!connection.isConnected)
+                if (!UnitProperty.connection.isConnected)
                 {
                     action.Stop();
                 }
@@ -360,7 +367,7 @@ namespace Dynadimmer
                 App.Current.Shutdown();
         }
 
-  
+
     }
 
 }

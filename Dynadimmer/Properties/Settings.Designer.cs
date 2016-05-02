@@ -106,5 +106,17 @@ namespace Dynadimmer.Properties {
                 this["FilesPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("IRDA")]
+        public global::Dynadimmer.Models.CinnectionType ConType {
+            get {
+                return ((global::Dynadimmer.Models.CinnectionType)(this["ConType"]));
+            }
+            set {
+                this["ConType"] = value;
+            }
+        }
     }
 }
