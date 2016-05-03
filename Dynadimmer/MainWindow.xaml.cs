@@ -86,6 +86,7 @@ namespace Dynadimmer
 
             settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
             settings.Model.TypeChanged += Model_TypeChanged;
+            settings.Model.UnitIPChanged += Model_UnitIPChanged;
 
             viewer.WindowEnable = true;
             switch(Properties.Settings.Default.ConType)
@@ -98,6 +99,11 @@ namespace Dynadimmer
                     break;
             }
             Model_TypeChanged(null, Properties.Settings.Default.ConType);
+        }
+
+        private void Model_UnitIPChanged(object sender, string e)
+        {
+            tcpconnection.UpdateIP();
         }
 
         private void Model_TypeChanged(object sender, CinnectionType e)
@@ -113,6 +119,7 @@ namespace Dynadimmer
                     UnitProperty.SetConnection(irdaconnection);
                     break;
                 case CinnectionType.TCP:
+                    tcpconnection.UpdateIP();
                     UnitProperty.SetConnection(tcpconnection);
                     break;
             }

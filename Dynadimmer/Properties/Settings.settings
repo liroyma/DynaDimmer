@@ -26,5 +26,8 @@
     <Setting Name="ConType" Type="Dynadimmer.Models.CinnectionType" Scope="User">
       <Value Profile="(Default)">IRDA</Value>
     </Setting>
+    <Setting Name="UnitIPAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">192.168.4.2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

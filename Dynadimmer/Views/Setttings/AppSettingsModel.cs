@@ -150,6 +150,8 @@ namespace Dynadimmer.Views.Setttings
             {
                 if (startcontype != Properties.Settings.Default.ConType && TypeChanged != null)
                     TypeChanged(null, Properties.Settings.Default.ConType);
+                if (startipadd != Properties.Settings.Default.UnitIPAddress && UnitIPChanged != null)
+                    UnitIPChanged(null, Properties.Settings.Default.UnitIPAddress);
                 ((Window)sender).Close();
             }
         }
@@ -160,6 +162,7 @@ namespace Dynadimmer.Views.Setttings
             Properties.Settings.Default.PricesList = String.Join(";", PriceList.ToArray());
             Properties.Settings.Default.ConType = ConType;
             Properties.Settings.Default.FilesPath = FilesPath;
+            Properties.Settings.Default.UnitIPAddress = string.Format("{0}.{1}.{2}.{3}", ClassA, ClassB, ClassC, ClassD); ;
             Properties.Settings.Default.Save();
 
         }
@@ -231,9 +234,21 @@ namespace Dynadimmer.Views.Setttings
         }
         #endregion
 
+        private bool _cansave;
+        public bool CanSave
+        {
+            get { return _cansave; }
+            set
+            {
+                _cansave = value;
+                NotifyPropertyChanged("CanSave");
+            }
+        }
+
         public Login.LogInWindow LoginWin { get; set; }
 
         public event EventHandler<CinnectionType> TypeChanged;
+        public event EventHandler<string> UnitIPChanged;
 
         private string _filespath;
         public string FilesPath
@@ -257,7 +272,75 @@ namespace Dynadimmer.Views.Setttings
             }
         }
 
+        private Visibility _ipaddressvisability;
+        public Visibility IPAddressVisability
+        {
+            get { return _ipaddressvisability; }
+            set
+            {
+                _ipaddressvisability = value;
+                NotifyPropertyChanged("IPAddressVisability");
+            }
+        }
+
+        //private string _ipaddress;
+        //public string IPAddress
+        //{
+        //    get { return _ipaddress; }
+        //    set
+        //    {
+        //        _ipaddress = value;
+        //        NotifyPropertyChanged("IPAddress");
+        //    }
+        //}
+
+        private int _classa;
+        public int ClassA
+        {
+            get { return _classa; }
+            set
+            {
+                _classa = value;
+                CanSave = true;
+                NotifyPropertyChanged("ClassA");
+            }
+        }
+        private int _classb;
+        public int ClassB
+        {
+            get { return _classb; }
+            set
+            {
+                _classb = value;
+                CanSave = true;
+                NotifyPropertyChanged("ClassB");
+            }
+        }
+        private int _classc;
+        public int ClassC
+        {
+            get { return _classc; }
+            set
+            {
+                _classc = value;
+                CanSave = true;
+                NotifyPropertyChanged("ClassC");
+            }
+        }
+        private int _classd;
+        public int ClassD
+        {
+            get { return _classd; }
+            set
+            {
+                _classd = value;
+                CanSave = true;
+                NotifyPropertyChanged("ClassD");
+            }
+        }
+        
         CinnectionType startcontype;
+        string startipadd;
 
         private CinnectionType _contype;
         public CinnectionType ConType
@@ -267,12 +350,13 @@ namespace Dynadimmer.Views.Setttings
             {
                 if (onstart)
                 {
-                    if(once)
+                    if (once)
                         _contype = value;
                     once = false;
                 }
                 else
                     _contype = value;
+                IPAddressVisability = _contype == CinnectionType.TCP ? Visibility.Visible : Visibility.Collapsed;
                 NotifyPropertyChanged("ConType");
             }
         }
@@ -307,6 +391,13 @@ namespace Dynadimmer.Views.Setttings
             ConType = Properties.Settings.Default.ConType;
             startcontype = Properties.Settings.Default.ConType;
             FilesPath = Properties.Settings.Default.FilesPath;
+            string IPAddress = Properties.Settings.Default.UnitIPAddress;
+            string[] classes = IPAddress.Split('.');
+            ClassA = int.Parse(classes[0]);
+            ClassB = int.Parse(classes[1]);
+            ClassC = int.Parse(classes[2]);
+            ClassD = int.Parse(classes[3]);
+            startipadd = Properties.Settings.Default.UnitIPAddress;
             if (FilesPath == string.Empty)
                 FilesPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string hoursstring = Properties.Settings.Default.HoursList;
@@ -403,5 +494,24 @@ namespace Dynadimmer.Views.Setttings
             return Enum.Parse(targetType, parameterString);
         }
         #endregion
+    }
+
+    public class BooleanOrConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            foreach (object value in values)
+            {
+                if ((bool)value == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
     }
 }

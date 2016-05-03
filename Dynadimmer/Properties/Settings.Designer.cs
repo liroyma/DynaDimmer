@@ -118,5 +118,17 @@ namespace Dynadimmer.Properties {
                 this["ConType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.4.2")]
+        public string UnitIPAddress {
+            get {
+                return ((string)(this["UnitIPAddress"]));
+            }
+            set {
+                this["UnitIPAddress"] = value;
+            }
+        }
     }
 }

@@ -4,14 +4,81 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Closing="win_Closing"
         xmlns:local="clr-namespace:Dynadimmer.Views.Setttings" ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow" Width="450" Height="400"
-        mc:Ignorable="d" Background="#efefef" Padding="5"  Title="Application Settings" Name="win" MinHeight="350" MinWidth="600">
+        xmlns:vlid="clr-namespace:Dynadimmer.Models.Converters"
+        mc:Ignorable="d" Background="#efefef" Padding="5"  Title="Application Settings" Name="win" MinHeight="350" MinWidth="650">
+    <Window.Resources>
+        <ResourceDictionary>
+            <local:BooleanOrConverter x:Key="BooleanOrConverter"></local:BooleanOrConverter>
+            <Color x:Key="detailMark" A="#00" R="#00" B="#00" G="#00"></Color>
+            <SolidColorBrush x:Key="detailMarkBrush" Color="{StaticResource ResourceKey=detailMark}" />
+            <ControlTemplate x:Key="errorTemplateSilverlightStyle">
+                <StackPanel Orientation="Vertical">
+                    <Border BorderThickness="1" BorderBrush="#FFdc000c" CornerRadius="0.7" VerticalAlignment="Top" HorizontalAlignment="Left">
+                        <Grid>
+                            <Polygon x:Name="toolTipCorner" Grid.ZIndex="2"  Margin="-1" Points="6,6 6,0 0,0" Fill="#FFdc000c" HorizontalAlignment="Right" VerticalAlignment="Top" IsHitTestVisible="True"/>
+                            <Polyline Grid.ZIndex="3" Points="7,7 0,0" Margin="-1" HorizontalAlignment="Right" StrokeThickness="1.5" StrokeEndLineCap="Round" StrokeStartLineCap="Round" Stroke="White"  VerticalAlignment="Top" IsHitTestVisible="True"/>
+                            <AdornedElementPlaceholder x:Name="adorner"/>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="errorBorder" Background="#FFdc000c" Opacity="0" CornerRadius="1.5" IsHitTestVisible="False" MinHeight="24" MaxWidth="267">
+                        <Border.Margin>
+                            <Thickness Left="-70" Top="0" Right="0" Bottom="0" />
+                        </Border.Margin>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="2.25" Color="Black" Opacity="0.4" Direction="315"  BlurRadius="4"/>
+                        </Border.Effect>
+                        <TextBlock Width="100" Text="{Binding ElementName=adorner, Path=AdornedElement.(Validation.Errors).CurrentItem.ErrorContent}" Foreground="White" Margin="8,3,8,3" TextWrapping="Wrap"/>
+                    </Border>
+                </StackPanel>
+                <ControlTemplate.Triggers>
+                    <DataTrigger Value="True">
+                        <DataTrigger.Binding>
+                            <MultiBinding Converter="{StaticResource BooleanOrConverter}">
+                                <Binding ElementName="adorner" Path="AdornedElement.IsKeyboardFocused" />
+                                <Binding ElementName="toolTipCorner" Path="IsMouseOver"/>
+                            </MultiBinding>
+                        </DataTrigger.Binding>
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard x:Name="fadeInStoryboard">
+                                <Storyboard>
+                                    <DoubleAnimation Duration="00:00:00.15" Storyboard.TargetName="errorBorder"  Storyboard.TargetProperty="Opacity"  To="1"/>
+                                    <!--<ThicknessAnimation Duration="00:00:00.15" Storyboard.TargetName="errorBorder" Storyboard.TargetProperty="Margin" FillBehavior="HoldEnd" To="-70,0,0,0">
+                                        <ThicknessAnimation.EasingFunction>
+                                            <BackEase EasingMode="EaseOut" Amplitude="2"/>
+                                        </ThicknessAnimation.EasingFunction>
+                                    </ThicknessAnimation>-->
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <StopStoryboard BeginStoryboardName="fadeInStoryboard"/>
+                            <BeginStoryboard x:Name="fadeOutStoryBoard">
+                                <Storyboard>
+                                    <DoubleAnimation Duration="00:00:00" Storyboard.TargetName="errorBorder" Storyboard.TargetProperty="Opacity" To="0"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+            <Style x:Key="flatTextBox" TargetType="{x:Type TextBox}">
+                <Setter Property="Background" Value="White"></Setter>
+                <Setter Property="Width" Value="27"></Setter>
+                <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                <Setter Property="BorderThickness" Value="0"></Setter>
+                <Setter Property="MaxLength" Value="3"></Setter>
+                <Setter Property="Uid" Value="IP"></Setter>
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource errorTemplateSilverlightStyle}" ></Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition ></ColumnDefinition>
-            <ColumnDefinition ></ColumnDefinition>
-            <ColumnDefinition ></ColumnDefinition>
-            <ColumnDefinition ></ColumnDefinition>
-            <ColumnDefinition ></ColumnDefinition>
+            <ColumnDefinition Width="1*" ></ColumnDefinition>
+            <ColumnDefinition Width="1*" ></ColumnDefinition>
+            <ColumnDefinition Width="1*" ></ColumnDefinition>
+            <ColumnDefinition Width="1*" ></ColumnDefinition>
+            <ColumnDefinition Width="1.5*" ></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -19,7 +86,7 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <GroupBox  BorderBrush="Black" Margin="5" Padding="5" Header="Authentication"  Grid.Row="1" VerticalAlignment="Top" Grid.Column="4">
+        <GroupBox  BorderBrush="Black" Margin="5" Padding="5" Header="Authentication"  Grid.Row="0" VerticalAlignment="Stretch" Grid.Column="0">
             <Grid>
                 <Button Command="{Binding LogIn}" Grid.Column="1" Margin="5" Content="{Binding LoginText}"></Button>
             </Grid>
@@ -78,7 +145,7 @@
                 <ListBox Grid.RowSpan="4" Grid.Row="0" Margin="10,0,10,10" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ListBox>
                 <TextBox Margin="5,2" Grid.Row="0" Grid.Column="1" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                     <TextBox.Text>
-                        <Binding FallbackValue="0.0" Path="PriceText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                        <Binding  FallbackValue="0.0" Path="PriceText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                             <Binding.Converter>
                                 <local:DefaultLowerCaseConverter></local:DefaultLowerCaseConverter>
                             </Binding.Converter>
@@ -92,7 +159,7 @@
                 <Button Margin="5,2" Grid.Row="2" Grid.Column="1" Content="Remove" Visibility="{Binding PriceRemoveVisability}" Command="{Binding Remove}" CommandParameter="Price"></Button>
             </Grid>
         </GroupBox>
-        <GroupBox VerticalAlignment="Top" BorderBrush="Black" Margin="5" Padding="5" Header="Connection Type"  Grid.Column="0" Grid.Row="0">
+        <GroupBox VerticalAlignment="Top" BorderBrush="Black" Margin="5" Padding="5" Header="Connection Type"  Grid.Column="4" Grid.Row="1">
             <Grid>
                 <Grid.Resources>
                     <local:EnumBooleanConverter x:Key="enumBooleanConverter"/>
@@ -100,11 +167,57 @@
                 <StackPanel>
                     <RadioButton IsChecked="{Binding Path=ConType, Converter={StaticResource enumBooleanConverter}, ConverterParameter=IRDA,Mode=TwoWay}">IRDA</RadioButton>
                     <RadioButton IsChecked="{Binding Path=ConType, Converter={StaticResource enumBooleanConverter}, ConverterParameter=TCP,Mode=TwoWay}">TCP IP</RadioButton>
+                    <Border Visibility="{Binding IPAddressVisability}" HorizontalAlignment="Left" Background="White" Margin="10,2,2,2" Padding="5">
+                        <WrapPanel >
+                            <TextBox Canvas.Left="-30" Validation.Error="TextBox_Error"  Style="{StaticResource flatTextBox}"  TabIndex="1">
+                                <TextBox.Text>
+                                    <Binding Path="ClassA" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                                        <Binding.Converter>
+                                            <local:DefaultLowerCaseConverter></local:DefaultLowerCaseConverter>
+                                        </Binding.Converter>
+                                        <Binding.ValidationRules>
+                                            <vlid:DoubleRangeRule Min="1" Max="255" ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
+                            <TextBox Canvas.Left="-60" Validation.Error="TextBox_Error" Style="{StaticResource flatTextBox}" TabIndex="2">
+                                <TextBox.Text>
+                                    <Binding Path="ClassB" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                                        <Binding.ValidationRules>
+                                            <vlid:DoubleRangeRule Min="1" Max="255" ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
+                            <TextBox Canvas.Left="-90" Validation.Error="TextBox_Error" Style="{StaticResource flatTextBox}" TabIndex="3">
+                                <TextBox.Text>
+                                    <Binding Path="ClassC" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                                        <Binding.ValidationRules>
+                                            <vlid:DoubleRangeRule Min="1" Max="255" ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
+                            <TextBox Validation.Error="TextBox_Error" Canvas.Left="-120" Style="{StaticResource flatTextBox}" TabIndex="4">
+                                <TextBox.Text>
+                                    <Binding Path="ClassD" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                                        <Binding.ValidationRules>
+                                            <vlid:DoubleRangeRule Min="1" Max="255" ValidatesOnTargetUpdated="True"/>
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                        </WrapPanel>
+                    </Border>
                 </StackPanel>
             </Grid>
         </GroupBox>
         <Separator Margin="0,5" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2"></Separator>
-        <Button Grid.Row="3" Grid.Column="3" Margin="10,5" Width="80" Content="Save" Command="{Binding Save}"></Button>
+        <Button Grid.Row="3" Grid.Column="3" Margin="10,5" Width="80" Content="Save" IsEnabled="{Binding CanSave}" Command="{Binding Save}"></Button>
         <Button Grid.Row="3" Grid.Column="4" Margin="10,5" Width="80" Content="Close" Command="{Binding Close}" CommandParameter="{Binding ElementName=win}"></Button>
     </Grid>
 </Window>

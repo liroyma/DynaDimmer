@@ -42,7 +42,7 @@ namespace Dynadimmer.Models
 
         public override void Init()
         {
-            this.ip = IPAddress.Parse("192.168.4.1");
+            this.ip = IPAddress.Parse(Properties.Settings.Default.UnitIPAddress);
             this.port = 23;
             ping = new System.Net.NetworkInformation.Ping();
             ping.PingCompleted += Ping_PingCompleted;
@@ -147,6 +147,11 @@ namespace Dynadimmer.Models
 
         }
 
+        internal void UpdateIP()
+        {
+            ip = IPAddress.Parse(Properties.Settings.Default.UnitIPAddress);
+        }
+
         private void Connect_CommandSent(object sender, EventArgs e)
         {
             if (IsInit)
@@ -170,7 +175,7 @@ namespace Dynadimmer.Models
             var result = tcpclient.BeginConnect(ip, port, null, null);
             var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(2));
 
-            if (!success)
+            if (!success || !tcpclient.Connected)
             {
                 Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + "."));
                 IsConnected = false;
@@ -186,8 +191,10 @@ namespace Dynadimmer.Models
 
         public override void Dispose()
         {
-            stream.Close();
-            tcpclient.Close();
+            if(stream!=null)
+                stream.Close();
+            if(tcpclient!=null)
+                tcpclient.Close();
             startping = false;
         }
 
