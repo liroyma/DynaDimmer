@@ -118,9 +118,9 @@
                 <ListBox Grid.RowSpan="4" Grid.Row="0" Grid.Column="0" Margin="10,0,10,10" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ListBox>
                 <TextBox Name="txthours" Grid.Row="0" Grid.Column="1" Margin="5,2" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                     <TextBox.Text>
-                        <Binding FallbackValue="1" TargetNullValue="0" Path="HourText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
+                        <Binding FallbackValue="0" Path="HourText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                             <Binding.ValidationRules>
-                                <vlid:IntRangeRule Min="1" Max="8784" ValidatesOnTargetUpdated="True"/>
+                                <vlid:IntRangeRule Min="0" Max="8784" ValidatesOnTargetUpdated="True"/>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
@@ -143,6 +143,9 @@
                                     <Setter Property="IsEnabled" Value="False" />
                                 </MultiDataTrigger>
                                 <DataTrigger Binding="{Binding ElementName=txthours, Path=(Validation.HasError)}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding HourText}" Value="0">
                                     <Setter Property="IsEnabled" Value="False"></Setter>
                                 </DataTrigger>
                             </Style.Triggers>

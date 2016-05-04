@@ -347,9 +347,10 @@ namespace Dynadimmer.Views.Setttings
             Remove.CommandSent += Remove_CommandSent;
             SelectedPrice = "0.0";
             SelectedHour = "0";
+            HourText = "0";
+            PriceText = "0.0";
             LoginText = "Login";
             ReadFromSettings();
-            Console.WriteLine("SelectedHour: " + SelectedHour);
         }
 
         public void ReadFromSettings()
