@@ -131,7 +131,7 @@ namespace Dynadimmer.Models
                 }
                 catch
                 {
-                    Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + "."));
+                    Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + ".",Brushes.Red));
                     Dispose();
                     IsConnected = false;
                     Viewer.WindowEnable = true;
@@ -139,7 +139,7 @@ namespace Dynadimmer.Models
             }
             else
             {
-                Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + "."));
+                Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + ".", Brushes.Red));
                 Dispose();
                 IsConnected = false;
                 Viewer.WindowEnable = true;
@@ -177,13 +177,13 @@ namespace Dynadimmer.Models
 
             if (!success || !tcpclient.Connected)
             {
-                Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + "."));
+                Log.AddMessage(new ConnectionMessage("Unable to connect to " + this.ip + ".", Brushes.Red));
                 IsConnected = false;
             }
             else
             {
                 stream = tcpclient.GetStream();
-                Log.AddMessage(new ConnectionMessage("Connected TCP."));
+                Log.AddMessage(new ConnectionMessage("Connected TCP.",Brushes.Green));
                 IsConnected = true;
                 startping = true;
             }

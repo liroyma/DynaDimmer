@@ -107,7 +107,7 @@ namespace Dynadimmer.Models
         public abstract void Dispose();
 
     }
-    public enum CinnectionType
+    public enum ConnectionType
     {
         IRDA,
         TCP

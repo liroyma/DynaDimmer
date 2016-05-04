@@ -4,11 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Closing="win_Closing"
         xmlns:local="clr-namespace:Dynadimmer.Views.Setttings" ResizeMode="CanResizeWithGrip" WindowStyle="ThreeDBorderWindow" Width="450" Height="400"
-        xmlns:vlid="clr-namespace:Dynadimmer.Models.Converters"
+        xmlns:vlid="clr-namespace:Dynadimmer.Models.ConvertersAndRules"
         mc:Ignorable="d" Background="#efefef" Padding="5"  Title="Application Settings" Name="win" MinHeight="350" MinWidth="650">
     <Window.Resources>
         <ResourceDictionary>
-            <local:BooleanOrConverter x:Key="BooleanOrConverter"></local:BooleanOrConverter>
+            <vlid:BooleanOrConverter x:Key="booleanOrConverter"></vlid:BooleanOrConverter>
+            <vlid:ListContainItemConverter x:Key="listContainItemConverter"></vlid:ListContainItemConverter>
+            <vlid:EnumBooleanConverter x:Key="enumBooleanConverter"/>
+            
             <Color x:Key="detailMark" A="#00" R="#00" B="#00" G="#00"></Color>
             <SolidColorBrush x:Key="detailMarkBrush" Color="{StaticResource ResourceKey=detailMark}" />
             <ControlTemplate x:Key="errorTemplateSilverlightStyle">
@@ -33,7 +36,7 @@
                 <ControlTemplate.Triggers>
                     <DataTrigger Value="True">
                         <DataTrigger.Binding>
-                            <MultiBinding Converter="{StaticResource BooleanOrConverter}">
+                            <MultiBinding Converter="{StaticResource booleanOrConverter}">
                                 <Binding ElementName="adorner" Path="AdornedElement.IsKeyboardFocused" />
                                 <Binding ElementName="toolTipCorner" Path="IsMouseOver"/>
                             </MultiBinding>
@@ -67,7 +70,6 @@
                 <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
                 <Setter Property="BorderThickness" Value="0"></Setter>
                 <Setter Property="MaxLength" Value="3"></Setter>
-                <Setter Property="Uid" Value="IP"></Setter>
                 <Setter Property="Validation.ErrorTemplate" Value="{StaticResource errorTemplateSilverlightStyle}" ></Setter>
             </Style>
         </ResourceDictionary>
@@ -114,20 +116,51 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <ListBox Grid.RowSpan="4" Grid.Row="0" Grid.Column="0" Margin="10,0,10,10" ItemsSource="{Binding HoursList}" SelectedItem="{Binding SelectedHour}"></ListBox>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="5,2" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
+                <TextBox Name="txthours" Grid.Row="0" Grid.Column="1" Margin="5,2" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                     <TextBox.Text>
-                        <Binding FallbackValue="0" TargetNullValue="0" Path="HourText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
-                            <Binding.Converter>
-                                <local:DefaultLowerCaseConverter></local:DefaultLowerCaseConverter>
-                            </Binding.Converter>
+                        <Binding FallbackValue="1" TargetNullValue="0" Path="HourText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                             <Binding.ValidationRules>
-                                <local:NonEmptyStringIntValidationRule  ValidatesOnTargetUpdated="True"  />
+                                <vlid:IntRangeRule Min="1" Max="8784" ValidatesOnTargetUpdated="True"/>
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Button  Grid.Row="1" Grid.Column="1" Margin="5,2" Content="Add" IsEnabled="{Binding HourAddEnable}" Command="{Binding Add}" CommandParameter="Hour"></Button>
-                <Button Grid.Row="2" Grid.Column="2" Margin="5,2" Visibility="{Binding HourRemoveVisability}" Content="Remove" Command="{Binding Remove}" CommandParameter="Hour"></Button>
+                <Button  Grid.Row="1" Grid.Column="1" Margin="5,2" Content="Add" Command="{Binding Add}" CommandParameter="Hour">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Value="True">
+                                            <Condition.Binding>
+                                                <MultiBinding Converter="{StaticResource listContainItemConverter}" ConverterParameter="hour">
+                                                    <Binding Path="HoursList" />
+                                                    <Binding Path="HourText" />
+                                                </MultiBinding>
+                                            </Condition.Binding>
+                                        </Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </MultiDataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=txthours, Path=(Validation.HasError)}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Grid.Row="2" Grid.Column="2" Margin="5,2"  Content="Remove" Command="{Binding Remove}" CommandParameter="Hour">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedHour}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+
+                </Button>
             </Grid>
         </GroupBox>
         <GroupBox BorderBrush="Black" Margin="5" Padding="5" Header="Prices" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
@@ -143,38 +176,69 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <ListBox Grid.RowSpan="4" Grid.Row="0" Margin="10,0,10,10" ItemsSource="{Binding PriceList}" SelectedItem="{Binding SelectedPrice}"></ListBox>
-                <TextBox Margin="5,2" Grid.Row="0" Grid.Column="1" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
+                <TextBox Name="txtprice" Margin="5,2" Grid.Row="0" Grid.Column="1" TextAlignment="Center" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors).CurrentItem.ErrorContent}">
                     <TextBox.Text>
-                        <Binding  FallbackValue="0.0" Path="PriceText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
-                            <Binding.Converter>
-                                <local:DefaultLowerCaseConverter></local:DefaultLowerCaseConverter>
-                            </Binding.Converter>
+                        <Binding  FallbackValue="0" Path="PriceText" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                             <Binding.ValidationRules>
-                                <local:NonEmptyStringDoubleValidationRule  ValidatesOnTargetUpdated="True"  />
+                                <vlid:DoubleRangeRule Min="0" Max="100"  ValidatesOnTargetUpdated="True"  />
                             </Binding.ValidationRules>
                         </Binding>
                     </TextBox.Text>
                 </TextBox>
-                <Button Margin="5,2" Grid.Row="1" Grid.Column="1" Content="Add" IsEnabled="{Binding PriceAddEnable}" Command="{Binding Add}" CommandParameter="Price"></Button>
-                <Button Margin="5,2" Grid.Row="2" Grid.Column="1" Content="Remove" Visibility="{Binding PriceRemoveVisability}" Command="{Binding Remove}" CommandParameter="Price"></Button>
+                <Button Margin="5,0,5,2" Grid.Row="1" Grid.Column="1" Content="Add" Command="{Binding Add}" CommandParameter="Price" Height="22" VerticalAlignment="Bottom">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=txtprice, Path=(Validation.HasError)}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                </DataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Value="True">
+                                            <Condition.Binding>
+                                                <MultiBinding Converter="{StaticResource listContainItemConverter}" ConverterParameter="price">
+                                                    <Binding Path="PriceList" />
+                                                    <Binding Path="PriceText" />
+                                                </MultiBinding>
+                                            </Condition.Binding>
+                                        </Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </MultiDataTrigger>
+                               
+                                <DataTrigger Binding="{Binding PriceText}" Value="0">
+                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding PriceText}" Value="0.">
+                                    <Setter Property="IsEnabled" Value="False"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Margin="5,2" Grid.Row="2" Grid.Column="1" Content="Remove" Command="{Binding Remove}" CommandParameter="Price">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedPrice}" Value="0.0">
+                                    <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </GroupBox>
         <GroupBox VerticalAlignment="Top" BorderBrush="Black" Margin="5" Padding="5" Header="Connection Type"  Grid.Column="4" Grid.Row="1">
             <Grid>
-                <Grid.Resources>
-                    <local:EnumBooleanConverter x:Key="enumBooleanConverter"/>
-                </Grid.Resources>
                 <StackPanel>
                     <RadioButton IsChecked="{Binding Path=ConType, Converter={StaticResource enumBooleanConverter}, ConverterParameter=IRDA,Mode=TwoWay}">IRDA</RadioButton>
                     <RadioButton IsChecked="{Binding Path=ConType, Converter={StaticResource enumBooleanConverter}, ConverterParameter=TCP,Mode=TwoWay}">TCP IP</RadioButton>
                     <Border Visibility="{Binding IPAddressVisability}" HorizontalAlignment="Left" Background="White" Margin="10,2,2,2" Padding="5">
                         <WrapPanel >
-                            <TextBox Canvas.Left="-30" Validation.Error="TextBox_Error"  Style="{StaticResource flatTextBox}"  TabIndex="1">
+                            <TextBox Name="txtclassa" Canvas.Left="-30" Style="{StaticResource flatTextBox}"  TabIndex="1">
                                 <TextBox.Text>
                                     <Binding Path="ClassA" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
-                                        <Binding.Converter>
-                                            <local:DefaultLowerCaseConverter></local:DefaultLowerCaseConverter>
-                                        </Binding.Converter>
                                         <Binding.ValidationRules>
                                             <vlid:DoubleRangeRule Min="1" Max="255" ValidatesOnTargetUpdated="True"/>
                                         </Binding.ValidationRules>
@@ -182,7 +246,7 @@
                                 </TextBox.Text>
                             </TextBox>
                             <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
-                            <TextBox Canvas.Left="-60" Validation.Error="TextBox_Error" Style="{StaticResource flatTextBox}" TabIndex="2">
+                            <TextBox Name="txtclassb" Canvas.Left="-60" Style="{StaticResource flatTextBox}" TabIndex="2">
                                 <TextBox.Text>
                                     <Binding Path="ClassB" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                                         <Binding.ValidationRules>
@@ -192,7 +256,7 @@
                                 </TextBox.Text>
                             </TextBox>
                             <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
-                            <TextBox Canvas.Left="-90" Validation.Error="TextBox_Error" Style="{StaticResource flatTextBox}" TabIndex="3">
+                            <TextBox Name="txtclassc" Canvas.Left="-90" Style="{StaticResource flatTextBox}" TabIndex="3">
                                 <TextBox.Text>
                                     <Binding Path="ClassC" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                                         <Binding.ValidationRules>
@@ -202,7 +266,7 @@
                                 </TextBox.Text>
                             </TextBox>
                             <TextBlock VerticalAlignment="Bottom" Background="White" Text="."></TextBlock>
-                            <TextBox Validation.Error="TextBox_Error" Canvas.Left="-120" Style="{StaticResource flatTextBox}" TabIndex="4">
+                            <TextBox Name="txtclassd" Canvas.Left="-120" Style="{StaticResource flatTextBox}" TabIndex="4">
                                 <TextBox.Text>
                                     <Binding Path="ClassD" FallbackValue="1" TargetNullValue="0" NotifyOnValidationError="True" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True"  >
                                         <Binding.ValidationRules>
@@ -217,7 +281,29 @@
             </Grid>
         </GroupBox>
         <Separator Margin="0,5" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2"></Separator>
-        <Button Grid.Row="3" Grid.Column="3" Margin="10,5" Width="80" Content="Save" IsEnabled="{Binding CanSave}" Command="{Binding Save}"></Button>
+        <Button Grid.Row="3" Grid.Column="3" Margin="10,5" Width="80" Content="Save" Command="{Binding Save}">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=txtclassa, Path=(Validation.HasError)}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=txtclassb, Path=(Validation.HasError)}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=txtclassc, Path=(Validation.HasError)}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=txtclassd, Path=(Validation.HasError)}" Value="True">
+                            <Setter Property="IsEnabled" Value="False"></Setter>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ConType}" Value="IRDA">
+                            <Setter Property="IsEnabled" Value="True"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
         <Button Grid.Row="3" Grid.Column="4" Margin="10,5" Width="80" Content="Close" Command="{Binding Close}" CommandParameter="{Binding ElementName=win}"></Button>
     </Grid>
 </Window>

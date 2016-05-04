@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.MonthItem"
              xmlns:tools="http://schemas.xceed.com/wpf/xaml/toolkit"
-             xmlns:valid="clr-namespace:Dynadimmer.Models.Converters"  Loaded="UserControl_Loaded" Visibility="{Binding ItemVisablility,Mode=TwoWay}"
+             xmlns:valid="clr-namespace:Dynadimmer.Models.ConvertersAndRules"  Loaded="UserControl_Loaded" Visibility="{Binding ItemVisablility,Mode=TwoWay}"
              mc:Ignorable="d" Background="White"  d:DesignWidth="1280">
     <UserControl.Resources>
         

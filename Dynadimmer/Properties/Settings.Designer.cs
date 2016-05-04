@@ -110,9 +110,9 @@ namespace Dynadimmer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("IRDA")]
-        public global::Dynadimmer.Models.CinnectionType ConType {
+        public global::Dynadimmer.Models.ConnectionType ConType {
             get {
-                return ((global::Dynadimmer.Models.CinnectionType)(this["ConType"]));
+                return ((global::Dynadimmer.Models.ConnectionType)(this["ConType"]));
             }
             set {
                 this["ConType"] = value;

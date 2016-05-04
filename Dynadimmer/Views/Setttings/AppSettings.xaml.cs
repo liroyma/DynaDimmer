@@ -27,26 +27,7 @@ namespace Dynadimmer.Views.Setttings
             InitializeComponent();
             this.DataContext = Model;
         }
-
-        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
-        {
-            if(sender is TextBox)
-            {
-                switch(((TextBox)sender).Uid)
-                {
-                    case "IP":
-                        Model.CanSave = false;
-                        break;
-                    case "PRICE":
-                        Model.PriceAddEnable = false;
-                        break;
-                    case "HOURS":
-                        Model.HourAddEnable = false;
-                        break;
-                }
-            }
-        }
-
+        
         private void win_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;

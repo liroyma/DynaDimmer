@@ -91,10 +91,10 @@ namespace Dynadimmer
             viewer.WindowEnable = true;
             switch(Properties.Settings.Default.ConType)
             {
-                case CinnectionType.IRDA:
+                case ConnectionType.IRDA:
                     UnitProperty.SetConnection(irdaconnection);
                     break;
-                case CinnectionType.TCP:
+                case ConnectionType.TCP:
                     UnitProperty.SetConnection(tcpconnection);
                     break;
             }
@@ -106,19 +106,19 @@ namespace Dynadimmer
             tcpconnection.UpdateIP();
         }
 
-        private void Model_TypeChanged(object sender, CinnectionType e)
+        private void Model_TypeChanged(object sender, ConnectionType e)
         {
-            if (UnitProperty.connection.IsConnected)
+            if (UnitProperty.connection.IsInit)
             {
                 UnitProperty.connection.CheckStatus(true);
                 log.AddMessage(new ConnectionMessage("Connection type changed to: " + e, Brushes.Black));
             }
             switch (e)
             {
-                case CinnectionType.IRDA:
+                case ConnectionType.IRDA:
                     UnitProperty.SetConnection(irdaconnection);
                     break;
-                case CinnectionType.TCP:
+                case ConnectionType.TCP:
                     tcpconnection.UpdateIP();
                     UnitProperty.SetConnection(tcpconnection);
                     break;
