@@ -13,8 +13,8 @@ namespace Dynadimmer.Models
     {
 
 
-         public string connectionbuttontext { get; set; }    
-         public Color connectionbuttoncolor { get; set; }
+        public string connectionbuttontext { get; set; }    
+        public Color connectionbuttoncolor { get; set; }
 
         public MyCommand Connect { get; set; }
 

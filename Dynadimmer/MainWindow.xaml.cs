@@ -19,7 +19,7 @@ namespace Dynadimmer
     public partial class MainWindow : Window
     {
         CalcWindow calc;
-        ConnectionHandler connection;
+        ConnectionHand connection;
         LogHandler log;
         WindowHandler viewer;
         AnswerHandler answers;
@@ -88,7 +88,7 @@ namespace Dynadimmer
             onlinesavingview.Model.GotData += Model_GotData;
             settings.Model.LoginWin.Model.Loggedin += Model_Loggedin;
             viewer.WindowEnable = true;
-            if (connection.IsInit)
+            if (connection.isInit)
                 connection.CheckStatus();
         }
 

@@ -10,9 +10,9 @@ using wcl;
 
 namespace Dynadimmer.Models
 {
-    public class IRDAHandler : ConnectionHandler
+    public class IRDAHandler : ConnectionHand
     {
-        public override bool IsInit { get;  set; }
+        public new bool IsInit { get;  set; }
 
         public IRDAHandler()
         {
@@ -23,7 +23,7 @@ namespace Dynadimmer.Models
 
         }
 
-        public override void Init()
+        public new void Init()
         {
             try
             {
@@ -56,11 +56,12 @@ namespace Dynadimmer.Models
         //LogHandler Log;
         //WindowHandler Viewer;
 
-        public override void SetHandlers(LogHandler log, WindowHandler win)
+        public new void SetHandlers(LogHandler log, WindowHandler win)
         {
-            Log = log;
-            Viewer = win;
-            IsConnected = false;
+            //Log = log;
+            //Viewer = win;
+            //IsConnected = false;
+            base.SetHandlers(log, win);
         }
 
         #endregion
@@ -71,8 +72,8 @@ namespace Dynadimmer.Models
         wclIrDADiscovery _wclIrDADiscovery;
         List<wclIrDADevice> Devices;
 
-        List<byte> answer = new List<byte>();
-        DispatcherTimer FillAnswerTimer = new DispatcherTimer();
+        //List<byte> answer = new List<byte>();
+        //DispatcherTimer FillAnswerTimer = new DispatcherTimer();
         #endregion
 
         #region Commands
@@ -80,13 +81,13 @@ namespace Dynadimmer.Models
         #endregion
 
         #region Events
-        public override event EventHandler<bool> Connected;
-        public override event EventHandler<List<GaneralMessage>> Answered;
+        public new event EventHandler<bool> Connected;
+        public new event EventHandler<List<GaneralMessage>> Answered;
         #endregion
 
         #region UI Propeerties
        // private string connectionbuttontext;
-        public  string ConnectionButtonText
+        public  new string ConnectionButtonText
         {
             get { return connectionbuttontext; }
             set
@@ -97,7 +98,7 @@ namespace Dynadimmer.Models
         }
 
     //    private Color connectionbuttoncolor;
-        public  Color ConnectionButtonColor
+        public new Color ConnectionButtonColor
         {
             get { return connectionbuttoncolor; }
             set
@@ -107,7 +108,7 @@ namespace Dynadimmer.Models
             }
         }
 
-        public  bool IsConnected
+        public new  bool IsConnected
         {
             get { return isConnected; }
             set
@@ -124,53 +125,55 @@ namespace Dynadimmer.Models
 
         #region Send and Recieve
 
-        private void FillAnswerTimer_Elapsed(object sender, EventArgs e)
+        private new void FillAnswerTimer_Elapsed(object sender, EventArgs e)
         {
-            FillAnswerTimer.Stop();
-            List<GaneralMessage> mm = new List<GaneralMessage>();
+            base.FillAnswerTimer_Elapsed(sender, e);
+            //FillAnswerTimer.Stop();
+            //List<GaneralMessage> mm = new List<GaneralMessage>();
 
-            while (answer.Contains(1))
-            {
-                int startindex = answer.FindIndex(x => x == 1);
-                if (startindex != 0)
-                {
-                    mm.Add(new JunkMessage(answer.GetRange(0, startindex)));
-                    answer.RemoveRange(0, startindex);
-                }
-                if (answer.Contains(3))
-                {
-                    int endindex = answer.FindIndex(x => x == 3);
-                    byte[] answer1 = answer.GetRange(0, endindex + 1).ToArray();
-                    try
-                    {
-                        IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", ""), answer1.ToList());
-                        mm.Add(mess);
-                    }
-                    catch
-                    {
-                        mm.Add(new JunkMessage(answer1.ToList()));
-                        mm.Add(new NotificationMessage("Error getting message.", Brushes.Red));
-                    }
-                    answer.RemoveRange(0, endindex + 1);
-                }
-                else
-                    break;
-            }
-            if (answer.Count > 0)
-            {
-                mm.Add(new JunkMessage(answer));
-                answer.Clear();
-            }
-            Answered(null, mm);
+            //while (answer.Contains(1))
+            //{
+            //    int startindex = answer.FindIndex(x => x == 1);
+            //    if (startindex != 0)
+            //    {
+            //        mm.Add(new JunkMessage(answer.GetRange(0, startindex)));
+            //        answer.RemoveRange(0, startindex);
+            //    }
+            //    if (answer.Contains(3))
+            //    {
+            //        int endindex = answer.FindIndex(x => x == 3);
+            //        byte[] answer1 = answer.GetRange(0, endindex + 1).ToArray();
+            //        try
+            //        {
+            //            IncomeMessage mess = new IncomeMessage(string.Format("Recived {0}", ""), answer1.ToList());
+            //            mm.Add(mess);
+            //        }
+            //        catch
+            //        {
+            //            mm.Add(new JunkMessage(answer1.ToList()));
+            //            mm.Add(new NotificationMessage("Error getting message.", Brushes.Red));
+            //        }
+            //        answer.RemoveRange(0, endindex + 1);
+            //    }
+            //    else
+            //        break;
+            //}
+            //if (answer.Count > 0)
+            //{
+            //    mm.Add(new JunkMessage(answer));
+            //    answer.Clear();
+            //}
+            //Answered(null, mm);
         }
 
-        public override void Write(OutMessage outMessage)
+        public new void Write(OutMessage outMessage)
         {
-            if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.DaliHeader && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.V1_10_Header)
-                Viewer.WindowEnable = false;
-            FillAnswerTimer.Start();
-            Log.AddMessage(outMessage);
-            Log.AddMessage(new NotificationMessage(outMessage.Info, Brushes.Blue));
+            //if (outMessage.Header != Views.DateTime.UnitDateTimeModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.Header && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.DaliHeader && outMessage.Header != Views.OnlineSaving.OnlineSavingModel.V1_10_Header)
+            //    Viewer.WindowEnable = false;
+            //FillAnswerTimer.Start();
+            //Log.AddMessage(outMessage);
+            //Log.AddMessage(new NotificationMessage(outMessage.Info, Brushes.Blue));
+            base.Write(outMessage);
             _wclClient.Write(outMessage.DataAscii, (uint)outMessage.DataAscii.Length);
         }
 
@@ -266,7 +269,7 @@ namespace Dynadimmer.Models
                 CheckStatus();
         }
 
-        public override void CheckStatus()
+        public new void CheckStatus()
         {
             if (_wclClient == null)
                 return;
@@ -283,7 +286,7 @@ namespace Dynadimmer.Models
             }
         }
 
-        public override void Dispose()
+        public new void Dispose()
         {
             if (_wclClient != null)
                 _wclClient.Dispose();
