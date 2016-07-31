@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Dynadimmer.Views.Config"
-             xmlns:convertors="clr-namespace:Dynadimmer.Models.Converters"
+             xmlns:convertors="clr-namespace:Dynadimmer.Models.ConvertersAndRules"
              mc:Ignorable="d" Background="#efefef">
     <GroupBox Header="Unit Configuration" Margin="10" Padding="10" BorderBrush="Black">
         <Grid>

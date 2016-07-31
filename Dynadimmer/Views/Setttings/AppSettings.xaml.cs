@@ -27,16 +27,12 @@ namespace Dynadimmer.Views.Setttings
             InitializeComponent();
             this.DataContext = Model;
         }
-
-        private void TextBox_Error(object sender, ValidationErrorEventArgs e)
-        {
-            Model.PriceAddEnable = false;
-        }
-
+        
         private void win_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
             e.Cancel = true;
         }
+        
     }
 }

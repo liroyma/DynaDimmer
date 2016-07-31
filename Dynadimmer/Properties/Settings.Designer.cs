@@ -106,5 +106,29 @@ namespace Dynadimmer.Properties {
                 this["FilesPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("IRDA")]
+        public global::Dynadimmer.Models.ConnectionType ConType {
+            get {
+                return ((global::Dynadimmer.Models.ConnectionType)(this["ConType"]));
+            }
+            set {
+                this["ConType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("192.168.4.2")]
+        public string UnitIPAddress {
+            get {
+                return ((string)(this["UnitIPAddress"]));
+            }
+            set {
+                this["UnitIPAddress"] = value;
+            }
+        }
     }
 }

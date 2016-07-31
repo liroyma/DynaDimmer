@@ -82,7 +82,7 @@ namespace Dynadimmer.Models
         {
             Counter = 0;
             AllDone = true;
-            Log.AddMessage(new NotificationMessage("Unable to complete the process.", Brushes.Red));
+          //  Log.AddMessage(new NotificationMessage("Unable to complete the process.", Brushes.Red));
         }
     }
 

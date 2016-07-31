@@ -11,14 +11,17 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Dynadimmer.Models.Messages;
+using System.Windows.Data;
 
 namespace Dynadimmer.Views.Setttings
 {
     public class AppSettingsModel : MyUIHandler
     {
         #region Price
-        private ObservableCollection<string> _pricelist = new ObservableCollection<string>();
-        public ObservableCollection<string> PriceList
+        private List<double> _pl = new List<double>();
+
+        private ObservableCollection<double> _pricelist = new ObservableCollection<double>();
+        public ObservableCollection<double> PriceList
         {
             get { return _pricelist; }
             set
@@ -35,7 +38,6 @@ namespace Dynadimmer.Views.Setttings
             set
             {
                 _pricetext = value;
-                PriceAddEnable = (value != "0" && value != "0." && value != "0.0") && !PriceList.Contains(value);
                 NotifyPropertyChanged("PriceText");
             }
         }
@@ -47,38 +49,17 @@ namespace Dynadimmer.Views.Setttings
             set
             {
                 _selectedprice = value;
-                PriceRemoveVisability = value != "0" ? Visibility.Visible : Visibility.Collapsed;
                 NotifyPropertyChanged("SelectedPrice");
-            }
-        }
-
-        private bool _priceaddenable;
-        public bool PriceAddEnable
-        {
-            get { return _priceaddenable; }
-            set
-            {
-                _priceaddenable = value;
-                NotifyPropertyChanged("PriceAddEnable");
-            }
-        }
-
-        private Visibility _priceremovevisability;
-        public Visibility PriceRemoveVisability
-        {
-            get { return _priceremovevisability; }
-            set
-            {
-                _priceremovevisability = value;
-                NotifyPropertyChanged("PriceRemoveVisability");
             }
         }
 
         #endregion
 
-        #region Huers
-        private ObservableCollection<string> _hourslist = new ObservableCollection<string>();
-        public ObservableCollection<string> HoursList
+        #region Hours
+        private List<int> _hl = new List<int>();
+
+        private ObservableCollection<int> _hourslist = new ObservableCollection<int>();
+        public ObservableCollection<int> HoursList
         {
             get { return _hourslist; }
             set
@@ -95,7 +76,6 @@ namespace Dynadimmer.Views.Setttings
             set
             {
                 _hourtext = value;
-                HourAddEnable = (value != "0" && value != "0." && value != "0.0") && !HoursList.Contains(value);
                 NotifyPropertyChanged("HourText");
             }
         }
@@ -110,29 +90,7 @@ namespace Dynadimmer.Views.Setttings
                 NotifyPropertyChanged("SelectedHour");
             }
         }
-
-        private bool _houraddenable;
-        public bool HourAddEnable
-        {
-            get { return _houraddenable; }
-            set
-            {
-                _houraddenable = value;
-                NotifyPropertyChanged("HourAddEnable");
-            }
-        }
-
-        private Visibility _hourremovevisability;
-        public Visibility HourRemoveVisability
-        {
-            get { return _hourremovevisability; }
-            set
-            {
-                _hourremovevisability = value;
-                NotifyPropertyChanged("HourRemoveVisability");
-            }
-        }
-
+        
         #endregion
 
         #region Commands
@@ -147,16 +105,38 @@ namespace Dynadimmer.Views.Setttings
         {
             if (sender is Window)
             {
+                if (startcontype != Properties.Settings.Default.ConType && TypeChanged != null)
+                    TypeChanged(null, Properties.Settings.Default.ConType);
+                if (startipadd != Properties.Settings.Default.UnitIPAddress && UnitIPChanged != null)
+                    UnitIPChanged(null, Properties.Settings.Default.UnitIPAddress);
                 ((Window)sender).Close();
             }
         }
 
         private void Save_CommandSent(object sender, EventArgs e)
         {
-            Properties.Settings.Default.HoursList = String.Join(";", HoursList.ToArray());
-            Properties.Settings.Default.PricesList = String.Join(";", PriceList.ToArray());
+            Properties.Settings.Default.HoursList = String.Join(";", _hl.ToArray());
+            Properties.Settings.Default.PricesList = String.Join(";", _pl.ToArray());
+            Properties.Settings.Default.ConType = ConType;
             Properties.Settings.Default.FilesPath = FilesPath;
+            if(ConType==ConnectionType.TCP)
+                Properties.Settings.Default.UnitIPAddress = string.Format("{0}.{1}.{2}.{3}", ClassA, ClassB, ClassC, ClassD); ;
             Properties.Settings.Default.Save();
+
+        }
+
+        private void UpdateViewLists()
+        {
+            PriceList.Clear();
+            foreach (var item in _pl)
+            {
+                PriceList.Add(item);
+            }
+            HoursList.Clear();
+            foreach (var item in _hl)
+            {
+                HoursList.Add(item);
+            }
         }
 
         private void Remove_CommandSent(object sender, EventArgs e)
@@ -167,18 +147,20 @@ namespace Dynadimmer.Views.Setttings
                 case "Price":
                     if (SelectedPrice != double.Parse("0.0").ToString())
                     {
-                        PriceList.Remove(SelectedPrice);
+                        _pl.Remove(double.Parse(SelectedPrice));
+                        UpdateViewLists();
                         SelectedPrice = "0.0";
                     }
                     break;
                 case "Hour":
                     if (SelectedHour != int.Parse("0").ToString())
                     {
-                        HoursList.Remove(SelectedHour);
+                        _hl.Remove(int.Parse(SelectedHour));
                         SelectedHour = "0";
                     }
                     break;
             }
+            UpdateViewLists();
         }
 
         private void Add_CommandSent(object sender, EventArgs e)
@@ -186,20 +168,25 @@ namespace Dynadimmer.Views.Setttings
             switch (sender as string)
             {
                 case "Price":
-                    if (PriceText != double.Parse("0.0").ToString())
+                    if (PriceText != double.Parse("0.0").ToString() && !_pl.Contains(double.Parse(PriceText)))
                     {
-                        PriceList.Add(PriceText);
+                        _pl.Add(double.Parse(PriceText));
+                        SelectedPrice = "0.0";
                         PriceText = "0.0";
+                        _pl.Sort();
                     }
                     break;
                 case "Hour":
-                    if (HourText != int.Parse("0").ToString())
+                    if (HourText != int.Parse("0").ToString() && !_hl.Contains(int.Parse(HourText)))
                     {
-                        HoursList.Add(HourText);
+                        _hl.Add(int.Parse(HourText));
+                        SelectedHour = "0";
                         HourText = "0";
+                        _hl.Sort();
                     }
                     break;
             }
+            UpdateViewLists();
         }
 
         private void Browse_CommandSent(object sender, EventArgs e)
@@ -226,18 +213,70 @@ namespace Dynadimmer.Views.Setttings
         }
         #endregion
 
-        public Login.LogInWindow LoginWin { get; set; }
+        #region IP Address
+        string startipadd;
 
-        private string _filespath;
-        public string FilesPath
+        public event EventHandler<ConnectionType> TypeChanged;
+        public event EventHandler<string> UnitIPChanged;
+
+        private Visibility _ipaddressvisability;
+        public Visibility IPAddressVisability
         {
-            get { return _filespath; }
+            get { return _ipaddressvisability; }
             set
             {
-                _filespath = value;
-                NotifyPropertyChanged("FilesPath");
+                _ipaddressvisability = value;
+                NotifyPropertyChanged("IPAddressVisability");
             }
         }
+
+        private int _classa;
+        public int ClassA
+        {
+            get { return _classa; }
+            set
+            {
+                _classa = value;
+                NotifyPropertyChanged("ClassA");
+            }
+        }
+
+        private int _classb;
+        public int ClassB
+        {
+            get { return _classb; }
+            set
+            {
+                _classb = value;
+                NotifyPropertyChanged("ClassB");
+            }
+        }
+
+        private int _classc;
+        public int ClassC
+        {
+            get { return _classc; }
+            set
+            {
+                _classc = value;
+                NotifyPropertyChanged("ClassC");
+            }
+        }
+
+        private int _classd;
+        public int ClassD
+        {
+            get { return _classd; }
+            set
+            {
+                _classd = value;
+                NotifyPropertyChanged("ClassD");
+            }
+        }
+        #endregion
+
+        #region Login
+        public Login.LogInWindow LoginWin { get; set; }
 
         private string _logintext;
         public string LoginText
@@ -249,6 +288,47 @@ namespace Dynadimmer.Views.Setttings
                 NotifyPropertyChanged("LoginText");
             }
         }
+
+        #endregion
+
+        #region Files Path
+        private string _filespath;
+        public string FilesPath
+        {
+            get { return _filespath; }
+            set
+            {
+                _filespath = value;
+                NotifyPropertyChanged("FilesPath");
+            }
+        }
+        #endregion
+
+        #region Connection Type
+        ConnectionType startcontype;
+
+        private ConnectionType _contype;
+        public ConnectionType ConType
+        {
+            get { return _contype; }
+            set
+            {
+                if (onstart)
+                {
+                    if (once)
+                        _contype = value;
+                    once = false;
+                }
+                else
+                    _contype = value;
+                IPAddressVisability = _contype == ConnectionType.TCP ? Visibility.Visible : Visibility.Collapsed;
+                NotifyPropertyChanged("ConType");
+            }
+        }
+        #endregion
+
+        bool onstart = false;
+        bool once = false;
 
         public AppSettingsModel()
         {
@@ -267,79 +347,51 @@ namespace Dynadimmer.Views.Setttings
             Remove.CommandSent += Remove_CommandSent;
             SelectedPrice = "0.0";
             SelectedHour = "0";
+            HourText = "0";
+            PriceText = "0.0";
             LoginText = "Login";
             ReadFromSettings();
         }
 
-        private void ReadFromSettings()
+        public void ReadFromSettings()
         {
+            onstart = true;
+            once = true;
+            ConType = Properties.Settings.Default.ConType;
+            startcontype = Properties.Settings.Default.ConType;
             FilesPath = Properties.Settings.Default.FilesPath;
+            string IPAddress = Properties.Settings.Default.UnitIPAddress;
+            string[] classes = IPAddress.Split('.');
+            ClassA = int.Parse(classes[0]);
+            ClassB = int.Parse(classes[1]);
+            ClassC = int.Parse(classes[2]);
+            ClassD = int.Parse(classes[3]);
+            startipadd = Properties.Settings.Default.UnitIPAddress;
             if (FilesPath == string.Empty)
                 FilesPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string hoursstring = Properties.Settings.Default.HoursList;
+            _hl.Clear();
             if (hoursstring != string.Empty)
             {
                 foreach (var item in hoursstring.Split(';'))
                 {
-                    HoursList.Add(item);
+                    if(!_hl.Contains(int.Parse(item)))
+                        _hl.Add(int.Parse(item));
                 }
             }
             string pricestring = Properties.Settings.Default.PricesList;
+            _pl.Clear();
             if (pricestring != string.Empty)
             {
                 foreach (var item in pricestring.Split(';'))
                 {
-                    PriceList.Add(item);
+                    if (!_pl.Contains(double.Parse(item)))
+                        _pl.Add(double.Parse(item));
                 }
             }
+            UpdateViewLists();
+            onstart = false;
         }
-
     }
 
-    public class NonEmptyStringDoubleValidationRule : ValidationRule
-    {
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-        {
-            double x;
-            if (value == null || double.TryParse(value.ToString(), out x))
-                // return (x >= 0 && x <= 2)
-                return new ValidationResult(true, null);
-            //: new ValidationResult(false, "Must be number between 0 to 2.");
-            return new ValidationResult(false, "Must be a decimal number");
-        }
-
-    }
-
-    public class NonEmptyStringIntValidationRule : ValidationRule
-    {
-        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
-        {
-            int x;
-            if (value == null || int.TryParse(value.ToString(), out x))
-                // return (x >= 0 && x <= 2)
-                return new ValidationResult(true, null);
-            //: new ValidationResult(false, "Must be number between 0 to 2.");
-            return new ValidationResult(false, "Must be a integer");
-        }
-
-    }
-
-    public class DefaultLowerCaseConverter : System.Windows.Data.IValueConverter
-    {
-        #region IValueConverter Members
-
-        public object Convert(object value, Type targetType,
-            object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType,
-            object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value;
-        }
-
-        #endregion
-    }
 }

@@ -155,13 +155,6 @@
                         <MenuItem Header="_Clear Log" IsEnabled="{Binding Reset}" Command="{Binding ClearLog}"></MenuItem>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="_Connection Type" >
-                    <RadioButton  Content="_TCP/IP" Name="ipRadioButton" IsChecked="True" />
-                    <RadioButton  Content="_IrDA" Name="irdaRadioButton"  />
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding TcpEnabled}" Header="_TCP/IP"></MenuItem>
-                    <MenuItem IsCheckable="True" Click="MenuItem_Click" IsEnabled="{Binding HaveInformation}" IsChecked="{Binding IrdaEnabled}" Header="_IrDA"></MenuItem>
-                </MenuItem>
-
             </Menu>
             <Grid Height="130" Background="#efefef" DockPanel.Dock="Top">
                 <Grid.ColumnDefinitions>
@@ -185,10 +178,9 @@
                     <NewSchdularSelection:NewSchdularSelectionView x:Name="newschdularselectionview" Grid.Column="1" />
                     <OnlineSaving:OnlineSavingView x:Name="onlinesavingview" Grid.Column="2"/>
                     <Information:InformationView x:Name="infoview" Grid.Column="2"/>
-
                     <FileLoad:FileLoadView x:Name="fileloadview" Grid.Column="0" />
                 </Grid>
-                <Button  Name="ConnectBtn" Style="{StaticResource ConnectButton}"  Grid.Row="0" Grid.Column="1"  BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtonText}" ToolTip="{Binding ConnectionButtonText}" Height="40" Width="94" Margin="28,0,28,13" VerticalAlignment="Bottom">
+                <Button Style="{StaticResource ConnectButton}" Visibility="{Binding ConnectionButtonVisibility}"  Grid.Row="0" Grid.Column="1"  BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" Content="{Binding ConnectionButtonText}" ToolTip="{Binding ConnectionButtonText}" DataContext="{StaticResource TcpConnection}" Height="40" Width="94" Margin="28,0,28,13" VerticalAlignment="Bottom">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
                             <GradientStop Color="{Binding ConnectionButtonColor}" Offset="0"/>
@@ -196,7 +188,14 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                
+                <Button Style="{StaticResource ConnectButton}" Visibility="{Binding ConnectionButtonVisibility}"  Grid.Row="0" Grid.Column="1"  BorderThickness="1" BorderBrush="Black" Command="{Binding Connect}" DataContext="{StaticResource IrDAConnection}" Content="{Binding ConnectionButtonText}" ToolTip="{Binding ConnectionButtonText}" Height="40" Width="94" Margin="28,0,28,13" VerticalAlignment="Bottom">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
+                            <GradientStop Color="{Binding ConnectionButtonColor}" Offset="0"/>
+                            <GradientStop Color="White" Offset="2"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
                 <Button Grid.Row="1" Grid.Column="3" Style="{StaticResource ConnectButton}" BorderThickness="1" BorderBrush="Black" VerticalAlignment="Top" Content="Exit" ToolTip="Exit." Height="40" Width="95" Click="ExitButton_Click">
                     <Button.Background>
                         <LinearGradientBrush EndPoint="0.504,1.5" StartPoint="0.504,0.03">
@@ -205,7 +204,7 @@
                         </LinearGradientBrush>
                     </Button.Background>
                 </Button>
-                
+
             </Grid>
             <MainContainer:MainContainerView DockPanel.Dock="Bottom" x:Name="MainContainer" Background="White" />
         </DockPanel>

@@ -22,5 +22,11 @@ namespace Dynadimmer.Models
         {
             CommandSent(parameter, null);
         }
+
+        private void Check()
+        {
+            CanExecuteChanged(null,null);
+        }
+        
     }
 }

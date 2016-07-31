@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Dynadimmer.Views.Calc"
-        xmlns:valid="clr-namespace:Dynadimmer.Models.Converters"  
+        xmlns:valid="clr-namespace:Dynadimmer.Models.ConvertersAndRules"  
         mc:Ignorable="d" Closing="Window_Closing"
         Title="CalcWindow" Height="300" MinWidth="880" Width="880">
     <Grid>
